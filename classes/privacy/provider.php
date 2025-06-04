@@ -17,12 +17,12 @@
 /**
  * Privacy API Provider
  *
- * @package    block_openai_chat
+ * @package    block_exaaichat
  * @copyright  2024 Bryce Yoder <me@bryceyoder.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_openai_chat\privacy;
+namespace block_exaaichat\privacy;
 
 use \core_privacy\local\metadata\collection;
 use \core_privacy\local\request\writer;
@@ -33,23 +33,23 @@ use core_privacy\local\request\approved_userlist;
 
 defined('MOODLE_INTERNAL') || die();
 
-class provider implements 
+class provider implements
     \core_privacy\local\metadata\provider,
     \core_privacy\local\request\plugin\provider,
     \core_privacy\local\request\core_userlist_provider {
 
     public static function get_metadata(collection $collection): collection {
         $collection->add_database_table(
-            'block_openai_chat_log',
+            'block_exaaichat_log',
              [
-                'userid' => 'privacy:metadata:openai_chat_log:userid',
-                'usermessage' => 'privacy:metadata:openai_chat_log:usermessage',
-                'airesponse' => 'privacy:metadata:openai_chat_log:airesponse',
-                'timecreated' => 'privacy:metadata:openai_chat_log:timecreated'
+                'userid' => 'privacy:metadata:exaaichat_log:userid',
+                'usermessage' => 'privacy:metadata:exaaichat_log:usermessage',
+                'airesponse' => 'privacy:metadata:exaaichat_log:airesponse',
+                'timecreated' => 'privacy:metadata:exaaichat_log:timecreated'
              ],
-            'privacy:metadata:openai_chat_log'
+            'privacy:metadata:exaaichat_log'
         );
-    
+
         return $collection;
     }
 
@@ -66,7 +66,7 @@ class provider implements
             return;
         }
 
-        if ($DB->record_exists('block_openai_chat_log', ['userid' => $context->instanceid])) {
+        if ($DB->record_exists('block_exaaichat_log', ['userid' => $context->instanceid])) {
             $userlist->add_user($context->instanceid);
         }
     }
@@ -79,7 +79,7 @@ class provider implements
         $userid = $user->id;
 
         // Sent messages.
-        $sql = "SELECT id, userid, usermessage, airesponse, timecreated FROM {block_openai_chat_log} WHERE userid = :userid";
+        $sql = "SELECT id, userid, usermessage, airesponse, timecreated FROM {block_exaaichat_log} WHERE userid = :userid";
         $records = $DB->get_records_sql($sql, ["userid" => $userid]);
 
         if (!empty($records)) {
@@ -92,9 +92,9 @@ class provider implements
                     "timecreated" => $message->timecreated
                 ];
             }
-    
+
             writer::with_context($context)->export_data(
-                [get_string('privacy:chatmessagespath', 'block_openai_chat')],
+                [get_string('privacy:chatmessagespath', 'block_exaaichat')],
                 $messages
             );
         }
@@ -104,7 +104,7 @@ class provider implements
         global $DB;
         // Only delete data for a user context.
         if ($context->contextlevel == CONTEXT_USER) {
-            $DB->delete_records('block_openai_chat_log', ['userid' => $context->instanceid]);
+            $DB->delete_records('block_exaaichat_log', ['userid' => $context->instanceid]);
         }
     }
 
@@ -113,7 +113,7 @@ class provider implements
         foreach ($contextlist as $context) {
             // Let's be super certain that we have the right information for this user here.
             if ($context->contextlevel == CONTEXT_USER && $contextlist->get_user()->id == $context->instanceid) {
-                $DB->delete_records('block_openai_chat_log', ['userid' => $context->instanceid]);
+                $DB->delete_records('block_exaaichat_log', ['userid' => $context->instanceid]);
             }
         }
     }
@@ -122,7 +122,7 @@ class provider implements
         global $DB;
         $context = $userlist->get_context();
         if ($context instanceof \context_user && in_array($context->instanceid, $userlist->get_userids())) {
-            $DB->delete_records('block_openai_chat_log', ['userid' => $context->instanceid]);
+            $DB->delete_records('block_exaaichat_log', ['userid' => $context->instanceid]);
         }
     }
 }

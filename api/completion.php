@@ -17,20 +17,20 @@
 /**
  * API endpoint for retrieving GPT completion
  *
- * @package    block_openai_chat
+ * @package    block_exaaichat
  * @copyright  2023 Bryce Yoder <me@bryceyoder.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use \block_openai_chat\completion;
+use \block_exaaichat\completion;
 
 require_once('../../../config.php');
 require_once($CFG->libdir . '/filelib.php');
-require_once($CFG->dirroot . '/blocks/openai_chat/lib.php');
+require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
 global $DB, $PAGE;
 
-if (get_config('block_openai_chat', 'restrictusage') !== "0") {
+if (get_config('block_exaaichat', 'restrictusage') !== "0") {
     require_login();
 }
 
@@ -45,32 +45,42 @@ $history = clean_param_array($body['history'], PARAM_NOTAGS, true);
 $block_id = clean_param($body['blockId'], PARAM_INT, true);
 $thread_id = clean_param($body['threadId'], PARAM_NOTAGS, true);
 
+
 // So that we're not leaking info to the client like API key, the block makes an API request including its ID
 // Then we can look up that specific block to pull out its config data
-$instance_record = $DB->get_record('block_instances', ['blockname' => 'openai_chat', 'id' => $block_id], '*');
-$instance = block_instance('openai_chat', $instance_record);
+$instance_record = $DB->get_record('block_instances', ['blockname' => 'exaaichat', 'id' => $block_id], '*');
+$instance = block_instance('exaaichat', $instance_record);
 if (!$instance) {
     print_error('invalidblockinstance', 'error', $id);
 }
 
 $context = context::instance_by_id($instance_record->parentcontextid);
+
+if ($context instanceof \context_course) {
+    require_login($context->instanceid);
+} else {
+    throw new \moodle_exception('block is not a course block, TODO: pass courseid as parameter');
+}
+
 $PAGE->set_context($context);
 
 $block_settings = [];
 $setting_names = [
-    'sourceoftruth', 
+    'user_message',
+    'sourceoftruth',
     'prompt',
     'instructions',
-    'username', 
-    'assistantname', 
-    'apikey', 
-    'model', 
-    'temperature', 
-    'maxlength', 
-    'topp', 
-    'frequency', 
+    'username',
+    'assistantname',
+    'apikey',
+    'model',
+    'temperature',
+    'maxlength',
+    'topp',
+    'frequency',
     'presence',
-    'assistant'
+    'assistant',
+    'vector_store_ids'
 ];
 foreach ($setting_names as $setting) {
     if ($instance->config && property_exists($instance->config, $setting)) {
@@ -81,9 +91,9 @@ foreach ($setting_names as $setting) {
 }
 
 $engine_class;
-$model = get_config('block_openai_chat', 'model');
-$api_type = get_config('block_openai_chat', 'type');
-$engine_class = "\block_openai_chat\completion\\$api_type";
+$model = get_config('block_exaaichat', 'model');
+$api_type = get_config('block_exaaichat', 'type');
+$engine_class = "\block_exaaichat\completion\\$api_type";
 
 $completion = new $engine_class(...[$model, $message, $history, $block_settings, $thread_id]);
 $response = $completion->create_completion($PAGE->context);
@@ -92,7 +102,7 @@ $response = $completion->create_completion($PAGE->context);
 $response["message"] = format_text($response["message"], FORMAT_MARKDOWN, ['context' => $context]);
 
 // Log the message
-log_message($message, $response['message'], $context);
+block_exaaichat_log_message($message, $response['message'], $context);
 
 $response = json_encode($response);
 echo $response;

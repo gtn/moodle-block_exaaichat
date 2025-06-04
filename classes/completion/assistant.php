@@ -17,27 +17,31 @@
 /**
  * Class providing completions for assistant API
  *
- * @package    block_openai_chat
+ * @package    block_exaaichat
  * @copyright  2023 Bryce Yoder <me@bryceyoder.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ */
 
-namespace block_openai_chat\completion;
+namespace block_exaaichat\completion;
 
-use block_openai_chat\completion;
+use block_exaaichat\helper;
+
 defined('MOODLE_INTERNAL') || die;
 
-class assistant extends \block_openai_chat\completion {
+class assistant extends \block_exaaichat\completion {
 
     private $thread_id;
+    private \block_exaaichat\api\assistant $chat;
 
     public function __construct($model, $message, $history, $block_settings, $thread_id) {
         parent::__construct($model, $message, $history, $block_settings);
 
+        $this->chat = new \block_exaaichat\api\assistant($thread_id, $this->apikey, $this->assistant ?: '', $this->instructions ?: '');
+
         // If thread_id is NULL, create a new thread
-        if (!$thread_id) {
-            $thread_id = $this->create_thread();
-        }
+        // if (!$thread_id) {
+        //     $thread_id = $this->create_thread();
+        // }
         $this->thread_id = $thread_id;
     }
 
@@ -46,17 +50,28 @@ class assistant extends \block_openai_chat\completion {
      * @return JSON: The API response from OpenAI
      */
     public function create_completion($context) {
+        $response = $this->chat->message($this->message);
+
+        return [
+            "id" => $response->id,
+            "message" => helper::clean_text_response($response->content[0]->text->value),
+            "thread_id" => $response->threadId,
+        ];
+
+        /*
         $this->add_message_to_thread();
         return $this->run();
+        */
     }
 
+    /*
     private function create_thread() {
         $curl = new \curl();
         $curl->setopt(array(
             'CURLOPT_HTTPHEADER' => array(
                 'Authorization: Bearer ' . $this->apikey,
                 'Content-Type: application/json',
-                'OpenAI-Beta: assistants=v2'
+                'OpenAI-Beta: assistants=v2',
             ),
         ));
 
@@ -69,7 +84,7 @@ class assistant extends \block_openai_chat\completion {
     private function add_message_to_thread() {
         $curlbody = [
             "role" => "user",
-            "content" => $this->message
+            "content" => $this->message,
         ];
 
         $curl = new \curl();
@@ -77,12 +92,12 @@ class assistant extends \block_openai_chat\completion {
             'CURLOPT_HTTPHEADER' => array(
                 'Authorization: Bearer ' . $this->apikey,
                 'Content-Type: application/json',
-                'OpenAI-Beta: assistants=v2'
+                'OpenAI-Beta: assistants=v2',
             ),
         ));
 
         $response = $curl->post(
-            "https://api.openai.com/v1/threads/" . $this->thread_id ."/messages", 
+            "https://api.openai.com/v1/threads/" . $this->thread_id . "/messages",
             json_encode($curlbody)
         );
         $response = json_decode($response);
@@ -94,6 +109,7 @@ class assistant extends \block_openai_chat\completion {
      * Make the actual API call to OpenAI
      * @return JSON: The response from OpenAI
      */
+    /*
     private function run() {
 
         $curlbody = [
@@ -108,12 +124,12 @@ class assistant extends \block_openai_chat\completion {
             'CURLOPT_HTTPHEADER' => array(
                 'Authorization: Bearer ' . $this->apikey,
                 'Content-Type: application/json',
-                'OpenAI-Beta: assistants=v2'
+                'OpenAI-Beta: assistants=v2',
             ),
         ));
 
         $response = $curl->post(
-            "https://api.openai.com/v1/threads/" . $this->thread_id . "/runs", 
+            "https://api.openai.com/v1/threads/" . $this->thread_id . "/runs",
             json_encode($curlbody)
         );
         $response = json_decode($response);
@@ -143,7 +159,7 @@ class assistant extends \block_openai_chat\completion {
             'CURLOPT_HTTPHEADER' => array(
                 'Authorization: Bearer ' . $this->apikey,
                 'Content-Type: application/json',
-                'OpenAI-Beta: assistants=v2'
+                'OpenAI-Beta: assistants=v2',
             ),
         ));
         $response = $curl->get("https://api.openai.com/v1/threads/" . $this->thread_id . '/messages');
@@ -152,7 +168,7 @@ class assistant extends \block_openai_chat\completion {
         return [
             "id" => $response->data[0]->id,
             "message" => $response->data[0]->content[0]->text->value,
-            "thread_id" => $response->data[0]->thread_id
+            "thread_id" => $response->data[0]->thread_id,
         ];
     }
 
@@ -162,16 +178,17 @@ class assistant extends \block_openai_chat\completion {
             'CURLOPT_HTTPHEADER' => array(
                 'Authorization: Bearer ' . $this->apikey,
                 'Content-Type: application/json',
-                'OpenAI-Beta: assistants=v2'
+                'OpenAI-Beta: assistants=v2',
             ),
         ));
 
         $response = $curl->get("https://api.openai.com/v1/threads/" . $this->thread_id . "/runs/" . $run_id);
         $response = json_decode($response);
-        
+
         if ($response->status === 'completed' || property_exists($response, 'error')) {
             return true;
         }
         return false;
     }
+    */
 }

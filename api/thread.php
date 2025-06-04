@@ -17,21 +17,21 @@
 /**
  * API endpoint for retrieving thread history
  *
- * @package    block_openai_chat
+ * @package    block_exaaichat
  * @copyright  2023 Bryce Yoder <me@bryceyoder.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../../../config.php');
 require_once($CFG->libdir . '/filelib.php');
-require_once($CFG->dirroot . '/blocks/openai_chat/lib.php');
+require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
-if (get_config('block_openai_chat', 'restrictusage') !== "0") {
+if (get_config('block_exaaichat', 'restrictusage') !== "0") {
     require_login();
 }
 
 $thread_id = required_param('thread_id', PARAM_NOTAGS);
-$apikey = get_config('block_openai_chat', 'apikey');
+$apikey = get_config('block_exaaichat', 'apikey');
 
 $curl = new \curl();
 $curl->setopt(array(

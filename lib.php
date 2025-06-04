@@ -17,7 +17,7 @@
 /**
  * General plugin functions
  *
- * @package    block_openai_chat
+ * @package    block_exaaichat
  * @copyright  2023 Bryce Yoder <me@bryceyoder.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,12 +28,12 @@ defined('MOODLE_INTERNAL') || die();
  * Fetch the current API type from the database, defaulting to "chat"
  * @return String: the API type (chat|azure|assistant)
  */
-function get_type_to_display() {
-    $stored_type = get_config('block_openai_chat', 'type');
+function block_exaaichat_get_type_to_display() {
+    $stored_type = get_config('block_exaaichat', 'type');
     if ($stored_type) {
         return $stored_type;
     }
-    
+
     return 'chat';
 }
 
@@ -42,15 +42,15 @@ function get_type_to_display() {
  * @param Int (optional): The ID of a block instance. If this is passed, the API can be pulled from the block rather than the site level.
  * @return Array: The list of assistants
  */
-function fetch_assistants_array($block_id = null) {
+function block_exaaichat_fetch_assistants_array($block_id = null) {
     global $DB;
 
     if (!$block_id) {
-        $apikey = get_config('block_openai_chat', 'apikey');
+        $apikey = get_config('block_exaaichat', 'apikey');
     } else {
-        $instance_record = $DB->get_record('block_instances', ['blockname' => 'openai_chat', 'id' => $block_id], '*');
-        $instance = block_instance('openai_chat', $instance_record);
-        $apikey = $instance->config->apikey ? $instance->config->apikey : get_config('block_openai_chat', 'apikey');
+        $instance_record = $DB->get_record('block_instances', ['blockname' => 'exaaichat', 'id' => $block_id], '*');
+        $instance = block_instance('exaaichat', $instance_record);
+        $apikey = $instance->config->apikey ? $instance->config->apikey : get_config('block_exaaichat', 'apikey');
     }
 
     if (!$apikey) {
@@ -69,7 +69,7 @@ function fetch_assistants_array($block_id = null) {
     $response = $curl->get("https://api.openai.com/v1/assistants?order=desc");
     $response = json_decode($response);
     $assistant_array = [];
-    if (property_exists($response, 'data')) {
+    if ($response && property_exists($response, 'data')) {
         foreach ($response->data as $assistant) {
             $assistant_array[$assistant->id] = $assistant->name;
         }
@@ -84,9 +84,10 @@ function fetch_assistants_array($block_id = null) {
  * but I left it here in case the API is changed significantly in the future)
  * @return Array: The list of model info
  */
-function get_models() {
+function block_exaaichat_get_models() {
     return [
         "models" => [
+            'gpt-4.1-mini' => 'gpt-4.1-mini',
             'gpt-4o' => 'gpt-4o',
             'gpt-4o-2024-11-20' => 'gpt-4o-2024-11-20',
             'gpt-4o-2024-08-06' => 'gpt-4o-2024-08-06',
@@ -136,16 +137,16 @@ function get_models() {
 /**
  * If setting is enabled, log the user's message and the AI response
  * @param string usermessage: The text sent from the user
- * @param string airesponse: The text returned by the AI 
+ * @param string airesponse: The text returned by the AI
  */
-function log_message($usermessage, $airesponse, $context) {
+function block_exaaichat_log_message($usermessage, $airesponse, $context) {
     global $USER, $DB;
 
-    if (!get_config('block_openai_chat', 'logging')) {
+    if (!get_config('block_exaaichat', 'logging')) {
         return;
     }
 
-    $DB->insert_record('block_openai_chat_log', (object) [
+    $DB->insert_record('block_exaaichat_log', (object) [
         'userid' => $USER->id,
         'usermessage' => $usermessage,
         'airesponse' => $airesponse,
@@ -154,11 +155,11 @@ function log_message($usermessage, $airesponse, $context) {
     ]);
 }
 
-function block_openai_chat_extend_navigation_course($nav, $course, $context) {
+function block_exaaichat_extend_navigation_course($nav, $course, $context) {
     if ($nav->get('coursereports')) {
         $nav->get('coursereports')->add(
-            get_string('openai_chat_logs', 'block_openai_chat'),
-            new moodle_url('/blocks/openai_chat/report.php', ['courseid' => $course->id]),
+            get_string('exaaichat_logs', 'block_exaaichat'),
+            new moodle_url('/blocks/exaaichat/report.php', ['courseid' => $course->id]),
             navigation_node::TYPE_SETTING,
             null
         );

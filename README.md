@@ -1,6 +1,6 @@
-# moodle-block_openai_chat
+# moodle-block_exaaichat
 
-<img align="right" src="https://github.com/Limekiller/moodle-block_openai_chat/assets/33644013/21f73adc-5bd4-4539-999b-a3b0a83736e0" />
+<img align="right" src="https://github.com/Limekiller/moodle-block_exaaichat/assets/33644013/21f73adc-5bd4-4539-999b-a3b0a83736e0" />
 
 ### GPT powered AI chat block for Moodle
 
@@ -19,7 +19,7 @@ The global block settings can be found by going to Site Administration > Plugins
 -  **Assistant name:** When the Chat API is enabled, the AI will use this name for itself in the conversation. It is also always used for the UI headings in the chat window.
 -  **User name:** When the Chat API is enabled, the AI will use this name for the user in the conversation. Both this and the above option can be used to influence the persona and responses of the AI. It is also always used for the UI headings in the chat window.
 -  **Enable logging:** Checking this box will record all messages sent by users along with the AI response. When logging is enabled, a recording icon is displayed in the block to indicate to users that their messages are being saved. Interactions with the AI can be found at Site Administration > Reports > OpenAI Chat Logs.
-  
+
 ### Assistant API settings
 These settings only appear when "Assistant" is chosen as the API Type
 -  **Assistant:** Which assistant to set as the global default. The list is pulled from your OpenAI account, and can be changed at a per-block level if instance-level settings are enabled.
@@ -55,7 +55,7 @@ If "Instance-level settings" is checked in the global block settings, the follow
 - **Advanced:** These are extra, advanced parameters to adjust the behavior of the model
   - **OpenAI API Key:** This allows a separate API key to be used on individual block instances
   - For more information on advanced settings, please see OpenAI documentation.
-    
+
 Note that any instance-level settings that are blank will default to the global block settings.
 
 # Using the Assistant API

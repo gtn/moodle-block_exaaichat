@@ -17,12 +17,12 @@
 /**
  * Log table
  *
- * @package    block_openai_chat
+ * @package    block_exaaichat
  * @copyright  2024 Bryce Yoder <me@bryceyoder.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_openai_chat;
+namespace block_exaaichat;
 defined('MOODLE_INTERNAL') || die;
 
 class report extends \table_sql {
@@ -59,7 +59,7 @@ class report extends \table_sql {
         } catch (\Throwable $e) {
             $coursecontext = $context;
         }
-        
+
         if ($this->is_downloading()) {
             return '=HYPERLINK("' . $context->get_url() . '","' . $context->get_context_name() . '")';
         } else {

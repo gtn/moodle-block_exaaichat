@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="blocks/openai_chat/db" VERSION="20240408" COMMENT="XMLDB file for Moodle blocks/openai_chat"
+<XMLDB PATH="blocks/exaaichat/db" VERSION="20240408" COMMENT="XMLDB file for Moodle blocks/exaaichat"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="block_openai_chat_log" COMMENT="Log of chat messages for block_openai_chat">
+    <TABLE NAME="block_exaaichat_log" COMMENT="Log of chat messages for block_exaaichat">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ID of the user that sent the message"/>

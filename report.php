@@ -17,12 +17,12 @@
 /**
  * Log report table
  *
- * @package    block_openai_chat
+ * @package    block_exaaichat
  * @copyright  2024 Bryce Yoder <me@bryceyoder.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use \block_openai_chat\report;
+use \block_exaaichat\report;
 
 require_once('../../config.php');
 require_once($CFG->libdir.'/tablelib.php');
@@ -35,7 +35,7 @@ $starttime = optional_param('starttime', '', PARAM_TEXT);
 $endtime = optional_param('endtime', '', PARAM_TEXT);
 $tsort = optional_param('tsort', '', PARAM_TEXT);
 
-$pageurl = $CFG->wwwroot . "/blocks/openai_chat/report.php?courseid=$courseid" .
+$pageurl = $CFG->wwwroot . "/blocks/exaaichat/report.php?courseid=$courseid" .
     "&user=$user" .
     "&starttime=$starttime" .
     "&endtime=$endtime";
@@ -46,32 +46,32 @@ $course = $DB->get_record('course', ['id' => $courseid]);
 $PAGE->set_url($pageurl);
 require_login($course);
 $context = context_course::instance($courseid);
-require_capability('block/openai_chat:viewreport', $context);
+require_capability('block/exaaichat:viewreport', $context);
 
 $datetime = new DateTime();
-$table = new \block_openai_chat\report(time());
+$table = new \block_exaaichat\report(time());
 $table->show_download_buttons_at(array(TABLE_P_BOTTOM));
 $table->is_downloading(
-    $download, 
-    get_string('downloadfilename', 'block_openai_chat') 
-        . '_' 
+    $download,
+    get_string('downloadfilename', 'block_exaaichat')
+        . '_'
         . $datetime->format(DateTime::ATOM)
 );
 
 if (!$table->is_downloading()) {
     $PAGE->set_pagelayout('report');
-    $PAGE->set_title(get_string('openai_chat_logs', 'block_openai_chat'));
-    $PAGE->set_heading(get_string('openai_chat_logs', 'block_openai_chat'));
+    $PAGE->set_title(get_string('exaaichat_logs', 'block_exaaichat'));
+    $PAGE->set_heading(get_string('exaaichat_logs', 'block_exaaichat'));
     $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', ['id' => $course->id]));
-    $PAGE->navbar->add(get_string('openai_chat_logs', 'block_openai_chat'), new moodle_url($pageurl));
+    $PAGE->navbar->add(get_string('exaaichat_logs', 'block_exaaichat'), new moodle_url($pageurl));
 
     echo $OUTPUT->header();
-    echo $OUTPUT->render_from_template('block_openai_chat/report_page', [
+    echo $OUTPUT->render_from_template('block_exaaichat/report_page', [
         "courseid" => $courseid,
         "user" => $user,
         "starttime" => $starttime,
         "endtime" => $endtime,
-        "link" => (new moodle_url("/blocks/openai_chat/report.php"))->out()
+        "link" => (new moodle_url("/blocks/exaaichat/report.php"))->out()
     ]);
 }
 
@@ -85,28 +85,36 @@ if ($courseid !== 1) {
 }
 
 // filter by user, starttime, endtime
+
+$params = [];
+
 if ($user) {
-    $where .= " AND CONCAT(u.firstname, ' ', u.lastname) like '%$user%'";
+    $userlike = $DB->sql_like($DB->sql_concat('u.firstname', "' '", 'u.lastname'), '?', false);
+    $where .= " AND $userlike";
+    $params[] = "%$user%";
 }
 if ($starttime_ts) {
-    $where .= " AND ocl.timecreated > $starttime_ts";
+    $where .= " AND ocl.timecreated > ?";
+    $params[] = $starttime_ts;
 }
 if ($endtime_ts) {
-    $where .= " AND ocl.timecreated < $endtime_ts";
-}
-
-if (!$tsort) {
-    $where .= " ORDER BY ocl.timecreated DESC";
+    $where .= " AND ocl.timecreated < ?";
+    $params[] = $endtime_ts;
 }
 
 $table->set_sql(
-    "ocl.*, CONCAT(u.firstname, ' ', u.lastname) as user_name", 
-    "{block_openai_chat_log} ocl 
-        JOIN {user} u ON u.id = ocl.userid 
+    "ocl.*, " . $DB->sql_concat('u.firstname', "' '", 'u.lastname') . " AS user_name",
+    "{block_exaaichat_log} ocl
+        JOIN {user} u ON u.id = ocl.userid
         JOIN {context} c ON c.id = ocl.contextid
         LEFT JOIN {course} co ON co.id = c.instanceid",
-    $where
+    $where,
+    $params
 );
+
+// Let Moodle handle sorting
+$table->sortable(true, 'timecreated');
+
 $table->define_baseurl($pageurl);
 $table->out($out, true);
 

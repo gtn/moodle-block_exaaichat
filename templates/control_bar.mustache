@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template block_openai_chat/control_bar
+    @template block_exaaichat/control_bar
 
     This template renders the control_bar.
 
@@ -31,21 +31,21 @@
 
 {{^is_edit_mode}}
     {{#logging_enabled}}
-        <div title='{{#str}}loggingenabled, block_openai_chat{{/str}}' class='recording'></div>
+        <div title='{{#str}}loggingenabled, block_exaaichat{{/str}}' class='recording'></div>
     {{/logging_enabled}}
-    <button class='openai_input_popout_btn' title="{{#str}}popout, block_openai_chat {{/str}}" id="popout">
-        <img src="{{{config.wwwroot}}}{{{ pix_popout }}}" alt="{{#str}}popout, block_openai_chat {{/str}}" class='openai_input_popout_btn_icon' />
+    <button class='openai_input_popout_btn' title="{{#str}}popout, block_exaaichat {{/str}}" id="popout">
+        <img src="{{{config.wwwroot}}}{{{ pix_popout }}}" alt="{{#str}}popout, block_exaaichat {{/str}}" class='openai_input_popout_btn_icon' />
     </button>
 {{/is_edit_mode}}
 <div id="control_bar">
     <div class="openai_input_bar" id="input_bar">
 
-        <textarea aria-label="{{#str}}askaquestion, block_openai_chat{{/str}}" rows=1 id="openai_input" placeholder="{{#str}}askaquestion, block_openai_chat{{/str}}" type="text" name="message"></textarea>
-        <button class='openai_input_submit_btn' title="{{#str}}askaquestion, block_openai_chat{{/str}}" id="go">
-            <img src="{{{config.wwwroot}}}{{{ pix_arrow_right }}}" alt="{{#str}}askaquestion, block_openai_chat{{/str}}" class='openai_input_submit_btn_icon'/>
+        <textarea aria-label="{{#str}}askaquestion, block_exaaichat{{/str}}" rows=1 id="openai_input" placeholder="{{#str}}askaquestion, block_exaaichat{{/str}}" type="text" name="message"></textarea>
+        <button class='openai_input_submit_btn' title="{{#str}}askaquestion, block_exaaichat{{/str}}" id="go">
+            <img src="{{{config.wwwroot}}}{{{ pix_arrow_right }}}" alt="{{#str}}askaquestion, block_exaaichat{{/str}}" class='openai_input_submit_btn_icon'/>
         </button>
     </div>
-    <button class='openai_input_refresh_btn' title="{{#str}}new_chat, block_openai_chat {{/str}}" id="refresh">
-        <img src="{{{config.wwwroot}}}{{{ pix_refresh }}}" class='openai_input_refresh_btn_icon' alt="{{#str}}new_chat, block_openai_chat {{/str}}" />
+    <button class='openai_input_refresh_btn' title="{{#str}}new_chat, block_exaaichat {{/str}}" id="refresh">
+        <img src="{{{config.wwwroot}}}{{{ pix_refresh }}}" class='openai_input_refresh_btn_icon' alt="{{#str}}new_chat, block_exaaichat {{/str}}" />
     </button>
 </div>

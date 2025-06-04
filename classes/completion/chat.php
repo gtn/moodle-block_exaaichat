@@ -17,20 +17,26 @@
 /**
  * Class providing completions for chat models (3.5 and up)
  *
- * @package    block_openai_chat
+ * @package    block_exaaichat
  * @copyright  2023 Bryce Yoder <me@bryceyoder.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
-namespace block_openai_chat\completion;
+namespace block_exaaichat\completion;
 
-use block_openai_chat\completion;
+use block_exaaichat\completion;
+use block_exaaichat\helper;
+use block_exaaichat\logger;
+
 defined('MOODLE_INTERNAL') || die;
 
-class chat extends \block_openai_chat\completion {
+class chat extends \block_exaaichat\completion {
+    private $block_settings;
 
     public function __construct($model, $message, $history, $block_settings, $thread_id = null) {
         parent::__construct($model, $message, $history, $block_settings);
+
+        $this->block_settings = $block_settings;
     }
 
     /**
@@ -38,9 +44,10 @@ class chat extends \block_openai_chat\completion {
      * @return JSON: The API response from OpenAI
      */
     public function create_completion($context) {
+        /*
         if ($this->sourceoftruth) {
             $this->sourceoftruth = format_string($this->sourceoftruth, true, ['context' => $context]);
-            $this->prompt .= get_string('sourceoftruthreinforcement', 'block_openai_chat');
+            $this->prompt .= get_string('sourceoftruthreinforcement', 'block_exaaichat');
         }
         $this->prompt .= "\n\n";
 
@@ -49,6 +56,23 @@ class chat extends \block_openai_chat\completion {
         array_unshift($history_json, ["role" => "system", "content" => $this->sourceoftruth]);
 
         array_push($history_json, ["role" => "user", "content" => $this->message]);
+
+        var_dump($history_json);
+        exit;
+        */
+
+        $block_settings = $this->block_settings;
+        $sourceoftruth = trim($block_settings['sourceoftruth'].' '.$block_settings['prompt']);
+
+        $user_message = trim($this->block_settings['user_message'] ?? '');
+        $user_message = helper::format_user_message($user_message);
+
+        $history_json = array_values(array_filter([
+            $this->sourceoftruth ? ["role" => "system", "content" => $sourceoftruth] : null,
+            $user_message ? ["role" => "user", "content" => $user_message] : null,
+            ...$this->format_history(),
+            ["role" => "user", "content" => $this->message],
+        ]));
 
         $response_data = $this->make_api_call($history_json);
         return $response_data;
@@ -72,6 +96,8 @@ class chat extends \block_openai_chat\completion {
      * @return JSON: The response from OpenAI
      */
     private function make_api_call($history) {
+        global $USER;
+
         $curlbody = [
             "model" => $this->model,
             "messages" => $history,
@@ -91,8 +117,12 @@ class chat extends \block_openai_chat\completion {
             ),
         ));
 
+        logger::debugGrouped('chat.user:'.$USER->id, '/v1/chat/completions', $curlbody);
+
         $response = $curl->post("https://api.openai.com/v1/chat/completions", json_encode($curlbody));
         $response = json_decode($response);
+
+        logger::debugGrouped('chat.user:'.$USER->id, 'response', $response);
 
         $message = null;
         if (property_exists($response, 'error')) {
