@@ -1,6 +1,77 @@
-# moodle-block_exaaichat
+# Moodle Block: `block_exaaichat`
+
+This block is an enhanced version of `block_openai_chat`, offering deeper Moodle integration and expanded AI capabilities using various OpenAI APIs.
 
 <img align="right" src="https://github.com/Limekiller/moodle-block_exaaichat/assets/33644013/21f73adc-5bd4-4539-999b-a3b0a83736e0" />
+
+![Logo](pix/chat.png)
+
+---
+
+## 🔧 Key Improvements
+
+### ✅ Expanded OpenAI API Integration
+
+- **Chat API** – Standard conversational AI.
+- **Responses API** – Includes:
+  - Moodle API integration
+  - File-based contextual search
+- **Assistant API** – Includes:
+  - Moodle API integration
+  - File-based contextual search
+- **Azure (Self-hosted OpenAI)** – Supports Azure-hosted OpenAI instances.
+
+---
+
+## 🚀 Planned Features
+
+- Integration of additional AI providers beyond OpenAI.
+
+---
+
+## 🌟 Main Features
+
+### 🎓 Moodle API Integration
+
+The AI can dynamically interact with Moodle APIs to fulfill user requests.
+
+**Example:**
+A user asks for their course grades — the AI calls the Moodle Grades API and provides a personalized response.
+
+---
+
+### 📂 File Search Support
+
+Admins can upload files which are made available to the AI during chats. This enables context-aware responses based on the provided materials.
+
+---
+
+### 💬 Custom User Messages with Dynamic Placeholders
+
+Each chat instance can define a custom initial message to send to the AI, supporting dynamic user/course-based placeholders.
+
+**Example message template:**
+"My name is {user.fullname} and my final course grade is {grade:Final Grade}."
+
+These placeholders are replaced with actual user and course data before being sent.
+
+As the AI is not aware of the current date/time, you can also add a placeholder for the current date/time, such as `{userdate}`.
+
+---
+
+### 🐞 Detailed API Logging (Optional)
+
+Enable fine-grained logging of all API requests and responses for in-depth debugging and diagnostics of backend interactions with the AI providers.
+
+---
+
+## 📁 Based on
+
+- [`block_openai_chat`](https://github.com/Limekiller/moodle-block_openai_chat/) (original implementation)
+
+
+
+# OpenAI Chat Block Readme
 
 ### GPT powered AI chat block for Moodle
 
