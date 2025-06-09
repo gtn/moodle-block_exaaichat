@@ -1,10 +1,27 @@
 # Moodle Block: `block_exaaichat`
 
-This block is an enhanced version of `block_openai_chat`, offering deeper Moodle integration and expanded AI capabilities using various OpenAI APIs.
+<img src="pix/logo.png" alt="Logo" width="300"/>
 
-<img align="right" src="https://github.com/Limekiller/moodle-block_exaaichat/assets/33644013/21f73adc-5bd4-4539-999b-a3b0a83736e0" />
 
-![Logo](pix/chat.png)
+This block is an enhanced version of `block_openai_chat`, offering deeper Moodle integration and expanded AI capabilities using various OpenAI APIs - with planned support for additional AI providers in the future.
+
+For more information see the section "Key Improvements" below.
+
+---
+
+## Development
+
+The development of the block was carried out in collaboration with the Laboratory for Advanced Technology in Education at the University of Zagreb Faculty of Organization and Informatics.
+
+The Laboratory contributed to the plugin’s conceptual design, pedagogical framework, and evaluation process, bringing extensive expertise in educational technology and its application within higher education contexts.
+
+For more information, visit: https://www.foi.unizg.hr/en/about-us/departments/late
+
+---
+
+## Usage
+
+![Chat](pix/chat.png)
 
 ---
 
@@ -59,7 +76,7 @@ As the AI is not aware of the current date/time, you can also add a placeholder 
 
 ---
 
-### 🐞 Detailed API Logging (Optional)
+### 🐞 Detailed API Logging
 
 Enable fine-grained logging of all API requests and responses for in-depth debugging and diagnostics of backend interactions with the AI providers.
 
