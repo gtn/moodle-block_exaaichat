@@ -74,6 +74,14 @@ These placeholders are replaced with actual user and course data before being se
 
 As the AI is not aware of the current date/time, you can also add a placeholder for the current date/time, such as `{userdate}`.
 
+#### Available Placeholders:
+
+* {user.fullname} – Full name of the user
+* {userdate} – Current date/time in the user's timezone
+* {grade:entryname} – Get the grade from the gradebook with the name of "entryname".
+  entryname can be any item from the gradebook. e.g., "Final Grade", "Midterm Exam", or any Activity name
+
+
 ---
 
 ### 🐞 Detailed API Logging
