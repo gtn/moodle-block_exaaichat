@@ -33,7 +33,7 @@ class block_exaaichat_edit_form extends block_edit_form {
         $mform->addElement('header', 'config_header', get_string('blocksettings', 'block'));
 
         $mform->addElement('text', 'config_title', get_string('blocktitle', 'block_exaaichat'));
-        $mform->setDefault('config_title', 'OpenAI Chat');
+        $mform->setDefault('config_title', 'Exabis AI Chat');
         $mform->setType('config_title', PARAM_TEXT);
 
         $mform->addElement('advcheckbox', 'config_showlabels', get_string('showlabels', 'block_exaaichat'));
