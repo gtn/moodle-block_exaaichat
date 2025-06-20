@@ -27,6 +27,12 @@ use block_exaaichat\callback_helper;
 
 defined('MOODLE_INTERNAL') || die;
 
+/**
+ * OpenAI Responses API
+ *
+ * This class handles interactions with the OpenAI Responses API, allowing for the creation and management of threads
+ * and messages.
+ */
 class responses extends base {
     function __construct(
         protected string $threadId = '',
@@ -45,6 +51,12 @@ class responses extends base {
         parent::__construct($threadId);
     }
 
+    /**
+     * Send a request to the OpenAI Responses API to create a new thread or continue an existing one.
+     *
+     * @param string $message The initial message to start the thread with.
+     * @return \OpenAI\Responses\Threads\Messages\ThreadMessageResponse
+     */
     private function call_response_api(array $data) {
         $tools = array_values(array_map(function($function_definition) {
             unset($function_definition['callback']);
@@ -111,6 +123,13 @@ class responses extends base {
         return $response;
     }
 
+    /**
+     * Send a message to the AI and get a response.
+     *
+     * @param string $message The message to send to the AI.
+     * @return object An object containing the response ID, thread ID, and the AI's message.
+     * @throws \Exception If an error occurs during the API call.
+     */
     public function message(string $message) {
         try {
             if ($additional_message = trim(get_config('block_exaaichat', 'additional_message'))) {
@@ -201,9 +220,4 @@ class responses extends base {
             'message' => $result_message,
         ];
     }
-
-    // public function messageSimple(string $message): string {
-    //     $response = $this->message($message);
-    //     return helper::clean_text_response($response->content[0]->text->value);
-    // }
 }

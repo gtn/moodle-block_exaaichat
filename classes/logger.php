@@ -23,10 +23,22 @@
 
 namespace block_exaaichat;
 
+/**
+ * Logger class
+ *
+ * This class provides methods for logging debug messages, either to the output or to a file.
+ * It can be used to log messages grouped by a specific category or just as standalone messages.
+ */
 class logger {
     private static bool $debug_output = false;
     private static ?bool $debug_file_logging = null;
 
+    /**
+     * Logs a debug message with an optional group.
+     *
+     * @param string $group The group name for the log message.
+     * @param mixed ...$args The message (values) to log.
+     */
     public static function debug_grouped(string $group, ...$args) {
         global $CFG;
 
@@ -63,10 +75,20 @@ class logger {
         }
     }
 
+    /**
+     * Logs a debug message without a specific group.
+     *
+     * @param mixed ...$args The message (values) to log.
+     */
     public static function debug(...$args) {
         static::debug_grouped('', $args);
     }
 
+    /**
+     * Enables debug output to stdout.
+     *
+     * This method allows debug messages to be printed directly to the browser output.
+     */
     public static function enable_debug_output() {
         static::$debug_output = true;
     }

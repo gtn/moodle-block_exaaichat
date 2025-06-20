@@ -29,6 +29,9 @@ require_once $CFG->libdir . '/gradelib.php';
 require_once $CFG->dirroot . '/grade/lib.php';
 require_once $CFG->dirroot . '/grade/report/user/lib.php';
 
+/**
+ * Helper class
+ */
 class helper {
     /**
      * clean the text response from the assistant
@@ -122,6 +125,11 @@ class helper {
         return $data;
     }
 
+    /**
+     * Parse placeholders in the user message
+     * @param string $user_message
+     * @return string
+     */
     public static function format_user_message(string $user_message): string {
 
         $gradedata = static::get_student_grades_for_course_flattened();

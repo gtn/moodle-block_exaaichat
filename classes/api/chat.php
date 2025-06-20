@@ -32,6 +32,9 @@ use OpenAI\Responses\Threads\Runs\ThreadRunResponseRequiredActionFunctionToolCal
 
 defined('MOODLE_INTERNAL') || die;
 
+/**
+ * OpenAI chat API
+ */
 class chat extends base {
     private Client $client;
     private StreamResponse $stream;
@@ -48,6 +51,12 @@ class chat extends base {
         parent::__construct($threadId);
     }
 
+    /**
+     * Create a new thread with the given message
+     *
+     * @param string $message The initial message to start the thread with.
+     * @return \OpenAI\Responses\Threads\Messages\ThreadMessageResponse
+     */
     public function create_thread(string $message = '') {
         $tools = array_values(array_map(function($function_definition) {
             unset($function_definition['callback']);
@@ -74,6 +83,12 @@ class chat extends base {
         return $this->get_response();
     }
 
+    /**
+     * Send a message to the chat thread
+     *
+     * @param string $message The message to send.
+     * @return \OpenAI\Responses\Threads\Messages\ThreadMessageResponse
+     */
     public function message(string $message): \OpenAI\Responses\Threads\Messages\ThreadMessageResponse {
         $this->debug("User: {$message}");
 
@@ -102,6 +117,11 @@ class chat extends base {
         return $response;
     }
 
+    /**
+     * Get the response from the stream
+     * @return OpenAI\Responses\Threads\Messages\ThreadMessageResponse
+     * @throws \Exception
+     */
     private function get_response(): \OpenAI\Responses\Threads\Messages\ThreadMessageResponse {
         // $chatResponse = '';
         $completedResponse = null;
@@ -218,6 +238,12 @@ class chat extends base {
         // return $chatResponse;
     }
 
+    /**
+     * Send a message to the chat and return the cleaned response.
+     *
+     * @param string $message The message to send to the assistant.
+     * @return string The cleaned response from the assistant.
+     */
     public function message_simple(string $message): string {
         $response = $this->message($message);
         return helper::clean_text_response($response->content[0]->text->value);

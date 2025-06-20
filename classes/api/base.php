@@ -29,16 +29,29 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
+/**
+ * Base class for API implementations.
+ */
 class base {
     function __construct(protected string $threadId = '') {
 
     }
 
-    protected function debug(...$args) {
+    /**
+     * add debug output to the logger
+     * @param ...$args
+     * @return void
+     */
+    protected function debug(...$args): void {
         logger::debug_grouped($this->threadId ?: 'new', ...$args);
     }
 
-    protected function throw(...$args) {
+    /**
+     * add error output to the logger and throw an exception
+     * @param ...$args
+     * @throws \moodle_exception
+     */
+    protected function throw(...$args): void {
         $this->debug($args);
         throw new \moodle_exception(json_encode($args));
     }

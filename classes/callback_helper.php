@@ -24,10 +24,22 @@
 namespace block_exaaichat;
 
 require_once $CFG->dirroot . '/course/externallib.php';
-// require_once $CFG->dirroot . '/enrol/externallib.php';
-// require_once($CFG->dirroot . '/calendar/externallib.php');
 
+/**
+ * Helper class for handling callbacks and function definitions.
+ *
+ * This class provides methods to retrieve Moodle web service functions,
+ * parse callback parameters, and call the appropriate functions.
+ */
 class callback_helper {
+    /**
+     * Get all AI function definitions.
+     *
+     * This method retrieves all available AI functions, including Moodle web service functions
+     * and custom class methods defined in the actions class.
+     *
+     * @return array An array of function definitions.
+     */
     public static function get_functions() {
         static $functions = null;
 
@@ -42,8 +54,14 @@ class callback_helper {
                 'get_categories',
                 'get_recent_courses',
             ]),
+
+            // other possible functions:
             // static::get_moodle_ws_functions(\core_enrol_external::class),
             // static::get_moodle_ws_functions(\core_calendar_external::class),
+            // but those need to be required manually:
+            // require_once $CFG->dirroot . '/enrol/externallib.php';
+            // require_once($CFG->dirroot . '/calendar/externallib.php');
+
             static::get_class_functions(actions::class)
         );
 
@@ -65,6 +83,13 @@ class callback_helper {
         return $functions;
     }
 
+    /**
+     * get the phpdoc description of a class method
+     * @param $className
+     * @param $methodName
+     * @return string|null
+     * @throws \ReflectionException
+     */
     protected static function get_method_doc_description($className, $methodName) {
         $reflector = new \ReflectionMethod($className, $methodName);
         $docComment = $reflector->getDocComment();
@@ -99,6 +124,12 @@ class callback_helper {
         return implode("\n", $description);
     }
 
+    /**
+     * get the function parameters from a php function
+     * @param $callback
+     * @return array
+     * @throws \ReflectionException
+     */
     protected static function parse_callback_parameters($callback) {
         if ($callback instanceof \ReflectionMethod) {
             $reflection = $callback;
@@ -184,6 +215,12 @@ class callback_helper {
         return $schema;
     }
 
+    /**
+     * Call an AI function
+     * @param $function
+     * @return bool|float|int|string
+     * @throws \Exception
+     */
     public static function call_tool($function) {
         logger::debug('api calling function: ' . $function->name);
 
@@ -225,7 +262,13 @@ class callback_helper {
         return is_scalar($output) ? $output : json_encode($output);
     }
 
-    protected static function get_class_functions($class) {
+    /**
+     * get AI function definitions from a all static methods of a class
+     * @param $class
+     * @return array
+     * @throws \ReflectionException
+     */
+    protected static function get_class_functions($class): array {
         $functions = [];
 
         $reflection = new \ReflectionClass($class);
@@ -249,7 +292,14 @@ class callback_helper {
         return $functions;
     }
 
-    protected static function get_moodle_ws_functions($class, ?array $method_filter = null) {
+    /**
+     * Get AI function definitions from a moodle externallib webservice class
+     * @param $class
+     * @param array $method_filter
+     * @return array
+     * @throws \ReflectionException
+     */
+    protected static function get_moodle_ws_functions($class, ?array $method_filter = null): array {
         $functions = [];
 
         $reflection = new \ReflectionClass($class);

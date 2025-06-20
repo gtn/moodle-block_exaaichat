@@ -31,7 +31,9 @@ require_once $CFG->libdir . '/gradelib.php';
 require_once $CFG->dirroot . '/grade/lib.php';
 require_once $CFG->dirroot . '/grade/report/user/lib.php';
 
-
+/**
+ * This class contains methods, which can be called by the AI assisstant
+ */
 class actions {
     /**
      * Get the firstname, lastname, email, etc. of the current user
