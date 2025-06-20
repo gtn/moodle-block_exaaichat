@@ -70,7 +70,7 @@ class callback_helper {
         return $functions;
     }
 
-    protected static function getMethodDocDescription($className, $methodName) {
+    protected static function get_method_doc_description($className, $methodName) {
         $reflector = new \ReflectionMethod($className, $methodName);
         $docComment = $reflector->getDocComment();
 
@@ -104,7 +104,7 @@ class callback_helper {
         return implode("\n", $description);
     }
 
-    protected static function parseCallbackParameters($callback) {
+    protected static function parse_callback_parameters($callback) {
         if ($callback instanceof \ReflectionMethod) {
             $reflection = $callback;
         } else {
@@ -189,7 +189,7 @@ class callback_helper {
         return $schema;
     }
 
-    public static function callTool($function) {
+    public static function call_tool($function) {
         logger::debug('api calling function: ' . $function->name);
 
         $functions = static::get_functions();
@@ -241,8 +241,8 @@ class callback_helper {
 
             $functions[] = [
                 'name' => $methodName, // trim(substr(preg_replace('!.*\\\\!', '', $class) . '_' . $methodName, -64), '_'),
-                'description' => static::getMethodDocDescription($class, $methodName) ?: $methodName,
-                'parameters' => static::parseCallbackParameters($method),
+                'description' => static::get_method_doc_description($class, $methodName) ?: $methodName,
+                'parameters' => static::parse_callback_parameters($method),
                 // Setting strict to true will ensure function calls reliably adhere to the function schema, instead of being best effort. We recommend always enabling strict mode.
                 // https://platform.openai.com/docs/guides/function-calling
                 'strict' => true,
@@ -284,8 +284,8 @@ class callback_helper {
 
             $functions[] = [
                 'name' => $methodName, // trim(substr(preg_replace('!.*\\\\!', '', $class) . '_' . $methodName, -64), '_'),
-                'description' => static::getMethodDocDescription($class, $methodName) ?: $methodName,
-                'parameters' => static::parseCallbackParameters($method),
+                'description' => static::get_method_doc_description($class, $methodName) ?: $methodName,
+                'parameters' => static::parse_callback_parameters($method),
                 'callback' => [$class, $methodName],
             ];
         }

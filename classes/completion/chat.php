@@ -118,12 +118,12 @@ class chat extends \block_exaaichat\completion {
             ),
         ));
 
-        logger::debugGrouped('chat.user:'.$USER->id, '/v1/chat/completions', $curlbody);
+        logger::debug_grouped('chat.user:'.$USER->id, '/v1/chat/completions', $curlbody);
 
         $response = $curl->post("https://api.openai.com/v1/chat/completions", json_encode($curlbody));
         $response = json_decode($response);
 
-        logger::debugGrouped('chat.user:'.$USER->id, 'response', $response);
+        logger::debug_grouped('chat.user:'.$USER->id, 'response', $response);
 
         $message = null;
         if (property_exists($response, 'error')) {

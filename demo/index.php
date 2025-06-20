@@ -27,24 +27,24 @@ echo '<pre>';
 logger::enable_debug_output();
 
 try {
-    function userMessage($userMessage) {
+    function user_message($user_message) {
         global $chat;
-        $chat->message($userMessage);
+        $chat->message($user_message);
     }
 
-    userMessage('How much is 2 + 4?');
-    userMessage('what was the last calculation?');
+    user_message('How much is 2 + 4?');
+    user_message('what was the last calculation?');
     exit;
 
-    // userMessage('Explain the course signature');
-    userMessage('Who am I?');
-    // userMessage('Gib mir alle meine Kurse');
-    // userMessage('was macht die api get_enrolled_users?');
-    // userMessage('What are my grades in the current course?');
-    // userMessage('Gib mir alle Teilnehmer vom Kurs mit der id 81');
-    // userMessage('Gib mir alle Teilnehmer vom Kurs Teacher02');
-    // userMessage('Gib mir alle Teilnehmer vom Kurs Kurs 1');
-    // userMessage('wie heiße ich?');
+    // user_message('Explain the course signature');
+    user_message('Who am I?');
+    // user_message('Gib mir alle meine Kurse');
+    // user_message('was macht die api get_enrolled_users?');
+    // user_message('What are my grades in the current course?');
+    // user_message('Gib mir alle Teilnehmer vom Kurs mit der id 81');
+    // user_message('Gib mir alle Teilnehmer vom Kurs Teacher02');
+    // user_message('Gib mir alle Teilnehmer vom Kurs Kurs 1');
+    // user_message('wie heiße ich?');
 
 } catch (\Exception $e) {
     echo 'Error: ' . $e->getMessage() . "\n";

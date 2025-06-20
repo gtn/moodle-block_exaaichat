@@ -49,7 +49,7 @@ class assistant extends base {
         parent::__construct($threadId);
     }
 
-    public function createThread(string $message = '') {
+    public function create_thread(string $message = '') {
         $tools = array_values(array_map(function($function_definition) {
             unset($function_definition['callback']);
 
@@ -76,14 +76,14 @@ class assistant extends base {
             ]
         );
 
-        return $this->getResponse();
+        return $this->get_response();
     }
 
     public function message(string $message): \OpenAI\Responses\Threads\Messages\ThreadMessageResponse {
         $this->debug("User: {$message}");
 
         if (!$this->threadId) {
-            $response = $this->createThread($message);
+            $response = $this->create_thread($message);
         } else {
             /* @var $run OpenAI\Responses\Threads\Runs\ThreadRunResponse */
             $this->client->threads()->messages()->create($this->threadId, [
@@ -97,7 +97,7 @@ class assistant extends base {
                 ],
             );
 
-            $response = $this->getResponse();
+            $response = $this->get_response();
         }
 
         $this->debug("AI:\n====================================================================\n" .
@@ -107,7 +107,7 @@ class assistant extends base {
         return $response;
     }
 
-    private function getResponse(): \OpenAI\Responses\Threads\Messages\ThreadMessageResponse {
+    private function get_response(): \OpenAI\Responses\Threads\Messages\ThreadMessageResponse {
         // $chatResponse = '';
         $completedResponse = null;
 
@@ -150,7 +150,7 @@ class assistant extends base {
                             /* @var $toolCall ThreadRunResponseRequiredActionFunctionToolCall */
                             $function = $toolCall->function;
 
-                            $output = callback_helper::callTool($function);
+                            $output = callback_helper::call_tool($function);
 
                             $tool_outputs[] = [
                                 'tool_call_id' => $toolCall->id,
@@ -187,7 +187,7 @@ class assistant extends base {
         // return $chatResponse;
     }
 
-    public function messageSimple(string $message): string {
+    public function message_simple(string $message): string {
         $response = $this->message($message);
         return helper::clean_text_response($response->content[0]->text->value);
     }

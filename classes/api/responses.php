@@ -45,7 +45,7 @@ class responses extends base {
         parent::__construct($threadId);
     }
 
-    private function callResponseApi(array $data) {
+    private function call_response_api(array $data) {
         $tools = array_values(array_map(function($function_definition) {
             unset($function_definition['callback']);
 
@@ -117,7 +117,7 @@ class responses extends base {
                 $message .= "\n" . $additional_message;
             }
 
-            $response = $this->callResponseApi([
+            $response = $this->call_response_api([
                 'input' => $message,
             ]);
         } catch (\Exception $e) {
@@ -161,12 +161,12 @@ class responses extends base {
                 // })
                 // var_dump($output);
 
-                $response = $this->callResponseApi([
+                $response = $this->call_response_api([
                     'input' => [
                         [
                             "type" => "function_call_output",
                             "call_id" => $output_function_call->call_id,
-                            "output" => callback_helper::callTool($output_function_call),
+                            "output" => callback_helper::call_tool($output_function_call),
                         ],
                     ],
                 ]);

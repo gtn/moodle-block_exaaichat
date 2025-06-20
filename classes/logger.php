@@ -27,7 +27,7 @@ class logger {
     private static bool $debug_output = false;
     private static ?bool $debug_file_logging = null;
 
-    public static function debugGrouped(string $group, ...$args) {
+    public static function debug_grouped(string $group, ...$args) {
         global $CFG;
 
         if (static::$debug_file_logging === null) {
@@ -64,7 +64,7 @@ class logger {
     }
 
     public static function debug(...$args) {
-        static::debugGrouped('', $args);
+        static::debug_grouped('', $args);
     }
 
     public static function enable_debug_output() {

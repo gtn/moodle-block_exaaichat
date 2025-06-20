@@ -35,7 +35,7 @@ class base {
     }
 
     protected function debug(...$args) {
-        logger::debugGrouped($this->threadId ?: 'new', ...$args);
+        logger::debug_grouped($this->threadId ?: 'new', ...$args);
     }
 
     protected function throw(...$args) {
