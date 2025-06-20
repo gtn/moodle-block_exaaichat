@@ -8,8 +8,8 @@ require __DIR__ . '/../../../config.php';
 require_login();
 // require_admin();
 
-$zagreb_api = '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';
-$chat = new responses('', $zagreb_api);
+$api_key = '';
+$chat = new responses('', $api_key);
 
 /*
 echo json_encode(array_map(function($function_definition) {
@@ -33,7 +33,7 @@ try {
     }
 
     userMessage('How much is 2 + 4?');
-    userMessage('what was the last caluclation?');
+    userMessage('what was the last calculation?');
     exit;
 
     // userMessage('Explain the course signature');
