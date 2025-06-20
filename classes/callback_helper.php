@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package    block_exaaichat
+ * @copyright  2025 GTN Solutions https://gtn-solutions.com
+ * @link       https://github.com/Limekiller/moodle-block_openai_chat Based on block openai_chat by Limekiller
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace block_exaaichat;
 
 require_once $CFG->dirroot . '/course/externallib.php';

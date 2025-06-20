@@ -18,7 +18,8 @@
  * API endpoint for retrieving GPT completion
  *
  * @package    block_exaaichat
- * @copyright  2023 Bryce Yoder <me@bryceyoder.com>
+ * @copyright  2025 GTN Solutions https://gtn-solutions.com
+ * @link       https://github.com/Limekiller/moodle-block_openai_chat Based on block openai_chat by Limekiller
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

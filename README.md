@@ -196,5 +196,3 @@ Assistant: Thursday, March 16.
 User: What about section 4?
 Assistant:"
 ```
-
-Maintained by [Bryce Yoder](https://bryceyoder.com). Also check out [OpenAI Question Generator](https://moodle.org/plugins/block_openai_questions)!
