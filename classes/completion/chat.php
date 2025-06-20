@@ -45,6 +45,7 @@ class chat extends \block_exaaichat\completion {
      * @return JSON: The API response from OpenAI
      */
     public function create_completion($context) {
+        // disabled block_openai_chat code:
         /*
         if ($this->sourceoftruth) {
             $this->sourceoftruth = format_string($this->sourceoftruth, true, ['context' => $context]);
@@ -57,9 +58,6 @@ class chat extends \block_exaaichat\completion {
         array_unshift($history_json, ["role" => "system", "content" => $this->sourceoftruth]);
 
         array_push($history_json, ["role" => "user", "content" => $this->message]);
-
-        var_dump($history_json);
-        exit;
         */
 
         $block_settings = $this->block_settings;

@@ -62,11 +62,6 @@ class callback_helper {
             $function_names[$function['name']] = true;
         }
 
-        // var_dump($functions);
-        // exit;
-        // echo json_encode($functions, JSON_PRETTY_PRINT);
-        // exit;
-
         return $functions;
     }
 

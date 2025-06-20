@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->dirroot .'/blocks/exaaichat/lib.php');
+require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
 class block_exaaichat_edit_form extends block_edit_form {
 
@@ -41,7 +41,7 @@ class block_exaaichat_edit_form extends block_edit_form {
         $mform->setDefault('config_showlabels', 1);
 
         if ($type === 'assistant') {
-            // Assistant settings //
+            // Assistant settings
 
             if (get_config('block_exaaichat', 'allowinstancesettings') === "1") {
                 $mform->addElement('select', 'config_assistant', get_string('assistant', 'block_exaaichat'), block_exaaichat_fetch_assistants_array($block_id));
@@ -110,29 +110,10 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->setType('config_temperature', PARAM_FLOAT);
                 $mform->addHelpButton('config_temperature', 'config_temperature', 'block_exaaichat');
 
-                /*
-                $mform->addElement('text', 'config_maxlength', get_string('maxlength', 'block_exaaichat'));
-                $mform->setDefault('config_maxlength', 500);
-                $mform->setType('config_maxlength', PARAM_INT);
-                $mform->addHelpButton('config_maxlength', 'config_maxlength', 'block_exaaichat');
-                */
-
                 $mform->addElement('text', 'config_topp', get_string('topp', 'block_exaaichat'));
                 $mform->setDefault('config_topp', 1);
                 $mform->setType('config_topp', PARAM_FLOAT);
                 $mform->addHelpButton('config_topp', 'config_topp', 'block_exaaichat');
-
-                /*
-                $mform->addElement('text', 'config_frequency', get_string('frequency', 'block_exaaichat'));
-                $mform->setDefault('config_frequency', 1);
-                $mform->setType('config_frequency', PARAM_FLOAT);
-                $mform->addHelpButton('config_frequency', 'config_frequency', 'block_exaaichat');
-
-                $mform->addElement('text', 'config_presence', get_string('presence', 'block_exaaichat'));
-                $mform->setDefault('config_presence', 1);
-                $mform->setType('config_presence', PARAM_FLOAT);
-                $mform->addHelpButton('config_presence', 'config_presence', 'block_exaaichat');
-                */
 
                 $mform->addElement('text', 'config_vector_store_ids', 'vector_store_ids');
                 $mform->setDefault('config_vector_store_ids', '');

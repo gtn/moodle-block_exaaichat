@@ -70,14 +70,10 @@ class helper {
         // which is to much for chatGPT (30k limit)
         // return $report->print_table(true);
 
-        // echo $report->print_table(true);
-        // exit;
-
         // NEW: parse the table into objects
         // this is probably better, than to copy the whole logic of fill_table() and fill_table_recursive() over to here
 
         $data = [];
-        // $parents = [];
 
         // Set the table body data.
         foreach ($report->tabledata as $rowdata) {
@@ -92,9 +88,6 @@ class helper {
             if (!preg_match('!\blevel([0-9]+)\b!', $rowdata['itemname']['class'], $matches)) {
                 continue;
             }
-
-            // $level = $matches[1];
-            // $parents[$level] = $row;
 
             // Set the row cells.
             foreach ($report->tablecolumns as $tablecolumn) {
@@ -115,9 +108,6 @@ class helper {
                     // Filter out spaces
                     $content_text = preg_replace('![\s\r\n]+!', ' ', $content_text);
 
-                    // var_dump($tablecolumn);
-                    // var_dump($content_text);
-                    // var_dump($rowdata[$tablecolumn]);
                     if ($tablecolumn == 'itemname') {
                         $tablecolumn = 'name';
                     }
@@ -127,15 +117,6 @@ class helper {
             $row->itemname = $rowdata['itemname']['content'] ?? null;
 
             $data[] = $row;
-            // if ($level == 1) {
-            //     $data[] = $row;
-            // } else {
-            //     // add all rows of level > 1 to it's parent
-            //     if (!isset($parents[$level - 1]->subs)) {
-            //         $parents[$level - 1]->subs = [];
-            //     }
-            //     $parents[$level - 1]->subs[] = $row;
-            // }
         }
 
         return $data;

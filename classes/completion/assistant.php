@@ -59,12 +59,14 @@ class assistant extends \block_exaaichat\completion {
             "thread_id" => $response->threadId,
         ];
 
+        // disabled block_openai_chat code:
         /*
         $this->add_message_to_thread();
         return $this->run();
         */
     }
 
+    // disabled block_openai_chat code:
     /*
     private function create_thread() {
         $curl = new \curl();

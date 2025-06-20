@@ -25,7 +25,6 @@ namespace block_exaaichat\api;
 
 use block_exaaichat\callback_helper;
 use block_exaaichat\helper;
-use block_exaaichat\logger;
 use OpenAI;
 use OpenAI\Client;
 use OpenAI\Responses\StreamResponse;
@@ -58,9 +57,6 @@ class assistant extends base {
                 'function' => $function_definition,
             ];
         }, callback_helper::get_functions()));
-
-        // $this->debug($tools);
-        // exit;
 
         $this->stream = $this->client->threads()->createAndRunStreamed(
             parameters: [

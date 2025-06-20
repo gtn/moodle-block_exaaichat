@@ -118,9 +118,6 @@ class actions {
         // which is to much for chatGPT (30k limit)
         // return $report->print_table(true);
 
-        // echo $report->print_table(true);
-        // exit;
-
         // NEW: parse the table into objects
         // this is probably better, than to copy the whole logic of fill_table() and fill_table_recursive() over to here
 
@@ -160,9 +157,6 @@ class actions {
                     // Filter out spaces
                     $content_text = preg_replace('![\s\r\n]+!', ' ', $content_text);
 
-                    // var_dump($tablecolumn);
-                    // var_dump($content_text);
-                    // var_dump($rowdata[$tablecolumn]);
                     if ($tablecolumn == 'itemname') {
                         $tablecolumn = 'name';
                     }

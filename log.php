@@ -39,9 +39,6 @@ if ($search_thread) {
 
         if (preg_match('!^(\[[^\]]+\]\[)(thread_[^\]]+|new)!', $line, $matches)) {
             $thread = $matches[2];
-            // } elseif ($line[0] == '[') {
-            //     // something else
-            //     continue;
         }
 
         if ($thread != $search_thread) {
