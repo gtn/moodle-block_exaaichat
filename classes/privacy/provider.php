@@ -42,14 +42,20 @@ class provider implements
     public static function get_metadata(collection $collection): collection {
         $collection->add_database_table(
             'block_exaaichat_log',
-             [
+            [
                 'userid' => 'privacy:metadata:exaaichat_log:userid',
                 'usermessage' => 'privacy:metadata:exaaichat_log:usermessage',
                 'airesponse' => 'privacy:metadata:exaaichat_log:airesponse',
-                'timecreated' => 'privacy:metadata:exaaichat_log:timecreated'
-             ],
+                'timecreated' => 'privacy:metadata:exaaichat_log:timecreated',
+            ],
             'privacy:metadata:exaaichat_log'
         );
+
+        $collection->add_external_location_link('ai_api', [
+            'fullname' => 'privacy:metadata:ai_api:fullname',
+            'gradebook' => 'privacy:metadata:ai_api:gradebook',
+            'actions' => 'privacy:metadata:ai_api:actions',
+        ], 'privacy:metadata:ai_api');
 
         return $collection;
     }
@@ -90,7 +96,7 @@ class provider implements
                     "userid" => $message->userid,
                     "usermessage" => $message->usermessage,
                     "airesponse" => $message->airesponse,
-                    "timecreated" => $message->timecreated
+                    "timecreated" => $message->timecreated,
                 ];
             }
 

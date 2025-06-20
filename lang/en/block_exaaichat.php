@@ -34,6 +34,11 @@ $string['privacy:metadata:exaaichat_log:userid'] = 'The ID of the user that sent
 $string['privacy:metadata:exaaichat_log:usermessage'] = 'The content of the message.';
 $string['privacy:metadata:exaaichat_log:airesponse'] = 'The response from AI Backend.';
 $string['privacy:metadata:exaaichat_log:timecreated'] = 'The time the message was sent.';
+$string['privacy:metadata:ai_api'] = 'Depending on the configuration moodle will send some data to the AI Backend (eg. OpenAI), or the AI can request data from moodle.';
+$string['privacy:metadata:ai_api:fullname'] = 'The fullname of the user that sent the message.';
+$string['privacy:metadata:ai_api:gradebook'] = 'Gradebook entries of the current course.';
+$string['privacy:metadata:ai_api:actions'] = 'The AI can request data from moodle. This includes userdetails (userid, username, firstname, lastname, email), enrolled courses, userlist of the enrolled courses, list of all grades in the current course,
+list of course content, course categories and also recent courses';
 $string['privacy:chatmessagespath'] = 'Sent AI chat messages';
 $string['downloadfilename'] = 'block_exaaichat_logs';
 
