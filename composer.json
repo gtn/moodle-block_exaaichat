@@ -1,18 +1,12 @@
 {
     "require": {
-        "openai-php/client": "dev-main",
-        "symfony/http-client": "^6.4",
+        "openai-php/client": "^v0.13",
+        "symfony/http-client": "^7.3",
         "nyholm/psr7": "^1.8"
     },
     "config": {
         "allow-plugins": {
             "php-http/discovery": true
         }
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/openai-php/client"
-        }
-    ]
+    }
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>vendor/openai-php/client/</location>
+        <name>openai-php/client</name>
+        <version>v0.13.0</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>vendor/symfony/http-client/</location>
+        <name>symfony/http-client</name>
+        <version>v7.3.0</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>vendor/nyholm/psr7/</location>
+        <name>nyholm/psr7</name>
+        <version>1.8.2</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+</libraries>
