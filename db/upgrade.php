@@ -32,7 +32,7 @@ function xmldb_block_exaaichat_upgrade($oldversion): bool {
         }
 
         // exaaichat savepoint reached.
-        upgrade_block_savepoint(true, 2024040401, 'exaaichat');
+        upgrade_block_savepoint(true, 2024040800, 'exaaichat');
     }
 
     // Everything has succeeded to here. Return true.
