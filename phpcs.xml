@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<ruleset name="CustomRuleset">
+    <rule ref="Moodle"/>
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude name="moodle.NamingConventions.ValidVariableName.VariableNameUnderscore"/>
+    <exclude name="moodle.Files.LineLength.TooLong"/>
+</ruleset>
