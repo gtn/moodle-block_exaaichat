@@ -39,7 +39,7 @@ class base {
 
     /**
      * add debug output to the logger
-     * @param ...$args
+     * @param mixed ...$args
      * @return void
      */
     protected function debug(...$args): void {
@@ -48,7 +48,7 @@ class base {
 
     /**
      * add error output to the logger and throw an exception
-     * @param ...$args
+     * @param mixed ...$args
      * @throws \moodle_exception
      */
     protected function throw(...$args): void {

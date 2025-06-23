@@ -126,11 +126,11 @@ class callback_helper {
 
     /**
      * get the function parameters from a php function
-     * @param $callback
+     * @param \ReflectionMethod|string $callback
      * @return array
      * @throws \ReflectionException
      */
-    protected static function parse_callback_parameters($callback) {
+    protected static function parse_callback_parameters(\ReflectionMethod|string $callback) {
         if ($callback instanceof \ReflectionMethod) {
             $reflection = $callback;
         } else {

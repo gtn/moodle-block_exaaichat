@@ -48,10 +48,10 @@ class completion {
 
     /**
      * Initialize all the class properties that we'll need regardless of model
-     * @param string model: The name of the model we're using
-     * @param string message: The most recent message sent by the user
-     * @param array history: An array of objects containing the history of the conversation
-     * @param string block_settings: An object containing the instance-level settings if applicable
+     * @param string $model: The name of the model we're using
+     * @param string $message: The most recent message sent by the user
+     * @param array $history: An array of objects containing the history of the conversation
+     * @param string $block_settings: An object containing the instance-level settings if applicable
      */
     public function __construct($model, $message, $history, $block_settings) {
         // Set default values
