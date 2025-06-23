@@ -24,27 +24,27 @@
         "courseid": "int, the ID of the course we are looking at",
         "link": "/url",
         "user": "Username",
-        "starttime": "2025-01-01",
-        "endtime": "2025-01-01"
+        "starttime": "2025-01-01T00:00",
+        "endtime": "2025-01-01T00:00"
     }
 }}
 
-<form class='block_exaaichat' method='GET' action='{{link}}'>
-    <input type='hidden' name='courseid' value='{{courseid}}' />
-    <div class='report_container'>
-        <div style='display: flex; flex-direction: column'>
-            <label for='user'>Search by user name</label>
-            <input name='user' type='text' value='{{user}}' placeholder='User name'/>
+<form class="block_exaaichat" method="GET" action="{{link}}">
+    <input type="hidden" name="courseid" value="{{courseid}}" />
+    <div class="report_container">
+        <div style="display: flex; flex-direction: column">
+            <label for="user">Search by user name</label>
+            <input name="user" type="text" value="{{user}}" placeholder="User name"/>
         </div>
-        <div style='display: flex; flex-direction: column'>
-            <label for='starttime'>Start time</label>
-            <input type='datetime-local' name='starttime' value='{{starttime}}' />
+        <div style="display: flex; flex-direction: column">
+            <label for="starttime">Start time</label>
+            <input type="datetime-local" name="starttime" value="{{starttime}}" />
         </div>
-        <div style='display: flex; flex-direction: column'>
-            <label for='endtime'>End time</label>
-            <input type='datetime-local' name='endtime' value='{{endtime}}' />
+        <div style="display: flex; flex-direction: column">
+            <label for="endtime">End time</label>
+            <input type="datetime-local" name="endtime" value="{{endtime}}" />
         </div>
     </div>
-    <button class='btn btn-primary' type='submit'>Search</button>
+    <button class="btn btn-primary" type="submit">Search</button>
 </form>
 <br />
