@@ -78,11 +78,7 @@ jobs:
 
       - name: Moodle Code Checker
         if: ${{ !cancelled() }}
-        run: |
-          moodle-plugin-ci phpcs --max-warnings 0 \
-            --exclude=moodle.NamingConventions.ValidVariableName.VariableNameUnderscore,\
-            moodle.NamingConventions.ValidVariableName.VariableNameLowerCase,\
-            moodle.Files.LineLength.TooLong
+        run: moodle-plugin-ci phpcs --max-warnings 0
 
       - name: Moodle PHPDoc Checker
         if: ${{ !cancelled() }}

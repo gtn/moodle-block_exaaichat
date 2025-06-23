@@ -33,16 +33,16 @@
     <input type="hidden" name="courseid" value="{{courseid}}" />
     <div class="report_container">
         <div style="display: flex; flex-direction: column">
-            <label for="user">Search by user name</label>
-            <input name="user" type="text" value="{{user}}" placeholder="User name"/>
+            <label for="search-user">Search by user name</label>
+            <input id="search-user" name="user" type="text" value="{{user}}" placeholder="User name"/>
         </div>
         <div style="display: flex; flex-direction: column">
-            <label for="starttime">Start time</label>
-            <input type="datetime-local" name="starttime" value="{{starttime}}" />
+            <label for="search-starttime">Start time</label>
+            <input id="search-starttime" type="datetime-local" name="starttime" value="{{starttime}}" />
         </div>
         <div style="display: flex; flex-direction: column">
-            <label for="endtime">End time</label>
-            <input type="datetime-local" name="endtime" value="{{endtime}}" />
+            <label for="search-endtime">End time</label>
+            <input id="search-endtime" type="datetime-local" name="endtime" value="{{endtime}}" />
         </div>
     </div>
     <button class="btn btn-primary" type="submit">Search</button>

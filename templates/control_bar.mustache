@@ -24,8 +24,8 @@
         "logging_enabled": "boolean, true if logging is enabled in the plugin settings",
         "is_edit_mode": "boolean; true if edit mode is active",
         "pix_popout": "relative url of the popout pix to the root of moodle",
-        "pix_arrow_right": "relative url of the arrow right pix to the root of moodle",
-        "pix_refresh": "relative url of the refresh pix to the root of moodle"
+        "pix_arrow_right": "/relative-url-of-the-arrow-right-pix-to-the-root-of-moodle",
+        "pix_refresh": "/relativ-url-of-the-refresh-pix-to-the-root-of-moodle"
     }
 }}
 
@@ -40,7 +40,7 @@
 <div id="control_bar">
     <div class="openai_input_bar" id="input_bar">
 
-        <textarea aria-label="{{#str}}askaquestion, block_exaaichat{{/str}}" rows=1 id="openai_input" placeholder="{{#str}}askaquestion, block_exaaichat{{/str}}" type="text" name="message"></textarea>
+        <textarea aria-label="{{#str}}askaquestion, block_exaaichat{{/str}}" rows=1 id="openai_input" placeholder="{{#str}}askaquestion, block_exaaichat{{/str}}" name="message"></textarea>
         <button class='openai_input_submit_btn' title="{{#str}}askaquestion, block_exaaichat{{/str}}" id="go">
             <img src="{{{config.wwwroot}}}{{{ pix_arrow_right }}}" alt="{{#str}}askaquestion, block_exaaichat{{/str}}" class='openai_input_submit_btn_icon'/>
         </button>
