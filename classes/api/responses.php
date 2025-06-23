@@ -54,10 +54,10 @@ class responses extends base {
     /**
      * Send a request to the OpenAI Responses API to create a new thread or continue an existing one.
      *
-     * @param string $message The initial message to start the thread with.
-     * @return \OpenAI\Responses\Threads\Messages\ThreadMessageResponse
+     * @param array $data the raw request data to send to the API.
+     * @return object (the response)
      */
-    private function call_response_api(array $data) {
+    private function call_response_api(array $data): object {
         $tools = array_values(array_map(function($function_definition) {
             unset($function_definition['callback']);
 

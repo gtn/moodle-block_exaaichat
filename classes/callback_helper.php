@@ -85,12 +85,12 @@ class callback_helper {
 
     /**
      * get the phpdoc description of a class method
-     * @param $className
-     * @param $methodName
+     * @param string $className
+     * @param string $methodName
      * @return string|null
      * @throws \ReflectionException
      */
-    protected static function get_method_doc_description($className, $methodName) {
+    protected static function get_method_doc_description(string $className, string $methodName): ?string {
         $reflector = new \ReflectionMethod($className, $methodName);
         $docComment = $reflector->getDocComment();
 
@@ -217,11 +217,11 @@ class callback_helper {
 
     /**
      * Call an AI function
-     * @param $function
+     * @param object $function
      * @return bool|float|int|string
      * @throws \Exception
      */
-    public static function call_tool($function) {
+    public static function call_tool(object $function) {
         logger::debug('api calling function: ' . $function->name);
 
         $functions = static::get_functions();
@@ -264,11 +264,11 @@ class callback_helper {
 
     /**
      * get AI function definitions from a all static methods of a class
-     * @param $class
+     * @param string $class
      * @return array
      * @throws \ReflectionException
      */
-    protected static function get_class_functions($class): array {
+    protected static function get_class_functions(string $class): array {
         $functions = [];
 
         $reflection = new \ReflectionClass($class);
@@ -294,12 +294,12 @@ class callback_helper {
 
     /**
      * Get AI function definitions from a moodle externallib webservice class
-     * @param $class
-     * @param array $method_filter
+     * @param string $class
+     * @param ?array $method_filter
      * @return array
      * @throws \ReflectionException
      */
-    protected static function get_moodle_ws_functions($class, ?array $method_filter = null): array {
+    protected static function get_moodle_ws_functions(string $class, ?array $method_filter = null): array {
         $functions = [];
 
         $reflection = new \ReflectionClass($class);
