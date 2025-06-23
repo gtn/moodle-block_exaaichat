@@ -2,9 +2,8 @@
 <ruleset name="MoodlePluginCIOverrides">
     <rule ref="Moodle" />
 
-    <!-- Disable the specific sniff -->
+    <!-- Disable the specific sniff: this does not work! excludes are in ci.yml -->
     <exclude name="moodle.NamingConventions.ValidVariableName.VariableNameUnderscore" />
-    <exclude name="moodle.Files.LineLength.TooLong" />
 
     <!-- Exclude vendor directory -->
     <exclude-pattern>vendor/*</exclude-pattern>
