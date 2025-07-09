@@ -209,8 +209,10 @@ class block_exaaichat_edit_form extends block_edit_form {
 
 
                 // Dropdown menu for activities
-                $activities = $this->fetch_course_activities($COURSE->id); // TODO: self:: vs $this-> ?
-                $mform->addElement('select', 'config_activity_dropdown', get_string('selectactivity', 'block_openai_chat'), ["asdf", "qwer", "test"]);
+                $courseactivities = $this->fetch_course_activities($COURSE->id); // TODO: self:: vs $this-> ?
+                // get the names and modids of the $courseactivities
+
+                $mform->addElement('select', 'config_activity_dropdown', get_string('selectactivity', 'block_openai_chat'), $courseactivities);
                 $mform->setDefault('config_activity_dropdown', '');
                 $mform->addHelpButton('config_activity_dropdown', 'config_activity_dropdown', 'block_openai_chat');
 
@@ -218,30 +220,37 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addElement('button', 'config_add_activity_button', get_string('addactivity', 'block_openai_chat'));
 
                 // JavaScript for button functionality
-                $PAGE->requires->js_call_amd('block_openai_chat/config_popup', 'init'); // TODO: is this the right way to load the js? --> Does NOT work for now
-                $PAGE->requires->js_call_amd('block_openai_chat/settings', 'init');
+                // $PAGE->requires->js_call_amd('block_openai_chat/config_popup', 'init'); // TODO: is this the right way to load the js? --> Does NOT work for now
+                // $PAGE->requires->js_call_amd('block_openai_chat/settings', 'init');
                 // TODO: maybe there is a better way, but for now, add the script like this:
                 // Inject inline JavaScript directly after the button.
                 $script = '<script>
-                    console.log("Adding custom JavaScript for button functionality.");
-                    debugger;
-                    const addActivityButton = document.getElementsByName("config_add_activity_button")[0]; // TODO: this works, but id would be better, but id is created dynamically
-                    const activityDropdown = document.getElementsByName("config_activity_dropdown")[0];
-                    const userMessageTextarea = document.getElementsByName("config_user_message")[0];
+                    // "let" instead of "const" because this runs every time the popup is opened, and it should update
+                    (function() { // this is needed to avoid polluting the global scope and getting an error message: Uncaught SyntaxError: Failed to execute appendChild on Node: Identifier addActivityButton has already been declared
+                        let addActivityButton = document.getElementsByName("config_add_activity_button")[0]; // TODO: this works, but id would be better, but id is created dynamically
+                        let activityDropdown = document.getElementsByName("config_activity_dropdown")[0];
+                        let userMessageTextarea = document.getElementsByName("config_user_message")[0];
 
-                    if (addActivityButton && activityDropdown && userMessageTextarea) {
-                      addActivityButton.addEventListener("click", () => {
-                        debugger;
-                        const selectedActivity = activityDropdown.value;
-                        const placeholder = `Result of coursemodule ${selectedActivity} is: {grade:${selectedActivity}}`;
-                        userMessageTextarea.value += (userMessageTextarea.value ? "\n" : "") + placeholder;
-                      });
-                    }
+                        if (addActivityButton && activityDropdown && userMessageTextarea) {
+                          addActivityButton.addEventListener("click", () => {
+                            let selectedActivity = activityDropdown.value;
+                            // get the name of the selected activity
+                            if (!selectedActivity) {
+                              alert("Please select an activity first.");
+                              return;
+                            }
+                            let selectContent = activityDropdown.options[activityDropdown.selectedIndex].text;
+                            let activityName = selectContent.split(":")[1].trim(); // Get the name after the first colon
+                            let placeholder = `Result of ${selectContent} is: {grade:${activityName}}`;
+                            userMessageTextarea.value += (userMessageTextarea.value ? "\n" : "") + placeholder;
+                          });
+                        }
+                    })();
                 </script>';
                 $mform->addElement('html', $script);
 
                 $mform->addElement('textarea', 'config_user_message', 'user_message');
-                $mform->setDefault('config_user_message', get_string('config_user_message_default', 'block_openai_chat'));
+                $mform->setDefault('config_user_message', get_string('config_user_message_default', 'block_exaaichat'));
                 $mform->setType('config_user_message', PARAM_TEXT);
                 $mform->addHelpButton('config_user_message', 'config_user_message', 'block_exaaichat');
 
