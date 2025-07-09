@@ -241,7 +241,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addElement('html', $script);
 
                 $mform->addElement('textarea', 'config_user_message', 'user_message');
-                $mform->setDefault('config_user_message', '');
+                $mform->setDefault('config_user_message', get_string('config_user_message_default', 'block_openai_chat'));
                 $mform->setType('config_user_message', PARAM_TEXT);
                 $mform->addHelpButton('config_user_message', 'config_user_message', 'block_exaaichat');
 
