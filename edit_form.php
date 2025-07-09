@@ -212,16 +212,16 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $courseactivities = $this->fetch_course_activities($COURSE->id); // TODO: self:: vs $this-> ?
                 // get the names and modids of the $courseactivities
 
-                $mform->addElement('select', 'config_activity_dropdown', get_string('selectactivity', 'block_openai_chat'), $courseactivities);
+                $mform->addElement('select', 'config_activity_dropdown', get_string('selectactivity', 'block_exaaichat'), $courseactivities);
                 $mform->setDefault('config_activity_dropdown', '');
-                $mform->addHelpButton('config_activity_dropdown', 'config_activity_dropdown', 'block_openai_chat');
+                $mform->addHelpButton('config_activity_dropdown', 'config_activity_dropdown', 'block_exaaichat');
 
                 // Button to add activity to user message
-                $mform->addElement('button', 'config_add_activity_button', get_string('addactivity', 'block_openai_chat'));
+                $mform->addElement('button', 'config_add_activity_button', get_string('addactivity', 'block_exaaichat'));
 
                 // JavaScript for button functionality
-                // $PAGE->requires->js_call_amd('block_openai_chat/config_popup', 'init'); // TODO: is this the right way to load the js? --> Does NOT work for now
-                // $PAGE->requires->js_call_amd('block_openai_chat/settings', 'init');
+                // $PAGE->requires->js_call_amd('block_exaaichat/config_popup', 'init'); // TODO: is this the right way to load the js? --> Does NOT work for now
+                // $PAGE->requires->js_call_amd('block_exaaichat/settings', 'init');
                 // TODO: maybe there is a better way, but for now, add the script like this:
                 // Inject inline JavaScript directly after the button.
                 $script = '<script>
