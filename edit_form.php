@@ -30,7 +30,7 @@ class block_exaaichat_edit_form extends block_edit_form {
     /**
      * @param $courseid
      * @return void
-     * Get the activies in the course
+     * Get the activies in the course (those that can get grades)
      */
     private function fetch_course_activities($courseid) {
         // Get information about course modules and existing module types.
@@ -40,7 +40,64 @@ class block_exaaichat_edit_form extends block_edit_form {
         $modnamesplural = get_module_types_names(true);
         $modnamesused = $modinfo->get_used_module_names();
         $mods = $modinfo->get_cms();
-        return $mods;
+
+        // we only need the id and the name of the modules to return
+        // TODO: get_content_items_for_user_in_course something like that to only get the activities, not resources? archetype=1 = resource, archetype=0  = activity
+        $activities = [];
+        foreach ($mods as $mod) {
+            // plugin_supports MOD_ARCHETYPE_RESOURCE
+            // $archetype = plugin_supports('mod', $mod->modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER); // to check if it is a resource. If it is a resource, you cannot grade it ==> skip it
+            // if ($archetype === MOD_ARCHETYPE_RESOURCE) {
+            //     continue; // skip resources
+            // }
+
+            // $hasgrade = plugin_supports('mod', $mod->modname, FEATURE_GRADE_HAS_GRADE, false);
+            // if (!$hasgrade) {
+            //     continue; // skip modules that do not have a grade
+            // }
+
+            $instance = $mod->get_instance_record(); // gets the record of table "modname" with id "instance"
+            $modulename = $mod->modname;
+
+            $hasgrading = false;
+
+            switch ($modulename) {
+                case 'assign':
+                case 'quiz':
+                case 'lesson':
+                case 'workshop':
+                case 'choice':
+                    $hasgrading = isset($instance->grade) && (int)$instance->grade !== 0;
+                    break;
+
+                case 'forum':
+                    $hasgrading = isset($instance->grade_forum) && (int)$instance->grade_forum !== 0;
+                    break;
+
+                case 'lti':
+                    $hasgrading = isset($instance->grade_max) && (int)$instance->grade_max > 0;
+                    break;
+
+                case 'scorm':
+                    $hasgrading = isset($instance->grademethod) && (int)$instance->grademethod !== 0;
+                    break;
+
+                // Add additional modules as needed here
+
+                default:
+                    // fallback for other modules with a 'grade' field
+                    $hasgrading = isset($instance->grade) && (int)$instance->grade !== 0;
+                    break;
+            }
+
+            if ($hasgrading) {
+                // add the name and the type
+                $activities[$mod->id] = "{$mod->modname}: {$mod->name}";
+            }
+
+        }
+
+        return $activities;
     }
 
     protected function specific_definition($mform) {
