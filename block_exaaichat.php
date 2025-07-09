@@ -60,7 +60,7 @@ class block_exaaichat extends block_base {
             'api_type' => get_config('block_exaaichat', 'type') ? get_config('block_exaaichat', 'type') : 'chat',
             'persistConvo' => $persistconvo
         ]]);
-        $this->page->requires->js_call_amd('block_exaaichat/config_popup', 'init');
+        // $this->page->requires->js_call_amd('block_exaaichat/config_popup', 'init'); // this would load it on pageload, which is too early.
 
         // Determine if name labels should be shown.
         $showlabelscss = '';
