@@ -67,7 +67,6 @@ $PAGE->set_context($context);
 
 $block_settings = [];
 $setting_names = [
-    'user_message',
     'sourceoftruth',
     'prompt',
     'instructions',

@@ -63,12 +63,10 @@ class chat extends \block_exaaichat\completion {
         $block_settings = $this->block_settings;
         $sourceoftruth = trim($block_settings['sourceoftruth'].' '.$block_settings['prompt']);
 
-        $user_message = trim($this->block_settings['user_message'] ?? '');
-        $user_message = helper::format_user_message($user_message);
+        $sourceoftruth = helper::generate_placeholders($sourceoftruth);
 
         $history_json = array_values(array_filter([
-            $this->sourceoftruth ? ["role" => "system", "content" => $sourceoftruth] : null,
-            $user_message ? ["role" => "user", "content" => $user_message] : null,
+            $sourceoftruth ? ["role" => "system", "content" => $sourceoftruth] : null,
             ...$this->format_history(),
             ["role" => "user", "content" => $this->message],
         ]));

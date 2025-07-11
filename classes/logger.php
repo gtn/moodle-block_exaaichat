@@ -70,7 +70,7 @@ class logger {
             if (!file_exists($dir)) {
                 mkdir($dir, 0777, true);
             }
-            $logfile = $dir . '/exaaichat.log';
+            $logfile = $dir . '/block_exaaichat.log';
             file_put_contents($logfile, $message, FILE_APPEND);
         }
     }

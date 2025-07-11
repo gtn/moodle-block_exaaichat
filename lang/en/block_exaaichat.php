@@ -78,7 +78,13 @@ $string['assistantnamedesc'] = 'The name that the AI will use for itself interna
 $string['username'] = 'User name';
 $string['usernamedesc'] = 'The name that the AI will use for the user internally. It is also used for the UI headings in the chat window.';
 $string['sourceoftruth'] = 'Source of truth';
-$string['sourceoftruthdesc'] = 'Although the AI is very capable out-of-the-box, if it doesn\'t know the answer to a question, it is more likely to give incorrect information confidently than to refuse to answer. In this textbox, you can add common questions and their answers for the AI to pull from. Please put questions and answers in the following format: <pre>Q: Question 1<br />A: Answer 1<br /><br />Q: Question 2<br />A: Answer 2</pre>';
+$string['sourceoftruthdesc'] = 'Although the AI is very capable out-of-the-box, if it doesn\'t know the answer to a question, it is more likely to give incorrect information confidently than to refuse to answer. In this textbox, you can add common questions and their answers for the AI to pull from. Please put questions and answers in the following format: <pre>Q: Question 1<br />A: Answer 1<br /><br />Q: Question 2<br />A: Answer 2</pre>
+
+You can also specify placeholders like this:
+My name is {user.fullname}.
+Today is {userdate}.
+My finalgrade is {grade:Course total}.
+';
 $string['showlabels'] = 'Show labels';
 $string['advanced'] = 'Advanced';
 $string['advanceddesc'] = 'Advanced arguments sent to OpenAI. Don\'t touch unless you know what you\'re doing!';
@@ -138,11 +144,11 @@ $string['new_chat'] = 'New chat';
 $string['popout'] = 'Open chat window';
 $string['loggingenabled'] = "Logging is enabled. Any messages you send or receive here will be recorded, and can be viewed by the site administrator.";
 $string['openaitimedout'] = 'ERROR: OpenAI did not provide a response in time.';
-$string['addactivity'] = 'Add activity to user_message';
-$string['selectactivity'] = 'Add Activity Information to the initial message';
-$string['config_user_message'] = "Initial message to AI";
-$string['config_user_message_default'] = "My name is {user.fullname}.\nToday is {userdate}.\nMy finalgrade is {grade:Course total}.";
-$string['config_activity_dropdown_help'] = "You can select an activity to add to the user message.";
-$string['config_user_message_help'] = "You can add information here that the AI will pull from when answering questions."; // TODO: how does it differ from the source of truth?
-
-
+$string['addplaceholders:title'] = 'Add placeholders to the Source of Truth';
+$string['addplaceholders:button'] = 'Add placeholder';
+$string['placeholders:grade:name'] = 'Result of {$a}';
+$string['placeholders:grade:placeholder'] = 'Result of {$a} is';
+$string['placeholders:user.fullname:name'] = 'User fullname';
+$string['placeholders:user.fullname:placeholder'] = 'The user name is {$a}';
+$string['placeholders:userdate:name'] = 'Current date and time';
+$string['placeholders:userdate:placeholder'] = 'Current date and time is {$a}';

@@ -34,21 +34,22 @@ class block_exaaichat_edit_form extends block_edit_form {
      * @param int $courseid
      * @return array
      */
-    private function fetch_course_activities(int $courseid): array {
+    private function get_placeholders(int $courseid): array {
         global $DB;
 
         // Get information about course modules and existing module types.
         // based on course/view.php
         $modinfo = get_fast_modinfo($courseid);
-        // TODO: remove unused variables
-        $modnames = get_module_types_names();
-        $modnamesplural = get_module_types_names(true);
-        $modnamesused = $modinfo->get_used_module_names();
         $mods = $modinfo->get_cms();
 
         // we only need the id and the name of the modules to return
         // TODO: get_content_items_for_user_in_course something like that to only get the activities, not resources? archetype=1 = resource, archetype=0  = activity
-        $activities = [];
+
+        $placeholders = [
+            get_string('placeholders:user.fullname:placeholder', 'block_exaaichat', '{user.fullname}') => get_string('placeholders:user.fullname:name', 'block_exaaichat'),
+            get_string('placeholders:userdate:placeholder', 'block_exaaichat', '{userdate}') => get_string('placeholders:userdate:name', 'block_exaaichat'),
+        ];
+
         foreach ($mods as $mod) {
             // plugin_supports MOD_ARCHETYPE_RESOURCE
             // $archetype = plugin_supports('mod', $mod->modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER); // to check if it is a resource. If it is a resource, you cannot grade it ==> skip it
@@ -56,25 +57,13 @@ class block_exaaichat_edit_form extends block_edit_form {
             //     continue; // skip resources
             // }
 
-            // $hasgrade = plugin_supports('mod', $mod->modname, FEATURE_GRADE_HAS_GRADE, false);
-            // if (!$hasgrade) {
-            //     continue; // skip modules that do not have a grade
-            // }
-
             if (method_exists($mod, 'get_instance_record')) {
                 // only available since moodle 5.0
                 $instance = $mod->instance ?? get_instance_record();
             } else {
-                $instance = $DB->get_record(
-                    table: $mod->modname,
-                    conditions: ['id' => $mod->instance],
-                    strictness: MUST_EXIST,
-                );
+                $instance = $DB->get_record($mod->modname, MUST_EXIST);
             }
             $modulename = $mod->modname;
-
-            // TODO: cleanup code
-            $hasgrading = false;
 
             switch ($modulename) {
                 case 'assign':
@@ -108,16 +97,23 @@ class block_exaaichat_edit_form extends block_edit_form {
 
             if ($hasgrading) {
                 // add the name and the type
-                $activities[$mod->name] = get_string('modulename', $mod->modname) . ' "' . $mod->name . '"';
+                $name = get_string('modulename', $mod->modname) . ' "' . $mod->name . '"';
+
+                $placeholders[get_string('placeholders:grade:placeholder', 'block_exaaichat', $name) . ": {grade:{$mod->name}}"] = get_string('placeholders:grade:name', 'block_exaaichat', $name);
             }
         }
 
-        return $activities;
+        return $placeholders;
     }
 
     protected function specific_definition($mform) {
         global $COURSE, $PAGE;
-        $block_id = $this->_ajaxformdata["blockid"];
+
+        // this does not work if the form is displayed on the config page
+        // $block_id = $this->_ajaxformdata["blockid"];
+        // solution:
+        $block_id = $this->get_block()->instance->id;
+
         $type = block_exaaichat_get_type_to_display();
 
         $mform->addElement('header', 'config_header', get_string('blocksettings', 'block'));
@@ -211,10 +207,51 @@ class block_exaaichat_edit_form extends block_edit_form {
         } else {
             // Chat settings
 
-            $mform->addElement('textarea', 'config_sourceoftruth', get_string('sourceoftruth', 'block_exaaichat'));
+            $el = $mform->addElement('textarea', 'config_sourceoftruth', get_string('sourceoftruth', 'block_exaaichat'));
+            $el->updateAttributes(['rows' => 10]);
             $mform->setDefault('config_sourceoftruth', '');
             $mform->setType('config_sourceoftruth', PARAM_TEXT);
             $mform->addHelpButton('config_sourceoftruth', 'config_sourceoftruth', 'block_exaaichat');
+
+            // Dropdown menu for activities
+            $placeholders = $this->get_placeholders($COURSE->id);
+
+            ob_start();
+            ?>
+            <div style="margin - top: -10px">
+                <div>
+                    <?= get_string('addplaceholders:title', 'block_exaaichat') ?>:
+                </div>
+                <select id="config_placeholder_dropdown" class="form-control" style="display: inline-block; width: auto;">
+                    <?php foreach ($placeholders as $key => $value): ?>
+                        <option value="<?= s($key) ?>"><?= s($value) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <button type="button" id="config_add_placeholder_button" class="btn btn-secondary" disabled>
+                    <?= get_string('addplaceholders:button', 'block_exaaichat') ?>
+                </button>
+            </div>
+            <script>
+                function block_exaaichat_require(modules, callback) {
+                    if (typeof require !== 'undefined') {
+                        // require the init script for the config popup
+                        require(modules, callback);
+                    } else {
+                        document.addEventListener('DOMContentLoaded', function () {
+                            // require if the form is displayed on the config page
+                            // then require is available after the DOM is loaded
+                            require(modules, callback);
+                        });
+                    }
+                }
+
+                block_exaaichat_require(['block_exaaichat/config_popup'], function (m) {
+                    m.init();
+                });
+            </script>
+            <?php
+            $html = ob_get_clean();
+            $mform->addElement('static', 'user_message_options', '', $html);
 
             if (get_config('block_exaaichat', 'allowinstancesettings') === "1") {
                 $mform->addElement('textarea', 'config_prompt', get_string('prompt', 'block_exaaichat'));
@@ -222,52 +259,6 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->setType('config_prompt', PARAM_TEXT);
                 $mform->addHelpButton('config_prompt', 'config_prompt', 'block_exaaichat');
 
-
-                // Dropdown menu for activities
-                $courseactivities = $this->fetch_course_activities($COURSE->id); // TODO: self:: vs $this-> ?  self:: static:: geht ja nur bei static methoden
-                // TODO: kommentar oben entfernen
-
-                $mform->addElement('textarea', 'config_user_message', get_string('config_user_message', 'block_exaaichat'));
-                $mform->setDefault('config_user_message', get_string('config_user_message_default', 'block_exaaichat'));
-                $mform->setType('config_user_message', PARAM_TEXT);
-                $mform->addHelpButton('config_user_message', 'config_user_message', 'block_exaaichat');
-
-                ob_start();
-                ?>
-                <div style="margin-top: -10px">
-                    <div>
-                        <?= get_string('selectactivity', 'block_exaaichat') ?>:
-                    </div>
-                    <select id="config_activity_dropdown" class="form-control" style="display: inline-block; width: auto;">
-                        <?php foreach ($courseactivities as $key => $value): ?>
-                            <option value="<?= s($key) ?>"><?= s($value) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                    <button type="button" id="config_add_activity_button" class="btn btn-secondary" disabled>
-                        <?= get_string('addactivity', 'block_exaaichat') ?>
-                    </button>
-                </div>
-                <script>
-                    function block_exaaichat_require(modules, callback) {
-                        if (typeof require !== 'undefined') {
-                            // require the init script for the config popup
-                            require(modules, callback);
-                        } else {
-                            document.addEventListener('DOMContentLoaded', function() {
-                                // require if the form is displayed on the config page
-                                // then require is available after the DOM is loaded
-                                require(modules, callback);
-                            });
-                        }
-                    }
-
-                    block_exaaichat_require(['block_exaaichat/config_popup'], function (m) {
-                        m.init();
-                    });
-                </script>
-                <?php
-                $html = ob_get_clean();
-                $mform->addElement('static', 'user_message_options', '', $html);
 
                 $mform->addElement('text', 'config_username', get_string('username', 'block_exaaichat'));
                 $mform->setDefault('config_username', '');
@@ -317,7 +308,5 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addHelpButton('config_presence', 'config_presence', 'block_exaaichat');
             }
         }
-
-        // $PAGE->requires->js_call_amd('block_yourblock/buttonhandler', 'init');
     }
 }

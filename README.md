@@ -63,7 +63,7 @@ Admins can upload files which are made available to the AI during chats. This en
 
 ---
 
-### 💬 Custom User Messages with Dynamic Placeholders
+### 💬 Custom Source of Truth with Dynamic Placeholders
 
 Each chat instance can define a custom initial message to send to the AI, supporting dynamic user/course-based placeholders.
 

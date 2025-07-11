@@ -127,15 +127,15 @@ class helper {
 
     /**
      * Parse placeholders in the user message
-     * @param string $user_message
+     * @param string $string
      * @return string
      */
-    public static function format_user_message(string $user_message): string {
+    public static function generate_placeholders(string $string): string {
 
         $gradedata = static::get_student_grades_for_course_flattened();
 
         return preg_replace_callback('!{(?<placeholder>[^}]+)}!', function($matches) use ($gradedata) {
-            global $COURSE, $USER;
+            global $USER;
 
             $placeholder = $matches['placeholder'];
 
@@ -159,13 +159,10 @@ class helper {
                 // not found
                 return 'not available';
 
-                echo 'gradedata: ';
-                var_dump($gradedata);
-
-                die("grade item \"{$matches[1]}\" not found");
+                throw new \moodle_exception("grade item \"{$matches[1]}\" not found");
             }
 
             throw new \moodle_exception('Unknown placeholder ' . $placeholder);
-        }, $user_message);
+        }, $string);
     }
 }

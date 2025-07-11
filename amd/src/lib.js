@@ -3,8 +3,6 @@ var questionString = 'Ask a question...'
 var errorString = 'An error occurred! Please try again later.'
 
 export const init = (data) => {
-    // TODO: remove
-    console.log('JS init lib called'); // Add logging for debug
     const blockId = data['blockId']
     const api_type = data['api_type']
     const persistConvo = data['persistConvo']

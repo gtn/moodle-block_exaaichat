@@ -28,7 +28,7 @@ require_admin();
 $lines = optional_param('lines', 2000, PARAM_INT);
 $search_thread = optional_param('thread', '', PARAM_TEXT);
 
-$logfile = $CFG->dataroot . '/log/exaaichat.log';
+$logfile = $CFG->dataroot . '/log/block_exaaichat.log';
 
 echo '<pre>';
 
