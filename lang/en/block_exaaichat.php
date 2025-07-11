@@ -152,3 +152,5 @@ $string['placeholders:user.fullname:name'] = 'User fullname';
 $string['placeholders:user.fullname:placeholder'] = 'The user name is {$a}';
 $string['placeholders:userdate:name'] = 'Current date and time';
 $string['placeholders:userdate:placeholder'] = 'Current date and time is {$a}';
+$string['placeholders:user.finalgrade:name'] = 'User final grade';
+$string['placeholders:user.finalgrade:placeholder'] = 'The user final grade is {$a}';
