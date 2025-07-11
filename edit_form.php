@@ -57,12 +57,12 @@ class block_exaaichat_edit_form extends block_edit_form {
             //     continue; // skip resources
             // }
 
-            // if (method_exists($mod, 'get_instance_record')) {
-            //     only available since moodle 5.0
-                // $instance = $mod->get_instance_record(); // gets the record of table "modname" with id "instance"
-            // } else {
+            if (method_exists($mod, 'get_instance_record')) {
+                // only available since moodle 5.0
+                $instance = $mod->get_instance_record(); // gets the record of table "modname" with id "instance"
+            } else {
                 $instance = $DB->get_record($mod->modname, ['id' => $mod->instance], '*', MUST_EXIST); // gets the record of table "modname" with id "instance"
-            // }
+            }
             $modulename = $mod->modname;
 
             switch ($modulename) {
@@ -107,7 +107,7 @@ class block_exaaichat_edit_form extends block_edit_form {
     }
 
     protected function specific_definition($mform) {
-        global $COURSE, $PAGE;
+        global $COURSE, $PAGE, $CFG;
 
         // this does not work if the form is displayed on the config page
         // $block_id = $this->_ajaxformdata["blockid"];
@@ -216,13 +216,16 @@ class block_exaaichat_edit_form extends block_edit_form {
             // Dropdown menu for activities
             $placeholders = $this->get_placeholders($COURSE->id);
 
+            // $formselectclass = ((float)($CFG->version) >= 2024041800) ? 'form-select' : 'custom-select'; // future development: use form-select or custom-select depending on Moodle version or based on theme
+            // for now: both classes are needed to make it work in all themes
+
             ob_start();
             ?>
             <div style="margin - top: -10px">
                 <div>
                     <?= get_string('addplaceholders:title', 'block_exaaichat') ?>:
                 </div>
-                <select id="config_placeholder_dropdown" class="form-select" style="display: inline-block; width: 75%;">
+                <select id="config_placeholder_dropdown" class="form-select custom-select>" style="display: inline-block; width: 75%;">
                     <?php foreach ($placeholders as $key => $value): ?>
                         <option value="<?= s($key) ?>"><?= s($value) ?></option>
                     <?php endforeach; ?>
