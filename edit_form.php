@@ -59,9 +59,9 @@ class block_exaaichat_edit_form extends block_edit_form {
 
             if (method_exists($mod, 'get_instance_record')) {
                 // only available since moodle 5.0
-                $instance = $mod->instance ?? get_instance_record();
+                $instance = $mod->get_instance_record(); // gets the record of table "modname" with id "instance"
             } else {
-                $instance = $DB->get_record($mod->modname, MUST_EXIST);
+                $instance = $DB->get_record($mod->modname, ['id' => $mod->instance], MUST_EXIST);
             }
             $modulename = $mod->modname;
 
