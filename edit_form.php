@@ -227,30 +227,47 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $courseactivities = $this->fetch_course_activities($COURSE->id); // TODO: self:: vs $this-> ?  self:: static:: geht ja nur bei static methoden
                 // TODO: kommentar oben entfernen
 
-                $mform->addElement('select', 'config_activity_dropdown', get_string('selectactivity', 'block_exaaichat'), $courseactivities);
-                $mform->setDefault('config_activity_dropdown', '');
-                $mform->addHelpButton('config_activity_dropdown', 'config_activity_dropdown', 'block_exaaichat');
-
-                // Button to add activity to user message
-                $el = $mform->addElement('button', 'config_add_activity_button', get_string('addactivity', 'block_exaaichat'));
-
-                // Disable the button initially
-                // $el->setDisabled(true) is not available for buttons
-                $el->updateAttributes(['disabled' => 'disabled']);
-
-                // Inject inline JavaScript directly after the button.
-                $script = "<script>
-                    require(['block_exaaichat/config_popup'], function (m) {
-                        m.init();
-                    });
-                </script>";
-                $mform->addElement('html', $script);
-
-                // TODO: translate user_message field
                 $mform->addElement('textarea', 'config_user_message', get_string('config_user_message', 'block_exaaichat'));
                 $mform->setDefault('config_user_message', get_string('config_user_message_default', 'block_exaaichat'));
                 $mform->setType('config_user_message', PARAM_TEXT);
                 $mform->addHelpButton('config_user_message', 'config_user_message', 'block_exaaichat');
+
+                ob_start();
+                ?>
+                <div style="margin-top: -10px">
+                    <div>
+                        <?= get_string('selectactivity', 'block_exaaichat') ?>:
+                    </div>
+                    <select id="config_activity_dropdown" class="form-control" style="display: inline-block; width: auto;">
+                        <?php foreach ($courseactivities as $key => $value): ?>
+                            <option value="<?= s($key) ?>"><?= s($value) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <button type="button" id="config_add_activity_button" class="btn btn-secondary" disabled>
+                        <?= get_string('addactivity', 'block_exaaichat') ?>
+                    </button>
+                </div>
+                <script>
+                    function block_exaaichat_require(modules, callback) {
+                        if (typeof require !== 'undefined') {
+                            // require the init script for the config popup
+                            require(modules, callback);
+                        } else {
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // require if the form is displayed on the config page
+                                // then require is available after the DOM is loaded
+                                require(modules, callback);
+                            });
+                        }
+                    }
+
+                    block_exaaichat_require(['block_exaaichat/config_popup'], function (m) {
+                        m.init();
+                    });
+                </script>
+                <?php
+                $html = ob_get_clean();
+                $mform->addElement('static', 'user_message_options', '', $html);
 
                 $mform->addElement('text', 'config_username', get_string('username', 'block_exaaichat'));
                 $mform->setDefault('config_username', '');
@@ -301,6 +318,6 @@ class block_exaaichat_edit_form extends block_edit_form {
             }
         }
 
-        $PAGE->requires->js_call_amd('block_yourblock/buttonhandler', 'init');
+        // $PAGE->requires->js_call_amd('block_yourblock/buttonhandler', 'init');
     }
 }
