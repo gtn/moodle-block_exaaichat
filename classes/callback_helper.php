@@ -23,6 +23,8 @@
 
 namespace block_exaaichat;
 
+defined('MOODLE_INTERNAL') || die;
+
 require_once $CFG->dirroot . '/course/externallib.php';
 
 /**

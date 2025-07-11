@@ -23,19 +23,24 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die;
+
 require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
 class block_exaaichat_edit_form extends block_edit_form {
 
     /**
-     * @param $courseid
-     * @return void
      * Get the activies in the course (those that can get grades)
+     * @param int $courseid
+     * @return array
      */
-    private function fetch_course_activities($courseid) {
+    private function fetch_course_activities(int $courseid): array {
+        global $DB;
+
         // Get information about course modules and existing module types.
         // based on course/view.php
         $modinfo = get_fast_modinfo($courseid);
+        // TODO: remove unused variables
         $modnames = get_module_types_names();
         $modnamesplural = get_module_types_names(true);
         $modnamesused = $modinfo->get_used_module_names();
@@ -56,9 +61,19 @@ class block_exaaichat_edit_form extends block_edit_form {
             //     continue; // skip modules that do not have a grade
             // }
 
-            $instance = $mod->get_instance_record(); // gets the record of table "modname" with id "instance"
+            if (method_exists($mod, 'get_instance_record')) {
+                // only available since moodle 5.0
+                $instance = $mod->instance ?? get_instance_record();
+            } else {
+                $instance = $DB->get_record(
+                    table: $mod->modname,
+                    conditions: ['id' => $mod->instance],
+                    strictness: MUST_EXIST,
+                );
+            }
             $modulename = $mod->modname;
 
+            // TODO: cleanup code
             $hasgrading = false;
 
             switch ($modulename) {
@@ -67,7 +82,8 @@ class block_exaaichat_edit_form extends block_edit_form {
                 case 'lesson':
                 case 'workshop':
                 case 'choice':
-                    $hasgrading = isset($instance->grade) && (int)$instance->grade !== 0;
+                    // TODO: sollte einfach !empty($instance->grade) sein?
+                    $hasgrading = !empty($instance->grade);
                     break;
 
                 case 'forum':
@@ -92,9 +108,8 @@ class block_exaaichat_edit_form extends block_edit_form {
 
             if ($hasgrading) {
                 // add the name and the type
-                $activities[$mod->id] = "{$mod->modname}: {$mod->name}";
+                $activities[$mod->name] = get_string('modulename', $mod->modname) . ' "' . $mod->name . '"';
             }
-
         }
 
         return $activities;
@@ -194,7 +209,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->setType('config_vector_store_ids', PARAM_TEXT);
             }
         } else {
-            // Chat settings //
+            // Chat settings
 
             $mform->addElement('textarea', 'config_sourceoftruth', get_string('sourceoftruth', 'block_exaaichat'));
             $mform->setDefault('config_sourceoftruth', '');
@@ -209,47 +224,30 @@ class block_exaaichat_edit_form extends block_edit_form {
 
 
                 // Dropdown menu for activities
-                $courseactivities = $this->fetch_course_activities($COURSE->id); // TODO: self:: vs $this-> ?
-                // get the names and modids of the $courseactivities
+                $courseactivities = $this->fetch_course_activities($COURSE->id); // TODO: self:: vs $this-> ?  self:: static:: geht ja nur bei static methoden
+                // TODO: kommentar oben entfernen
 
                 $mform->addElement('select', 'config_activity_dropdown', get_string('selectactivity', 'block_exaaichat'), $courseactivities);
                 $mform->setDefault('config_activity_dropdown', '');
                 $mform->addHelpButton('config_activity_dropdown', 'config_activity_dropdown', 'block_exaaichat');
 
                 // Button to add activity to user message
-                $mform->addElement('button', 'config_add_activity_button', get_string('addactivity', 'block_exaaichat'));
+                $el = $mform->addElement('button', 'config_add_activity_button', get_string('addactivity', 'block_exaaichat'));
 
-                // JavaScript for button functionality
-                // $PAGE->requires->js_call_amd('block_exaaichat/config_popup', 'init'); // TODO: is this the right way to load the js? --> Does NOT work for now
-                // $PAGE->requires->js_call_amd('block_exaaichat/settings', 'init');
-                // TODO: maybe there is a better way, but for now, add the script like this:
+                // Disable the button initially
+                // $el->setDisabled(true) is not available for buttons
+                $el->updateAttributes(['disabled' => 'disabled']);
+
                 // Inject inline JavaScript directly after the button.
-                $script = '<script>
-                    // "let" instead of "const" because this runs every time the popup is opened, and it should update
-                    (function() { // this is needed to avoid polluting the global scope and getting an error message: Uncaught SyntaxError: Failed to execute appendChild on Node: Identifier addActivityButton has already been declared
-                        let addActivityButton = document.getElementsByName("config_add_activity_button")[0]; // TODO: this works, but id would be better, but id is created dynamically
-                        let activityDropdown = document.getElementsByName("config_activity_dropdown")[0];
-                        let userMessageTextarea = document.getElementsByName("config_user_message")[0];
-
-                        if (addActivityButton && activityDropdown && userMessageTextarea) {
-                          addActivityButton.addEventListener("click", () => {
-                            let selectedActivity = activityDropdown.value;
-                            // get the name of the selected activity
-                            if (!selectedActivity) {
-                              alert("Please select an activity first.");
-                              return;
-                            }
-                            let selectContent = activityDropdown.options[activityDropdown.selectedIndex].text;
-                            let activityName = selectContent.split(":")[1].trim(); // Get the name after the first colon
-                            let placeholder = `Result of ${selectContent} is: {grade:${activityName}}`;
-                            userMessageTextarea.value += (userMessageTextarea.value ? "\n" : "") + placeholder;
-                          });
-                        }
-                    })();
-                </script>';
+                $script = "<script>
+                    require(['block_exaaichat/config_popup'], function (m) {
+                        m.init();
+                    });
+                </script>";
                 $mform->addElement('html', $script);
 
-                $mform->addElement('textarea', 'config_user_message', 'user_message');
+                // TODO: translate user_message field
+                $mform->addElement('textarea', 'config_user_message', get_string('config_user_message', 'block_exaaichat'));
                 $mform->setDefault('config_user_message', get_string('config_user_message_default', 'block_exaaichat'));
                 $mform->setType('config_user_message', PARAM_TEXT);
                 $mform->addHelpButton('config_user_message', 'config_user_message', 'block_exaaichat');
@@ -302,5 +300,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addHelpButton('config_presence', 'config_presence', 'block_exaaichat');
             }
         }
+
+        $PAGE->requires->js_call_amd('block_yourblock/buttonhandler', 'init');
     }
 }
