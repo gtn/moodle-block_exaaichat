@@ -222,7 +222,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 <div>
                     <?= get_string('addplaceholders:title', 'block_exaaichat') ?>:
                 </div>
-                <select id="config_placeholder_dropdown" class="form-control" style="display: inline-block; width: auto;">
+                <select id="config_placeholder_dropdown" class="form-select" style="display: inline-block; width: 75%;">
                     <?php foreach ($placeholders as $key => $value): ?>
                         <option value="<?= s($key) ?>"><?= s($value) ?></option>
                     <?php endforeach; ?>
