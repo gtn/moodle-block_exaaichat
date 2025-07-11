@@ -57,12 +57,12 @@ class block_exaaichat_edit_form extends block_edit_form {
             //     continue; // skip resources
             // }
 
-            if (method_exists($mod, 'get_instance_record')) {
-                // only available since moodle 5.0
-                $instance = $mod->get_instance_record(); // gets the record of table "modname" with id "instance"
-            } else {
-                $instance = $DB->get_record($mod->modname, ['id' => $mod->instance], MUST_EXIST);
-            }
+            // if (method_exists($mod, 'get_instance_record')) {
+            //     only available since moodle 5.0
+                // $instance = $mod->get_instance_record(); // gets the record of table "modname" with id "instance"
+            // } else {
+                $instance = $DB->get_record($mod->modname, ['id' => $mod->instance], '*', MUST_EXIST); // gets the record of table "modname" with id "instance"
+            // }
             $modulename = $mod->modname;
 
             switch ($modulename) {
