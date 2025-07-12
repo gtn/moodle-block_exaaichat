@@ -48,7 +48,7 @@ class block_exaaichat_edit_form extends block_edit_form {
         $placeholders = [
             get_string('placeholders:user.fullname:placeholder', 'block_exaaichat', '{user.fullname}') => get_string('placeholders:user.fullname:name', 'block_exaaichat'),
             get_string('placeholders:userdate:placeholder', 'block_exaaichat', '{userdate}') => get_string('placeholders:userdate:name', 'block_exaaichat'),
-            get_string('placeholders:user.finalgrade:placeholder', 'block_exaaichat', '{grade:Course total}') => get_string('placeholders:user.finalgrade:name', 'block_exaaichat'),
+            get_string('placeholders:grade:coursetotal:placeholder', 'block_exaaichat', '{grade:coursetotal}') => get_string('placeholders:grade:coursetotal:name', 'block_exaaichat'),
         ];
 
         foreach ($mods as $mod) {
@@ -60,9 +60,11 @@ class block_exaaichat_edit_form extends block_edit_form {
 
             if (method_exists($mod, 'get_instance_record')) {
                 // only available since moodle 5.0
-                $instance = $mod->get_instance_record(); // gets the record of table "modname" with id "instance"
+                // gets the record of table "modname" with id "instance"
+                $instance = $mod->get_instance_record();
             } else {
-                $instance = $DB->get_record($mod->modname, ['id' => $mod->instance], '*', MUST_EXIST); // gets the record of table "modname" with id "instance"
+                // gets the record of table "modname" with id "instance"
+                $instance = $DB->get_record($mod->modname, ['id' => $mod->instance], '*', MUST_EXIST);
             }
             $modulename = $mod->modname;
 
@@ -100,7 +102,8 @@ class block_exaaichat_edit_form extends block_edit_form {
                 // add the name and the type
                 $name = get_string('modulename', $mod->modname) . ' "' . $mod->name . '"';
 
-                $placeholders[get_string('placeholders:grade:placeholder', 'block_exaaichat', $name) . ": {grade:{$mod->name}}"] = get_string('placeholders:grade:name', 'block_exaaichat', $name);
+                $placeholders[get_string('placeholders:grade:placeholder', 'block_exaaichat', ['name' => $name, 'placeholder' => "{grade:{$mod->name}}"])] =
+                    get_string('placeholders:grade:name', 'block_exaaichat', $name);
             }
         }
 
@@ -108,7 +111,7 @@ class block_exaaichat_edit_form extends block_edit_form {
     }
 
     protected function specific_definition($mform) {
-        global $COURSE, $PAGE, $CFG;
+        global $COURSE;
 
         // this does not work if the form is displayed on the config page
         // $block_id = $this->_ajaxformdata["blockid"];
@@ -226,12 +229,12 @@ class block_exaaichat_edit_form extends block_edit_form {
                 <div>
                     <?= get_string('addplaceholders:title', 'block_exaaichat') ?>:
                 </div>
-                <select id="config_placeholder_dropdown" class="form-select custom-select" style="display: inline-block; width: 75%;">
+                <select id="config_placeholder_dropdown" class="form-select custom-select" style="width: 75%;">
                     <?php foreach ($placeholders as $key => $value): ?>
                         <option value="<?= s($key) ?>"><?= s($value) ?></option>
                     <?php endforeach; ?>
                 </select>
-                <button type="button" id="config_add_placeholder_button" class="btn btn-secondary" disabled>
+                <button type="button" id="config_add_placeholder_button" class="btn btn-secondary mt-1" disabled>
                     <?= get_string('addplaceholders:button', 'block_exaaichat') ?>
                 </button>
             </div>

@@ -87,7 +87,6 @@ class helper {
             }
 
             $row = (object)[];
-            // var_dump($rowdata);
             if (!preg_match('!\blevel([0-9]+)\b!', $rowdata['itemname']['class'], $matches)) {
                 continue;
             }
@@ -131,10 +130,7 @@ class helper {
      * @return string
      */
     public static function generate_placeholders(string $string): string {
-
-        $gradedata = static::get_student_grades_for_course_flattened();
-
-        return preg_replace_callback('!{(?<placeholder>[^}]+)}!', function($matches) use ($gradedata) {
+        return preg_replace_callback('!{(?<placeholder>[^}]+)}!', function($matches) {
             global $USER;
 
             $placeholder = $matches['placeholder'];
@@ -149,17 +145,36 @@ class helper {
                 throw new \moodle_exception('todo #42422444');
             }
             if (preg_match('!^grade:(.+)!', $placeholder, $matches)) {
+                // get gradedata only once if needed
+                static $gradedata = null;
+                if ($gradedata === null) {
+                    $gradedata = static::get_student_grades_for_course_flattened();
+                }
+
+                $grade_title = $matches[1];
+                if ($grade_title == 'coursetotal') {
+                    // the last grade entry is probably the course total
+                    // and the name should be "Course total"
+                    $last = end($gradedata);
+                    if ($last && $last->name == get_string('coursetotal', 'grades')) {
+                        return $last->grade;
+                    } else {
+                        // throw an error for now, maybe this can also be changed to return 'not available';
+                        throw new \moodle_exception("couldn't get course total");
+                    }
+                }
+
                 $make_name_english = fn($value) => preg_replace('!( gesamt| ukupno)$!i', ' total', $value ?? '');
                 foreach ($gradedata as $row) {
-                    if ($make_name_english($row->name) == $make_name_english($matches[1])) {
+                    if ($make_name_english($row->name) == $make_name_english($grade_title)) {
                         return $row->grade;
                     }
                 }
 
                 // not found
-                return 'not available';
+                return get_string('grade:not_available', 'block_exaaichat');
 
-                throw new \moodle_exception("grade item \"{$matches[1]}\" not found");
+                // throw new \moodle_exception("grade item \"{$grade_title}\" not found");
             }
 
             throw new \moodle_exception('Unknown placeholder ' . $placeholder);
