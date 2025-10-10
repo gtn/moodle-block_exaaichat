@@ -92,25 +92,21 @@ class responses extends base {
             ...$data,
         ];
 
-        $ch = curl_init($url);
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Authorization: Bearer ' . $this->apikey,
+        $curl = new \curl();
+        $curl->setopt([
+            'CURLOPT_RETURNTRANSFER' => true,
+            'CURLOPT_HTTPHEADER' => [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $this->apikey,
+            ],
         ]);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-
-        $response = curl_exec($ch);
+        $response = $curl->post($url, json_encode($data));
 
         $this->debug('raw response:', $response);
 
-        if (curl_errno($ch)) {
-            throw new \moodle_exception('curl error: ' . curl_error($ch));
+        if ($curl->get_errno()) {
+            throw new \moodle_exception('curl error: ' . $curl->get_errno());
         }
-
-        curl_close($ch);
 
         $response = json_decode($response);
 
