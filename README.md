@@ -78,12 +78,11 @@ As the AI is not aware of the current date/time, you can also add a placeholder 
 
 * {user.fullname} – Full name of the user
 * {userdate} – Current date/time in the user's timezone
-* {grade:entryname} – Get the grade from the gradebook with the name of "entryname".
-  entryname can be any item from the gradebook. e.g., "Final Grade", "Midterm Exam", or any Activity name
-* {range:coursetotal} – Course total grade range (numeric min - max or scale values joined by ' / ')
+* {grade:entryname:grade} – User’s current grade value for the given gradebook item (e.g. {grade:coursetotal:grade}, {grade:Final Grade:grade}, {grade:Assignment 1:grade})
+* {grade:entryname:range} – Grade range (numeric min–max or scale values) for the given gradebook item (e.g. {grade:coursetotal:range})
 
 Example including the range:
-"Course total grade is {grade:coursetotal} (range: {range:coursetotal})."
+"Course total grade is {grade:coursetotal:grade} (range: {grade:coursetotal:range})."
 
 
 ---

@@ -79,13 +79,11 @@ $string['username'] = 'User name';
 $string['usernamedesc'] = 'The name that the AI will use for the user internally. It is also used for the UI headings in the chat window.';
 $string['sourceoftruth'] = 'Source of truth';
 $string['sourceoftruthdesc'] = 'Although the AI is very capable out-of-the-box, if it doesn\'t know the answer to a question, it is more likely to give incorrect information confidently than to refuse to answer. In this textbox, you can add common questions and their answers for the AI to pull from. Please put questions and answers in the following format: <pre>Q: Question 1<br />A: Answer 1<br /><br />Q: Question 2<br />A: Answer 2</pre>
-
 You can also specify placeholders like this:
 My name is {user.fullname}.
 Today is {userdate}.
-My finalgrade is {grade:Course total}.
-Course total grade range is: {range:coursetotal}.
-';
+Course total grade is {grade:coursetotal:grade}.
+Course total grade range is {grade:coursetotal:range}.';
 $string['showlabels'] = 'Show labels';
 $string['advanced'] = 'Advanced';
 $string['advanceddesc'] = 'Advanced arguments sent to OpenAI. Don\'t touch unless you know what you\'re doing!';
@@ -153,8 +151,8 @@ $string['placeholders:user.fullname:name'] = 'User fullname';
 $string['placeholders:user.fullname:placeholder'] = 'The user name is: {$a}';
 $string['placeholders:userdate:name'] = 'Current date and time';
 $string['placeholders:userdate:placeholder'] = 'Current date and time is: {$a}';
-$string['placeholders:grade:coursetotal:name'] = 'Course total grade';
-$string['placeholders:grade:coursetotal:placeholder'] = 'Course total grade is: {$a}';
-$string['placeholders:range:coursetotal:name'] = 'Course total grade range';
-$string['placeholders:range:coursetotal:placeholder'] = 'Course total grade range is: {$a}';
+$string['placeholders:grade:coursetotal:grade:name'] = 'Course total grade';
+$string['placeholders:grade:coursetotal:grade:placeholder'] = 'Course total grade is: {$a}';
+$string['placeholders:grade:coursetotal:range:name'] = 'Course total grade range';
+$string['placeholders:grade:coursetotal:range:placeholder'] = 'Course total grade range is: {$a}';
 $string['grade:not_available'] = 'Not available';
