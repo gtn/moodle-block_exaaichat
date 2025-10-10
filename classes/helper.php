@@ -63,9 +63,9 @@ class helper {
         $context = \context_course::instance($courseid);
         $gpr = new \grade_plugin_return(['type' => 'report', 'plugin' => 'user', 'courseid' => $courseid, 'userid' => $userid]);
         $report = new \gradereport_user\report\user($courseid, $gpr, $context, $userid);
-
         if (!$report->fill_table()) {
-            return 'No grades available';
+            return []; // return empty array if no grades available, instead of the string, since an array is expected
+            // return get_string('grade:nogradesavailable', 'block_exaaichat');
         }
 
         // OLD: Print the page
