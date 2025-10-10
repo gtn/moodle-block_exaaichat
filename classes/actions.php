@@ -97,7 +97,7 @@ class actions {
      * Get my grade information of the current course
      * Abruf der Noten und Bewertungen für den aktuellen Kurs
      */
-    public static function get_student_grades_for_course(): mixed {
+    public static function get_student_grades_for_course(): array {
         global $COURSE, $USER;
 
         $courseid = 0;
@@ -112,7 +112,8 @@ class actions {
         $report = new \gradereport_user\report\user($courseid, $gpr, $context, $userid);
 
         if (!$report->fill_table()) {
-            return 'No grades available';
+            return [];
+            // return 'No grades available';
         }
 
         // OLD: Print the page
