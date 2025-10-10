@@ -36,7 +36,7 @@ class report extends \table_sql {
         $this->no_sorting('airesponse');
 
         // Define the titles of columns to show in header.
-        $headers = array('User ID', 'User Name', 'User Message', 'AI Response', 'Context', 'Time');
+        $headers = array(get_string('userid', 'block_exaaichat'), get_string('username', 'block_exaaichat'), get_string('usermessage', 'block_exaaichat'), get_string('airesponse', 'block_exaaichat'), get_string('context', 'block_exaaichat'), get_string('time', 'block_exaaichat'));
         $this->define_headers($headers);
     }
 
@@ -54,7 +54,6 @@ class report extends \table_sql {
     function col_contextid($values) {
         $context = \context::instance_by_id($values->contextid);
 
-        $coursecontext;
         try {
             $coursecontext = $context->get_course_context();
         } catch (\Throwable $e) {

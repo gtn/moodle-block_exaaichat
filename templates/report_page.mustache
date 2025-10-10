@@ -33,18 +33,18 @@
     <input type="hidden" name="courseid" value="{{courseid}}" />
     <div class="report_container">
         <div style="display: flex; flex-direction: column">
-            <label for="search-user">Search by user name</label>
-            <input id="search-user" name="user" type="text" value="{{user}}" placeholder="User name"/>
+            <label for="search-user">{{#str}} searchbyusername, block_exaaichat {{/str}}</label>
+            <input id="search-user" name="user" type="text" value="{{user}}" placeholder="{{#str}} username, block_exaaichat {{/str}}"/>
         </div>
         <div style="display: flex; flex-direction: column">
-            <label for="search-starttime">Start time</label>
+            <label for="search-starttime">{{#str}} starttime, block_exaaichat {{/str}}</label>
             <input id="search-starttime" type="datetime-local" name="starttime" value="{{starttime}}" />
         </div>
         <div style="display: flex; flex-direction: column">
-            <label for="search-endtime">End time</label>
+            <label for="search-endtime">{{#str}} endtime, block_exaaichat {{/str}}</label>
             <input id="search-endtime" type="datetime-local" name="endtime" value="{{endtime}}" />
         </div>
     </div>
-    <button class="btn btn-primary" type="submit">Search</button>
+    <button class="btn btn-primary" type="submit">{{#str}} search, block_exaaichat {{/str}}</button>
 </form>
 <br />

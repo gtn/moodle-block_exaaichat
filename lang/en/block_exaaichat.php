@@ -155,3 +155,31 @@ $string['placeholders:userdate:placeholder'] = 'Current date and time is: {$a}';
 $string['placeholders:grade:coursetotal:name'] = 'Course total grade';
 $string['placeholders:grade:coursetotal:placeholder'] = 'Course total grade is: {$a}';
 $string['grade:not_available'] = 'Not available';
+
+// Added for search/report UI.
+$string['search'] = 'Search';
+$string['searchbyusername'] = 'Search by user name';
+$string['starttime'] = 'Start time';
+$string['endtime'] = 'End time';
+$string['userid'] = 'User ID';
+// username already defined earlier as 'User name'.
+$string['usermessage'] = 'User Message';
+$string['airesponse'] = 'AI Response';
+$string['context'] = 'Context';
+$string['time'] = 'Time';
+
+$string['vectorstoreids'] = 'Vector store IDs';
+
+// Debug file logging setting.
+$string['debugfilelogging'] = 'Enable debug logging';
+$string['debugfileloggingdesc'] = 'All API calls (user messages, AI responses and function calls) will be logged to moodledata/log/exaaichat.log';
+
+// Additional message (responses type) setting.
+$string['additionalmessage'] = 'Additional text for every message';
+$string['additionalmessagedesc'] = 'This text will be appended to each user message before sending it to the AI.';
+
+// Type select option labels.
+$string['type_chat'] = 'Chat API';
+$string['type_assistant'] = 'Assistants API';
+$string['type_azure'] = 'Azure OpenAI';
+$string['type_responses'] = 'Responses API';

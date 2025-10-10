@@ -62,7 +62,12 @@ if ($hassiteconfig) {
             get_string('type', 'block_exaaichat'),
             get_string('typedesc', 'block_exaaichat'),
             'chat',
-            ['chat' => 'chat', 'assistant' => 'assistant', 'azure' => 'azure', 'responses' => 'responses']
+            [
+                'chat' => get_string('type_chat', 'block_exaaichat'),
+                'assistant' => get_string('type_assistant', 'block_exaaichat'),
+                'azure' => get_string('type_azure', 'block_exaaichat'),
+                'responses' => get_string('type_responses', 'block_exaaichat')
+            ]
         ));
 
         $settings->add(new admin_setting_configcheckbox(
@@ -76,7 +81,7 @@ if ($hassiteconfig) {
             'block_exaaichat/assistantname',
             get_string('assistantname', 'block_exaaichat'),
             get_string('assistantnamedesc', 'block_exaaichat'),
-            'Assistant',
+            get_string('defaultassistantname', 'block_exaaichat'),
             PARAM_TEXT
         ));
 
@@ -84,7 +89,7 @@ if ($hassiteconfig) {
             'block_exaaichat/username',
             get_string('username', 'block_exaaichat'),
             get_string('usernamedesc', 'block_exaaichat'),
-            'User',
+            get_string('defaultusername', 'block_exaaichat'),
             PARAM_TEXT
         ));
 
@@ -97,8 +102,8 @@ if ($hassiteconfig) {
 
         $settings->add(new admin_setting_configcheckbox(
             'block_exaaichat/debug_file_logging',
-            'Enable debug logging',
-            'All api calls (User messages, AI responses and function calls) will be logged to moodledata/log/exaaichat.log',
+            get_string('debugfilelogging', 'block_exaaichat'),
+            get_string('debugfileloggingdesc', 'block_exaaichat'),
             0
         ));
 
@@ -180,7 +185,7 @@ if ($hassiteconfig) {
                 'block_exaaichat/prompt',
                 get_string('prompt', 'block_exaaichat'),
                 get_string('promptdesc', 'block_exaaichat'),
-                "Below is a conversation between a user and a support assistant for a Moodle site, where users go for online learning.",
+                get_string('defaultprompt', 'block_exaaichat'),
                 PARAM_TEXT
             ));
 
@@ -212,8 +217,8 @@ if ($hassiteconfig) {
         if ($type === 'responses') {
             $settings->add(new admin_setting_configtext(
                 'block_exaaichat/additional_message',
-                'Additional text for every message',
-                '',
+                get_string('additionalmessage', 'block_exaaichat'),
+                get_string('additionalmessagedesc', 'block_exaaichat'),
                 '',
                 PARAM_TEXT
             ));

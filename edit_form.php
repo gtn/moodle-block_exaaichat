@@ -123,7 +123,7 @@ class block_exaaichat_edit_form extends block_edit_form {
         $mform->addElement('header', 'config_header', get_string('blocksettings', 'block'));
 
         $mform->addElement('text', 'config_title', get_string('blocktitle', 'block_exaaichat'));
-        $mform->setDefault('config_title', 'Exabis AI Chat');
+        $mform->setDefault('config_title', get_string('exaaichat', 'block_exaaichat'));
         $mform->setType('config_title', PARAM_TEXT);
 
         $mform->addElement('advcheckbox', 'config_showlabels', get_string('showlabels', 'block_exaaichat'));
@@ -204,7 +204,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->setType('config_topp', PARAM_FLOAT);
                 $mform->addHelpButton('config_topp', 'config_topp', 'block_exaaichat');
 
-                $mform->addElement('text', 'config_vector_store_ids', 'vector_store_ids');
+                $mform->addElement('text', 'config_vector_store_ids', get_string('vectorstoreids', 'block_exaaichat'));
                 $mform->setDefault('config_vector_store_ids', '');
                 $mform->setType('config_vector_store_ids', PARAM_TEXT);
             }
