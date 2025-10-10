@@ -155,6 +155,7 @@ $string['placeholders:userdate:placeholder'] = 'Current date and time is: {$a}';
 $string['placeholders:grade:coursetotal:name'] = 'Course total grade';
 $string['placeholders:grade:coursetotal:placeholder'] = 'Course total grade is: {$a}';
 $string['grade:not_available'] = 'Not available';
+$string['grade:nogradesavailable'] = 'No grades available';
 
 // Added for search/report UI.
 $string['search'] = 'Search';
