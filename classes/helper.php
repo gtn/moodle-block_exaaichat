@@ -50,7 +50,7 @@ class helper {
      * Get my grade information of the current course
      * Abruf der Noten und Bewertungen für den aktuellen Kurs
      */
-    public static function get_student_grades_for_course_flattened(): mixed {
+    public static function get_student_grades_for_course_flattened(): array {
         global $COURSE, $USER;
 
         $courseid = 0;
