@@ -1,6 +1,32 @@
-/* eslint-disable */
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Functions for the chat interface
+ *
+ * @module     block_exaaichat
+ * @copyright  2025 GTN Solutions https://gtn-solutions.com
+ * @copyright  based on work by Limekiller https://github.com/Limekiller/moodle-block_openai_chat
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* eslint-disable @babel/semi, no-undef */
 var questionString = 'Ask a question...'
 var errorString = 'An error occurred! Please try again later.'
+
+var chatData;
 
 export const init = (data) => {
     const blockId = data['blockId']
@@ -22,7 +48,7 @@ export const init = (data) => {
                     }
                 })
                 // Some sort of error in the API call. Probably the thread no longer exists, so lets reset it
-                .catch(error => {
+                .catch(() => {
                     chatData[blockId] = {}
                     localStorage.setItem("block_exaaichat_data", JSON.stringify(chatData));
                 })
@@ -78,7 +104,7 @@ export const init = (data) => {
             e.target.value = ''
         }
     })
-    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #go`).addEventListener('click', e => {
+    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #go`).addEventListener('click', () => {
         const input = document.querySelector('#openai_input')
         if (input.value !== "") {
             addToChatLog('user', input.value, blockId)
@@ -87,11 +113,11 @@ export const init = (data) => {
         }
     })
 
-    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #refresh`).addEventListener('click', e => {
+    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #refresh`).addEventListener('click', () => {
         clearHistory(blockId)
     })
 
-    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #popout`).addEventListener('click', e => {
+    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #popout`).addEventListener('click', () => {
         if (document.querySelector('.drawer.drawer-right')) {
             document.querySelector('.drawer.drawer-right').style.zIndex = '1041'
         }
@@ -145,6 +171,7 @@ const addToChatLog = (type, message, blockId) => {
 
 /**
  * Clears the thread ID from local storage and removes the messages from the UI in order to refresh the chat
+ * @param {int} blockId The ID of the block to manipulate
  */
 const clearHistory = (blockId) => {
     chatData = localStorage.getItem("block_exaaichat_data")
@@ -218,16 +245,25 @@ const createCompletion = (message, blockId, api_type) => {
                 localStorage.setItem("block_exaaichat_data", JSON.stringify(chatData));
             }
         } catch (error) {
-            console.log(error)
+            logError(error);
             addToChatLog('bot', data.error.message, blockId)
         }
         document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).focus()
     })
     .catch(error => {
-        console.log(error)
+        logError(error);
         document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).classList.add('error')
         document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).placeholder = errorString
     })
+}
+
+/**
+ * Log an error to the console and potentially to an external service in the future
+ * @param {Error} error The error object to log
+ */
+function logError(error) {
+  /* eslint-disable no-console */
+  console.error(error);
 }
 
 /**

@@ -52,7 +52,7 @@ $thread_id = clean_param($body['threadId'], PARAM_NOTAGS, true);
 $instance_record = $DB->get_record('block_instances', ['blockname' => 'exaaichat', 'id' => $block_id], '*');
 $instance = block_instance('exaaichat', $instance_record);
 if (!$instance) {
-    print_error('invalidblockinstance', 'error', $id);
+    throw new \moodle_exception('invalidblockinstance', 'error');
 }
 
 $context = context::instance_by_id($instance_record->parentcontextid);

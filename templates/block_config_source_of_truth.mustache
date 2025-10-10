@@ -1,0 +1,48 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+<div>
+    <div>
+        {{#str}} addplaceholders:title, block_exaaichat {{/str}}
+    </div>
+    <select id="config_placeholder_dropdown" class="form-select custom-select" style="width: 75%;">
+        {{#placeholders}}
+            <option value="{{key}}">{{value}}</option>
+        {{/placeholders}}
+    </select>
+    <button type="button" id="config_add_placeholder_button" class="btn btn-secondary mt-1" disabled>
+        {{#str}} addplaceholders:button, block_exaaichat {{/str}}
+    </button>
+</div>
+<script>
+    function block_exaaichat_require(modules, callback) {
+        if (typeof require !== 'undefined') {
+            // require the init script for the config popup
+            require(modules, callback);
+        } else {
+            document.addEventListener('DOMContentLoaded', function () {
+                // require if the form is displayed on the config page
+                // then require is available after the DOM is loaded
+                require(modules, callback);
+            });
+        }
+    }
+
+    block_exaaichat_require(['block_exaaichat/config_popup'], function (m) {
+        m.init();
+    });
+</script>
