@@ -111,7 +111,7 @@ class block_exaaichat_edit_form extends block_edit_form {
     }
 
     protected function specific_definition($mform) {
-        global $COURSE;
+        global $COURSE, $OUTPUT;
 
         // this does not work if the form is displayed on the config page
         // $block_id = $this->_ajaxformdata["blockid"];
@@ -223,42 +223,13 @@ class block_exaaichat_edit_form extends block_edit_form {
             // $formselectclass = ((float)($CFG->version) >= 2024041800) ? 'form-select' : 'custom-select'; // future development: use form-select or custom-select depending on Moodle version or based on theme
             // for now: both classes are needed to make it work in all themes
 
-            ob_start();
-            ?>
-            <div style="margin - top: -10px">
-                <div>
-                    <?= get_string('addplaceholders:title', 'block_exaaichat') ?>:
-                </div>
-                <select id="config_placeholder_dropdown" class="form-select custom-select" style="width: 75%;">
-                    <?php foreach ($placeholders as $key => $value): ?>
-                        <option value="<?= s($key) ?>"><?= s($value) ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <button type="button" id="config_add_placeholder_button" class="btn btn-secondary mt-1" disabled>
-                    <?= get_string('addplaceholders:button', 'block_exaaichat') ?>
-                </button>
-            </div>
-            <script>
-                function block_exaaichat_require(modules, callback) {
-                    if (typeof require !== 'undefined') {
-                        // require the init script for the config popup
-                        require(modules, callback);
-                    } else {
-                        document.addEventListener('DOMContentLoaded', function () {
-                            // require if the form is displayed on the config page
-                            // then require is available after the DOM is loaded
-                            require(modules, callback);
-                        });
-                    }
-                }
-
-                block_exaaichat_require(['block_exaaichat/config_popup'], function (m) {
-                    m.init();
-                });
-            </script>
-            <?php
-            $html = ob_get_clean();
-            $mform->addElement('static', 'user_message_options', '', $html);
+            $mform->addElement('static', 'user_message_options', '', $OUTPUT->render_from_template('block_exaaichat/block_config_source_of_truth', [
+                'placeholders' => array_map(
+                    fn($key, $value) => ['key' => $key, 'value' => $value],
+                    array_keys($placeholders),
+                    $placeholders
+                ),
+            ]));
 
             if (get_config('block_exaaichat', 'allowinstancesettings') === "1") {
                 $mform->addElement('textarea', 'config_prompt', get_string('prompt', 'block_exaaichat'));
