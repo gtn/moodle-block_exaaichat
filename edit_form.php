@@ -49,6 +49,7 @@ class block_exaaichat_edit_form extends block_edit_form {
             get_string('placeholders:user.fullname:placeholder', 'block_exaaichat', '{user.fullname}') => get_string('placeholders:user.fullname:name', 'block_exaaichat'),
             get_string('placeholders:userdate:placeholder', 'block_exaaichat', '{userdate}') => get_string('placeholders:userdate:name', 'block_exaaichat'),
             get_string('placeholders:grade:coursetotal:placeholder', 'block_exaaichat', '{grade:coursetotal}') => get_string('placeholders:grade:coursetotal:name', 'block_exaaichat'),
+            get_string('placeholders:range:coursetotal:placeholder', 'block_exaaichat', '{range:coursetotal}') => get_string('placeholders:range:coursetotal:name', 'block_exaaichat'),
         ];
 
         foreach ($mods as $mod) {

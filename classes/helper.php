@@ -51,7 +51,7 @@ class helper {
      * Abruf der Noten und Bewertungen für den aktuellen Kurs
      */
     public static function get_student_grades_for_course_flattened(): mixed {
-        global $COURSE, $USER;
+        global $COURSE, $USER, $CFG;
 
         $courseid = 0;
 
@@ -131,8 +131,7 @@ class helper {
      */
     public static function generate_placeholders(string $string): string {
         return preg_replace_callback('!{(?<placeholder>[^}]+)}!', function($matches) {
-            global $USER;
-
+            global $USER, $COURSE, $CFG;
             $placeholder = $matches['placeholder'];
 
             if ($placeholder == 'user.fullname') {
@@ -151,13 +150,23 @@ class helper {
                     $gradedata = static::get_student_grades_for_course_flattened();
                 }
 
-                $grade_title = $matches[1];
+                $grade_title_full = $matches[1];
+                $field = 'grade'; // default
+                $grade_title = $grade_title_full;
+                if (str_contains($grade_title_full, ':')) {
+                    [$maybe_title, $maybe_field] = explode(':', $grade_title_full, 2);
+                    if (in_array($maybe_field, ['grade', 'range'])) {
+                        $grade_title = $maybe_title;
+                        $field = $maybe_field;
+                    }
+                }
+
                 if ($grade_title == 'coursetotal') {
                     // the last grade entry is probably the course total
                     // and the name should be "Course total"
                     $last = end($gradedata);
                     if ($last && $last->name == get_string('coursetotal', 'grades')) {
-                        return $last->grade;
+                        return ($last->{$field} ?? '') !== '' ? $last->{$field} : get_string('grade:not_available', 'block_exaaichat');
                     } else {
                         // throw an error for now, maybe this can also be changed to return 'not available';
                         throw new \moodle_exception("couldn't get course total");
@@ -167,14 +176,10 @@ class helper {
                 $make_name_english = fn($value) => preg_replace('!( gesamt| ukupno)$!i', ' total', $value ?? '');
                 foreach ($gradedata as $row) {
                     if ($make_name_english($row->name) == $make_name_english($grade_title)) {
-                        return $row->grade;
+                        return ($row->{$field} ?? '') !== '' ? $row->{$field} : get_string('grade:not_available', 'block_exaaichat');
                     }
                 }
-
-                // not found
                 return get_string('grade:not_available', 'block_exaaichat');
-
-                // throw new \moodle_exception("grade item \"{$grade_title}\" not found");
             }
 
             throw new \moodle_exception('Unknown placeholder ' . $placeholder);

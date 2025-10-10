@@ -84,6 +84,7 @@ You can also specify placeholders like this:
 My name is {user.fullname}.
 Today is {userdate}.
 My finalgrade is {grade:Course total}.
+Course total grade range is: {range:coursetotal}.
 ';
 $string['showlabels'] = 'Show labels';
 $string['advanced'] = 'Advanced';
@@ -154,4 +155,6 @@ $string['placeholders:userdate:name'] = 'Current date and time';
 $string['placeholders:userdate:placeholder'] = 'Current date and time is: {$a}';
 $string['placeholders:grade:coursetotal:name'] = 'Course total grade';
 $string['placeholders:grade:coursetotal:placeholder'] = 'Course total grade is: {$a}';
+$string['placeholders:range:coursetotal:name'] = 'Course total grade range';
+$string['placeholders:range:coursetotal:placeholder'] = 'Course total grade range is: {$a}';
 $string['grade:not_available'] = 'Not available';
