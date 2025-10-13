@@ -48,8 +48,9 @@ class block_exaaichat_edit_form extends block_edit_form {
         $placeholders = [
             get_string('placeholders:user.fullname:placeholder', 'block_exaaichat', '{user.fullname}') => get_string('placeholders:user.fullname:name', 'block_exaaichat'),
             get_string('placeholders:userdate:placeholder', 'block_exaaichat', '{userdate}') => get_string('placeholders:userdate:name', 'block_exaaichat'),
-            get_string('placeholders:grade:coursetotal:grade:placeholder', 'block_exaaichat', '{grade:coursetotal:grade}') => get_string('placeholders:grade:coursetotal:grade:name', 'block_exaaichat'),
-            get_string('placeholders:grade:coursetotal:range:placeholder', 'block_exaaichat', '{grade:coursetotal:range}') => get_string('placeholders:grade:coursetotal:range:name', 'block_exaaichat'),
+            // New syntax examples for course total.
+            get_string('placeholders:grade:coursetotal:placeholder', 'block_exaaichat', '{grade:coursetotal}') => get_string('placeholders:grade:coursetotal:name', 'block_exaaichat'),
+            get_string('placeholders:range:coursetotal:placeholder', 'block_exaaichat', '{range:coursetotal}') => get_string('placeholders:range:coursetotal:name', 'block_exaaichat'),
         ];
 
         foreach ($mods as $mod) {
@@ -103,8 +104,12 @@ class block_exaaichat_edit_form extends block_edit_form {
                 // add the name and the type
                 $name = get_string('modulename', $mod->modname) . ' "' . $mod->name . '"';
 
+                // Grade value placeholder.
                 $placeholders[get_string('placeholders:grade:placeholder', 'block_exaaichat', ['name' => $name, 'placeholder' => "{grade:{$mod->name}}"])] =
                     get_string('placeholders:grade:name', 'block_exaaichat', $name);
+                // Grade range placeholder.
+                $placeholders[get_string('placeholders:range:placeholder', 'block_exaaichat', ['name' => $name, 'placeholder' => "{range:{$mod->name}}"])] =
+                    get_string('placeholders:range:name', 'block_exaaichat', $name);
             }
         }
 

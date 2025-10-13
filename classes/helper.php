@@ -126,6 +126,10 @@ class helper {
 
     /**
      * Parse placeholders in the user message
+     * Supported grade placeholders (new syntax):
+     *  - {grade:Item name} -> the grade value
+     *  - {range:Item name} -> the grade range
+     *  - {grade:coursetotal} / {range:coursetotal}
      * @param string $string
      * @return string
      */
@@ -143,33 +147,29 @@ class helper {
             if (preg_match('!^user\.(.+)!', $placeholder, $matches)) {
                 throw new \moodle_exception('todo #42422444');
             }
-            if (preg_match('!^grade:(.+)!', $placeholder, $matches)) {
+
+            // New syntax: grade:<name> or range:<name>
+            if (preg_match('!^(grade|range):(.+)!', $placeholder, $gmatches)) {
+                $requestedfield = $gmatches[1]; // 'grade' or 'range'
+                $grade_title = $gmatches[2];
+                $field = $requestedfield; // Map directly.
+
                 // get gradedata only once if needed
                 static $gradedata = null;
                 if ($gradedata === null) {
                     $gradedata = static::get_student_grades_for_course_flattened();
                 }
 
-                $grade_title_full = $matches[1];
-                $field = 'grade'; // default
-                $grade_title = $grade_title_full;
-                if (str_contains($grade_title_full, ':')) {
-                    [$maybe_title, $maybe_field] = explode(':', $grade_title_full, 2);
-                    if (in_array($maybe_field, ['grade', 'range'])) {
-                        $grade_title = $maybe_title;
-                        $field = $maybe_field;
-                    }
-                }
-
-                if ($grade_title == 'coursetotal') {
+                // Handle course total specially.
+                if ($grade_title === 'coursetotal') {
                     // the last grade entry is probably the course total
                     // and the name should be "Course total"
                     $last = end($gradedata);
-                    if ($last && $last->name == get_string('coursetotal', 'grades')) {
+                    if ($last && ($last->name ?? null) == get_string('coursetotal', 'grades')) {
                         return ($last->{$field} ?? '') !== '' ? $last->{$field} : get_string('grade:not_available', 'block_exaaichat');
                     } else {
-                        // throw an error for now, maybe this can also be changed to return 'not available';
-                        throw new \moodle_exception("couldn't get course total");
+                        // Fallback to not available instead of throwing (friendlier in chat context).
+                        return get_string('grade:not_available', 'block_exaaichat');
                     }
                 }
 

@@ -82,8 +82,9 @@ $string['sourceoftruthdesc'] = 'Although the AI is very capable out-of-the-box, 
 You can also specify placeholders like this:
 My name is {user.fullname}.
 Today is {userdate}.
-Course total grade is {grade:coursetotal:grade}.
-Course total grade range is {grade:coursetotal:range}.';
+Course total grade is {grade:coursetotal}.
+Course total grade range is {range:coursetotal}.
+';
 $string['showlabels'] = 'Show labels';
 $string['advanced'] = 'Advanced';
 $string['advanceddesc'] = 'Advanced arguments sent to OpenAI. Don\'t touch unless you know what you\'re doing!';
@@ -151,10 +152,12 @@ $string['placeholders:user.fullname:name'] = 'User fullname';
 $string['placeholders:user.fullname:placeholder'] = 'The user name is: {$a}';
 $string['placeholders:userdate:name'] = 'Current date and time';
 $string['placeholders:userdate:placeholder'] = 'Current date and time is: {$a}';
-$string['placeholders:grade:coursetotal:grade:name'] = 'Course total grade';
-$string['placeholders:grade:coursetotal:grade:placeholder'] = 'Course total grade is: {$a}';
-$string['placeholders:grade:coursetotal:range:name'] = 'Course total grade range';
-$string['placeholders:grade:coursetotal:range:placeholder'] = 'Course total grade range is: {$a}';
+$string['placeholders:grade:coursetotal:name'] = 'Course total grade';
+$string['placeholders:grade:coursetotal:placeholder'] = 'Course total grade is: {$a}';
+$string['placeholders:range:coursetotal:name'] = 'Course total grade range';
+$string['placeholders:range:coursetotal:placeholder'] = 'Course total grade range is: {$a}';
+$string['placeholders:range:name'] = 'Range of {$a}';
+$string['placeholders:range:placeholder'] = 'Range of {$a->name} is: {$a->placeholder}';
 $string['grade:not_available'] = 'Not available';
 $string['grade:nogradesavailable'] = 'No grades available';
 
