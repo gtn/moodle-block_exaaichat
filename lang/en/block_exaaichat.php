@@ -177,7 +177,7 @@ $string['vectorstoreids'] = 'Vector store IDs';
 
 // Debug file logging setting.
 $string['debugfilelogging'] = 'Enable debug logging';
-$string['debugfileloggingdesc'] = 'All API calls (user messages, AI responses and function calls) will be logged to moodledata/log/exaaichat.log';
+$string['debugfileloggingdesc'] = "All API calls (user messages, AI responses and function calls) will be logged to moodledata/log/exaaichat.log<br/>\nThis can be useful for debugging issues with the AI responses, but the log file can grow very large very quickly, so it should only be enabled temporarily.";
 
 // Additional message (responses type) setting.
 $string['additionalmessage'] = 'Additional text for every message';
