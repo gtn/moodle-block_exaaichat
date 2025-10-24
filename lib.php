@@ -112,7 +112,7 @@ function get_models() {
     if (count($configmodels) > 0) {
         $models = [];
         foreach ($configmodels as $model) {
-            $models[$model] = $model;
+            $models[trim($model)] = trim($model);
         }
     }
     return [
