@@ -33,7 +33,7 @@ function get_type_to_display() {
     if ($stored_type) {
         return $stored_type;
     }
-    
+
     return 'chat';
 }
 
@@ -66,7 +66,7 @@ function fetch_assistants_array($block_id = null) {
         ),
     ));
 
-    $response = $curl->get("https://api.openai.com/v1/assistants?order=desc");
+    $response = $curl->get(\block_openai_chat\lib::api_url() . "/assistants?order=desc");
     $response = json_decode($response);
     $assistant_array = [];
     if (property_exists($response, 'data')) {
@@ -85,29 +85,39 @@ function fetch_assistants_array($block_id = null) {
  * @return Array: The list of model info
  */
 function get_models() {
+    $defaultmodels = [
+        'gpt-4o' => 'gpt-4o',
+        'gpt-4o-2024-11-20' => 'gpt-4o-2024-11-20',
+        'gpt-4o-2024-08-06' => 'gpt-4o-2024-08-06',
+        'gpt-4o-2024-05-13' => 'gpt-4o-2024-05-13',
+        'gpt-4o-mini-2024-07-18' => 'gpt-4o-mini-2024-07-18',
+        'gpt-4o-mini' => 'gpt-4o-mini',
+        'gpt-4-turbo-preview' => 'gpt-4-turbo-preview',
+        'gpt-4-turbo-2024-04-09' => 'gpt-4-turbo-2024-04-09',
+        'gpt-4-turbo' => 'gpt-4-turbo',
+        'gpt-4-32k-0314' => 'gpt-4-32k-0314',
+        'gpt-4-1106-preview' => 'gpt-4-1106-preview',
+        'gpt-4-0613' => 'gpt-4-0613',
+        'gpt-4-0314' => 'gpt-4-0314',
+        'gpt-4-0125-preview' => 'gpt-4-0125-preview',
+        'gpt-4' => 'gpt-4',
+        'gpt-3.5-turbo-16k-0613' => 'gpt-3.5-turbo-16k-0613',
+        'gpt-3.5-turbo-16k' => 'gpt-3.5-turbo-16k',
+        'gpt-3.5-turbo-1106' => 'gpt-3.5-turbo-1106',
+        'gpt-3.5-turbo-0125' => 'gpt-3.5-turbo-0125',
+        'gpt-3.5-turbo' => 'gpt-3.5-turbo'
+    ];
+    $configmodels = explode("\n", get_config('block_openai_chat', 'models'));
+    $models = $defaultmodels;
+    if (count($configmodels) > 0) {
+        $models = [];
+        foreach ($configmodels as $model) {
+            $models[$model] = $model;
+        }
+    }
     return [
-        "models" => [
-            'gpt-4o' => 'gpt-4o',
-            'gpt-4o-2024-11-20' => 'gpt-4o-2024-11-20',
-            'gpt-4o-2024-08-06' => 'gpt-4o-2024-08-06',
-            'gpt-4o-2024-05-13' => 'gpt-4o-2024-05-13',
-            'gpt-4o-mini-2024-07-18' => 'gpt-4o-mini-2024-07-18',
-            'gpt-4o-mini' => 'gpt-4o-mini',
-            'gpt-4-turbo-preview' => 'gpt-4-turbo-preview',
-            'gpt-4-turbo-2024-04-09' => 'gpt-4-turbo-2024-04-09',
-            'gpt-4-turbo' => 'gpt-4-turbo',
-            'gpt-4-32k-0314' => 'gpt-4-32k-0314',
-            'gpt-4-1106-preview' => 'gpt-4-1106-preview',
-            'gpt-4-0613' => 'gpt-4-0613',
-            'gpt-4-0314' => 'gpt-4-0314',
-            'gpt-4-0125-preview' => 'gpt-4-0125-preview',
-            'gpt-4' => 'gpt-4',
-            'gpt-3.5-turbo-16k-0613' => 'gpt-3.5-turbo-16k-0613',
-            'gpt-3.5-turbo-16k' => 'gpt-3.5-turbo-16k',
-            'gpt-3.5-turbo-1106' => 'gpt-3.5-turbo-1106',
-            'gpt-3.5-turbo-0125' => 'gpt-3.5-turbo-0125',
-            'gpt-3.5-turbo' => 'gpt-3.5-turbo'
-        ],
+        "models" => $models,
+        "models_default" => $defaultmodels,
         "types" => [
             'gpt-4o-2024-11-20'          =>  'chat',
             'gpt-4o-2024-08-06'          =>  'chat',
@@ -136,7 +146,7 @@ function get_models() {
 /**
  * If setting is enabled, log the user's message and the AI response
  * @param string usermessage: The text sent from the user
- * @param string airesponse: The text returned by the AI 
+ * @param string airesponse: The text returned by the AI
  */
 function log_message($usermessage, $airesponse, $context) {
     global $USER, $DB;

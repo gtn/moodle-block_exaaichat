@@ -28,8 +28,8 @@ if ($hassiteconfig) {
 
     if (!defined('BEHAT_SITE_RUNNING')) {
         $ADMIN->add('reports', new admin_externalpage(
-            'openai_chat_report', 
-            get_string('openai_chat_logs', 'block_openai_chat'), 
+            'openai_chat_report',
+            get_string('openai_chat_logs', 'block_openai_chat'),
             new moodle_url("$CFG->wwwroot/blocks/openai_chat/report.php", ['courseid' => 1]),
             'moodle/site:config'
         ));
@@ -204,6 +204,21 @@ if ($hassiteconfig) {
         if ($type === 'assistant') {
 
         } else {
+            $settings->add(new admin_setting_configtext(
+                'block_openai_chat/apiurl',
+                get_string('apiurl', 'block_openai_chat'),
+                get_string('apiurldesc', 'block_openai_chat'),
+                'https://api.openai.com/v1',
+                PARAM_URL
+            ));
+
+            $settings->add(new admin_setting_configtextarea(
+                'block_openai_chat/models',
+                get_string('models', 'block_openai_chat'),
+                get_string('modelsdesc', 'block_openai_chat'),
+                implode("\n", array_keys(get_models()['models_default']))
+            ));
+
             $settings->add(new admin_setting_configselect(
                 'block_openai_chat/model',
                 get_string('model', 'block_openai_chat'),

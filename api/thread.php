@@ -42,7 +42,7 @@ $curl->setopt(array(
     ),
 ));
 
-$response = $curl->get("https://api.openai.com/v1/threads/$thread_id/messages");
+$response = $curl->get(\block_openai_chat\lib::api_url() . "/threads/$thread_id/messages");
 $response = json_decode($response);
 
 if (property_exists($response, 'error')) {
