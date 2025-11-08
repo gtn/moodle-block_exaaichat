@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 $string['pluginname'] = 'Exabis AI Chat Block';
 $string['exaaichat'] = 'Exabis AI Chat';
 $string['exaaichat_logs'] = 'Exabis Chat Logs';
@@ -37,8 +39,7 @@ $string['privacy:metadata:exaaichat_log:timecreated'] = 'The time the message wa
 $string['privacy:metadata:ai_api'] = 'Depending on the configuration moodle will send some data to the AI Backend (eg. OpenAI), or the AI can request data from moodle.';
 $string['privacy:metadata:ai_api:fullname'] = 'The fullname of the user that sent the message.';
 $string['privacy:metadata:ai_api:gradebook'] = 'Gradebook entries of the current course.';
-$string['privacy:metadata:ai_api:actions'] = 'The AI can request data from moodle. This includes userdetails (userid, username, firstname, lastname, email), enrolled courses, userlist of the enrolled courses, list of all grades in the current course,
-list of course content, course categories and also recent courses';
+$string['privacy:metadata:ai_api:actions'] = 'The AI can request data from moodle. This includes userdetails (userid, username, firstname, lastname, email), enrolled courses, userlist of the enrolled courses, list of all grades in the current course, list of course content, course categories and also recent courses';
 $string['privacy:chatmessagespath'] = 'Sent AI chat messages';
 $string['downloadfilename'] = 'block_exaaichat_logs';
 
@@ -146,7 +147,7 @@ $string['loggingenabled'] = "Logging is enabled. Any messages you send or receiv
 $string['openaitimedout'] = 'ERROR: OpenAI did not provide a response in time.';
 $string['addplaceholders:title'] = 'Add placeholders to the Source of Truth';
 $string['addplaceholders:button'] = 'Add placeholder';
-$string['placeholders:grade:name'] = 'Result of {$a}';
+$string['placeholders:grade:name'] = '{$a}: Grade';
 $string['placeholders:grade:placeholder'] = 'Result of {$a->name} is: {$a->placeholder}';
 $string['placeholders:user.fullname:name'] = 'User fullname';
 $string['placeholders:user.fullname:placeholder'] = 'The user name is: {$a}';
@@ -156,7 +157,7 @@ $string['placeholders:grade:coursetotal:name'] = 'Course total grade';
 $string['placeholders:grade:coursetotal:placeholder'] = 'Course total grade is: {$a}';
 $string['placeholders:range:coursetotal:name'] = 'Course total grade range';
 $string['placeholders:range:coursetotal:placeholder'] = 'Course total grade range is: {$a}';
-$string['placeholders:range:name'] = 'Range of {$a}';
+$string['placeholders:range:name'] = '{$a}: Range';
 $string['placeholders:range:placeholder'] = 'Range of {$a->name} is: {$a->placeholder}';
 $string['grade:not_available'] = 'Not available';
 $string['grade:nogradesavailable'] = 'No grades available';

@@ -20,9 +20,16 @@
         {{#str}} addplaceholders:title, block_exaaichat {{/str}}
     </div>
     <select id="config_placeholder_dropdown" class="form-select custom-select" style="width: 75%;">
-        {{#placeholders}}
-            <option value="{{key}}">{{value}}</option>
-        {{/placeholders}}
+        <optgroup label="{{#str}} general {{/str}}">
+            {{#placeholders}}
+                <option value="{{placeholder}}">{{label}}</option>
+            {{/placeholders}}
+        </optgroup>
+        <optgroup label="{{#str}} grades {{/str}}:">
+            {{#placeholders_gradebook}}
+                <option value="{{placeholder}}" {{#disabled}}disabled{{/disabled}}>{{{spacer}}}{{label}}</option>
+            {{/placeholders_gradebook}}
+        </optgroup>
     </select>
     <button type="button" id="config_add_placeholder_button" class="btn btn-secondary mt-1" disabled>
         {{#str}} addplaceholders:button, block_exaaichat {{/str}}

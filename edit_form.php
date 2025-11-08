@@ -23,101 +23,85 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_exaaichat\helper;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
 class block_exaaichat_edit_form extends block_edit_form {
 
-    /**
-     * Get the activies in the course (those that can get grades)
-     * @param int $courseid
-     * @return array
-     */
-    private function get_placeholders(int $courseid): array {
-        global $DB;
-
-        // Get information about course modules and existing module types.
-        // based on course/view.php
-        $modinfo = get_fast_modinfo($courseid);
-        $mods = $modinfo->get_cms();
-
-        // we only need the id and the name of the modules to return
-        // TODO: get_content_items_for_user_in_course something like that to only get the activities, not resources? archetype=1 = resource, archetype=0  = activity
-
-        $placeholders = [
-            get_string('placeholders:user.fullname:placeholder', 'block_exaaichat', '{user.fullname}') => get_string('placeholders:user.fullname:name', 'block_exaaichat'),
-            get_string('placeholders:userdate:placeholder', 'block_exaaichat', '{userdate}') => get_string('placeholders:userdate:name', 'block_exaaichat'),
-            // New syntax examples for course total.
-            get_string('placeholders:grade:coursetotal:placeholder', 'block_exaaichat', '{grade:coursetotal}') => get_string('placeholders:grade:coursetotal:name', 'block_exaaichat'),
-            get_string('placeholders:range:coursetotal:placeholder', 'block_exaaichat', '{range:coursetotal}') => get_string('placeholders:range:coursetotal:name', 'block_exaaichat'),
+    private function get_placeholders(): array {
+        $placeholders = [];
+        $placeholders[] = [
+            'placeholder' => get_string('placeholders:user.fullname:placeholder', 'block_exaaichat', '{user.fullname}'),
+            'label' => get_string('placeholders:user.fullname:name', 'block_exaaichat'),
+        ];
+        $placeholders[] = [
+            'placeholder' => get_string('placeholders:userdate:placeholder', 'block_exaaichat', '{userdate}'),
+            'label' => get_string('placeholders:userdate:name', 'block_exaaichat'),
         ];
 
-        foreach ($mods as $mod) {
-            // plugin_supports MOD_ARCHETYPE_RESOURCE
-            // $archetype = plugin_supports('mod', $mod->modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER); // to check if it is a resource. If it is a resource, you cannot grade it ==> skip it
-            // if ($archetype === MOD_ARCHETYPE_RESOURCE) {
-            //     continue; // skip resources
-            // }
+        return $placeholders;
+    }
 
-            if (method_exists($mod, 'get_instance_record')) {
-                // only available since moodle 5.0
-                // gets the record of table "modname" with id "instance"
-                $instance = $mod->get_instance_record();
-            } else {
-                // gets the record of table "modname" with id "instance"
-                $instance = $DB->get_record($mod->modname, ['id' => $mod->instance], '*', MUST_EXIST);
-            }
-            $modulename = $mod->modname;
+    private function get_placeholders_gradebook(): array {
+        $gradedata = helper::get_student_grades_for_course_flattened();
+        $placeholders = [];
 
-            switch ($modulename) {
-                case 'assign':
-                case 'quiz':
-                case 'lesson':
-                case 'workshop':
-                case 'choice':
-                    // TODO: sollte einfach !empty($instance->grade) sein?
-                    $hasgrading = !empty($instance->grade);
-                    break;
-
-                case 'forum':
-                    $hasgrading = isset($instance->grade_forum) && (int)$instance->grade_forum !== 0;
-                    break;
-
-                case 'lti':
-                    $hasgrading = isset($instance->grade_max) && (int)$instance->grade_max > 0;
-                    break;
-
-                case 'scorm':
-                    $hasgrading = isset($instance->grademethod) && (int)$instance->grademethod !== 0;
-                    break;
-
-                // Add additional modules as needed here
-
-                default:
-                    // fallback for other modules with a 'grade' field
-                    $hasgrading = isset($instance->grade) && (int)$instance->grade !== 0;
-                    break;
+        foreach ($gradedata as $key => $gradeitem) {
+            if ($key == array_key_last($gradedata)) {
+                // letzter Eintrag ist die Kursgesamtbewertung, diese wird weiter unten separat behandelt
+                continue;
             }
 
-            if ($hasgrading) {
-                // add the name and the type
-                $name = get_string('modulename', $mod->modname) . ' "' . $mod->name . '"';
+            $fullname = $gradeitem->mod_name ? "{$gradeitem->mod_name} \"{$gradeitem->name}\"" : $gradeitem->name;
 
-                // Grade value placeholder.
-                $placeholders[get_string('placeholders:grade:placeholder', 'block_exaaichat', ['name' => $name, 'placeholder' => "{grade:{$mod->name}}"])] =
-                    get_string('placeholders:grade:name', 'block_exaaichat', $name);
-                // Grade range placeholder.
-                $placeholders[get_string('placeholders:range:placeholder', 'block_exaaichat', ['name' => $name, 'placeholder' => "{range:{$mod->name}}"])] =
-                    get_string('placeholders:range:name', 'block_exaaichat', $name);
+            // schaut besser aus:
+            // level 0 no spacer
+            // level 1 spacer = 3
+            // level 2 spacer = 8
+            $spacer = $gradeitem->level > 1 ? ltrim(str_repeat('&nbsp;', 3 + ($gradeitem->level - 2) * 5) . ' &bull; ') : '';
+
+            if (!$gradeitem->has_grade) {
+                // Skip grade items without a grade (e.g., category headers).
+                $placeholders[] = [
+                    'placeholder' => $gradeitem->name,
+                    'label' => $gradeitem->name,
+                    'disabled' => true,
+                    'spacer' => $spacer,
+                ];
+                continue;
             }
+
+            // Grade value placeholder.
+            $placeholders[] = [
+                'placeholder' => get_string('placeholders:grade:placeholder', 'block_exaaichat', ['name' => $fullname, 'placeholder' => "{grade:{$gradeitem->name}}"]),
+                'label' => get_string('placeholders:grade:name', 'block_exaaichat', $fullname),
+                'spacer' => $spacer,
+            ];
+            $placeholders[] = [
+                'placeholder' => get_string('placeholders:range:placeholder', 'block_exaaichat', ['name' => $fullname, 'placeholder' => "{range:{$gradeitem->name}}"]),
+                'label' => get_string('placeholders:range:name', 'block_exaaichat', $fullname),
+                'spacer' => $spacer,
+            ];
         }
+
+        // New syntax examples for course total.
+        $placeholders[] = [
+            'placeholder' => get_string('placeholders:grade:coursetotal:placeholder', 'block_exaaichat', '{grade:coursetotal}'),
+            'label' => get_string('placeholders:grade:coursetotal:name', 'block_exaaichat'),
+        ];
+        $placeholders[] = [
+            'placeholder' => get_string('placeholders:range:coursetotal:placeholder', 'block_exaaichat', '{range:coursetotal}'),
+            'label' => get_string('placeholders:range:coursetotal:name', 'block_exaaichat'),
+        ];
 
         return $placeholders;
     }
 
     protected function specific_definition($mform) {
-        global $COURSE, $OUTPUT;
+        global $OUTPUT;
 
         // this does not work if the form is displayed on the config page
         // $block_id = $this->_ajaxformdata["blockid"];
@@ -223,18 +207,10 @@ class block_exaaichat_edit_form extends block_edit_form {
             $mform->setType('config_sourceoftruth', PARAM_TEXT);
             $mform->addHelpButton('config_sourceoftruth', 'config_sourceoftruth', 'block_exaaichat');
 
-            // Dropdown menu for activities
-            $placeholders = $this->get_placeholders($COURSE->id);
-
-            // $formselectclass = ((float)($CFG->version) >= 2024041800) ? 'form-select' : 'custom-select'; // future development: use form-select or custom-select depending on Moodle version or based on theme
-            // for now: both classes are needed to make it work in all themes
-
+            // Dropdown menu for placeholders
             $mform->addElement('static', 'user_message_options', '', $OUTPUT->render_from_template('block_exaaichat/block_config_source_of_truth', [
-                'placeholders' => array_map(
-                    fn($key, $value) => ['key' => $key, 'value' => $value],
-                    array_keys($placeholders),
-                    $placeholders
-                ),
+                'placeholders' => $this->get_placeholders(),
+                'placeholders_gradebook' => $this->get_placeholders_gradebook(),
             ]));
 
             if (get_config('block_exaaichat', 'allowinstancesettings') === "1") {

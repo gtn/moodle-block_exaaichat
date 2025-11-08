@@ -70,7 +70,7 @@ class helper {
 
         // OLD: Print the page
         // this doesn't work, because the output can be very long (100kb)
-        // which is to much for chatGPT (30k limit)
+        // which is too much for chatGPT (30k limit)
         // return $report->print_table(true);
 
         // NEW: parse the table into objects
@@ -86,10 +86,17 @@ class helper {
                 continue;
             }
 
+            if (empty($rowdata['itemname'])) {
+                // on Zagreb moodle itemname can also be empty
+                // Ignore those rows
+                continue;
+            }
+
             $row = (object)[];
             if (!preg_match('!\blevel([0-9]+)\b!', $rowdata['itemname']['class'], $matches)) {
                 continue;
             }
+            $row->level = (int)$matches[1];
 
             // Set the row cells.
             foreach ($report->tablecolumns as $tablecolumn) {
@@ -116,7 +123,10 @@ class helper {
                     $row->{$tablecolumn} = $content_text;
                 }
             }
+
             $row->itemname = $rowdata['itemname']['content'] ?? null;
+            $row->mod_name = trim(strip_tags(preg_replace('!<div class="rowtitle">.*!', '', $rowdata['itemname']['content'] ?? '')));
+            $row->has_grade = !empty($rowdata['grade']);
 
             $data[] = $row;
         }

@@ -24,6 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+
 $string['pluginname'] = 'Exabis KI Chat Block';
 $string['exaaichat'] = 'Exabis KI Chat';
 $string['exaaichat_logs'] = 'Exabis Chat-Protokolle';
@@ -146,7 +147,7 @@ $string['loggingenabled'] = 'Die Protokollierung ist aktiviert. Alle Nachrichten
 $string['openaitimedout'] = 'FEHLER: OpenAI hat nicht rechtzeitig geantwortet.';
 $string['addplaceholders:title'] = 'Platzhalter zur Wissensbasis hinzufügen';
 $string['addplaceholders:button'] = 'Platzhalter hinzufügen';
-$string['placeholders:grade:name'] = 'Ergebnis von {$a}';
+$string['placeholders:grade:name'] = '{$a}: Bewertung';
 $string['placeholders:grade:placeholder'] = 'Das Ergebnis von {$a->name} ist: {$a->placeholder}';
 $string['placeholders:user.fullname:name'] = 'Vollständiger Benutzername';
 $string['placeholders:user.fullname:placeholder'] = 'Der Benutzername lautet: {$a}';
@@ -154,10 +155,10 @@ $string['placeholders:userdate:name'] = 'Aktuelles Datum und Uhrzeit';
 $string['placeholders:userdate:placeholder'] = 'Aktuelles Datum und Uhrzeit: {$a}';
 $string['placeholders:grade:coursetotal:name'] = 'Kursgesamtbewertung';
 $string['placeholders:grade:coursetotal:placeholder'] = 'Kursgesamtbewertung: {$a}';
-// $string['placeholders:range:coursetotal:name'] = 'Notenbereich Kurs gesamt';
-// $string['placeholders:range:coursetotal:placeholder'] = 'Notenbereich Kurs gesamt: {$a}';
-// $string['placeholders:range:name'] = 'Bereich von {$a}';
-// $string['placeholders:range:placeholder'] = 'Bereich von {$a->name}: {$a->placeholder}';
+$string['placeholders:range:coursetotal:name'] = 'Notenbereich Kurs gesamt';
+$string['placeholders:range:coursetotal:placeholder'] = 'Notenbereich Kurs gesamt: {$a}';
+$string['placeholders:range:name'] = '{$a}: Bereich';
+$string['placeholders:range:placeholder'] = 'Bereich von {$a->name}: {$a->placeholder}';
 $string['grade:not_available'] = 'Nicht verfügbar';
 $string['grade:nogradesavailable'] = 'Keine Noten verfügbar';
 
