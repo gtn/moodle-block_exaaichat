@@ -35,21 +35,3 @@
         {{#str}} addplaceholders:button, block_exaaichat {{/str}}
     </button>
 </div>
-<script>
-    function block_exaaichat_require(modules, callback) {
-        if (typeof require !== 'undefined') {
-            // require the init script for the config popup
-            require(modules, callback);
-        } else {
-            document.addEventListener('DOMContentLoaded', function () {
-                // require if the form is displayed on the config page
-                // then require is available after the DOM is loaded
-                require(modules, callback);
-            });
-        }
-    }
-
-    block_exaaichat_require(['block_exaaichat/config_popup'], function (m) {
-        m.init();
-    });
-</script>

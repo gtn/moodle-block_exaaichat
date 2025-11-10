@@ -29,39 +29,39 @@ var errorString = 'An error occurred! Please try again later.'
 var chatData;
 
 export const init = (data) => {
-    const blockId = data['blockId']
-    const api_type = data['api_type']
-    const persistConvo = data['persistConvo']
+  const blockId = data['blockId']
+  const api_type = data['api_type']
+  const persistConvo = data['persistConvo']
 
-    // Initialize local data storage if necessary
-    // If a thread ID exists for this block, make an API request to get existing messages
-    if (api_type === 'assistant') {
-        chatData = localStorage.getItem("block_exaaichat_data")
-        if (chatData) {
-            chatData = JSON.parse(chatData)
-            if (chatData[blockId] && chatData[blockId]['threadId'] && persistConvo === "1") {
-                fetch(`${M.cfg.wwwroot}/blocks/exaaichat/api/thread.php?thread_id=${chatData[blockId]['threadId']}`)
-                .then(response => response.json())
-                .then(data => {
-                    for (let message of data) {
-                        addToChatLog(message.role === 'user' ? 'user' : 'bot', message.message, blockId)
-                    }
-                })
-                // Some sort of error in the API call. Probably the thread no longer exists, so lets reset it
-                .catch(() => {
-                    chatData[blockId] = {}
-                    localStorage.setItem("block_exaaichat_data", JSON.stringify(chatData));
-                })
-            // The block ID doesn't exist in the chat data object, so let's create it
-            } else {
-                chatData[blockId] = {}
+  // Initialize local data storage if necessary
+  // If a thread ID exists for this block, make an API request to get existing messages
+  if (api_type === 'assistant') {
+    chatData = localStorage.getItem("block_exaaichat_data")
+    if (chatData) {
+      chatData = JSON.parse(chatData)
+      if (chatData[blockId] && chatData[blockId]['threadId'] && persistConvo === "1") {
+        fetch(`${M.cfg.wwwroot}/blocks/exaaichat/api/thread.php?thread_id=${chatData[blockId]['threadId']}`)
+          .then(response => response.json())
+          .then(data => {
+            for (let message of data) {
+              addToChatLog(message.role === 'user' ? 'user' : 'bot', message.message, blockId)
             }
-        // We don't even have a chat data object, so we'll create one
-        } else {
-            chatData = {[blockId]: {}}
-        }
-        localStorage.setItem("block_exaaichat_data", JSON.stringify(chatData));
+          })
+          // Some sort of error in the API call. Probably the thread no longer exists, so lets reset it
+          .catch(() => {
+            chatData[blockId] = {}
+            localStorage.setItem("block_exaaichat_data", JSON.stringify(chatData));
+          })
+        // The block ID doesn't exist in the chat data object, so let's create it
+      } else {
+        chatData[blockId] = {}
+      }
+      // We don't even have a chat data object, so we'll create one
+    } else {
+      chatData = {[blockId]: {}}
     }
+    localStorage.setItem("block_exaaichat_data", JSON.stringify(chatData));
+  }
 
   if (api_type === 'responses') {
     chatData = localStorage.getItem("block_exaaichat_data")
@@ -93,53 +93,54 @@ export const init = (data) => {
   }
 
   // Prevent sidebar from closing when osk pops up (hack for MDL-77957)
-    window.addEventListener('resize', event => {
-        event.stopImmediatePropagation();
-    }, true);
+  window.addEventListener('resize', event => {
+    event.stopImmediatePropagation();
+  }, true);
 
-    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).addEventListener('keyup', e => {
-        if (e.which === 13 && e.target.value !== "") {
-            addToChatLog('user', e.target.value, blockId)
-            createCompletion(e.target.value, blockId, api_type)
-            e.target.value = ''
-        }
-    })
-    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #go`).addEventListener('click', () => {
-        const input = document.querySelector('#openai_input')
-        if (input.value !== "") {
-            addToChatLog('user', input.value, blockId)
-            createCompletion(input.value, blockId, api_type)
-            input.value = ''
-        }
-    })
+  document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).addEventListener('keydown', e => {
+    if (e.which === 13 && e.target.value !== "") {
+      e.preventDefault();
+      addToChatLog('user', e.target.value, blockId)
+      createCompletion(e.target.value, blockId, api_type)
+      e.target.value = ''
+    }
+  })
+  document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #go`).addEventListener('click', () => {
+    const input = document.querySelector('#openai_input')
+    if (input.value !== "") {
+      addToChatLog('user', input.value, blockId)
+      createCompletion(input.value, blockId, api_type)
+      input.value = ''
+    }
+  })
 
-    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #refresh`).addEventListener('click', () => {
-        clearHistory(blockId)
-    })
+  document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #refresh`).addEventListener('click', () => {
+    clearHistory(blockId)
+  })
 
-    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #popout`).addEventListener('click', () => {
-        if (document.querySelector('.drawer.drawer-right')) {
-            document.querySelector('.drawer.drawer-right').style.zIndex = '1041'
-        }
-        document.querySelector(`.block_exaaichat[data-instance-id='${blockId}']`).classList.toggle('expanded')
-    })
+  document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #popout`).addEventListener('click', () => {
+    if (document.querySelector('.drawer.drawer-right')) {
+      document.querySelector('.drawer.drawer-right').style.zIndex = '1041'
+    }
+    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}']`).classList.toggle('expanded')
+  })
 
-    require(['core/str'], function(str) {
-        var strings = [
-            {
-                key: 'askaquestion',
-                component: 'block_exaaichat'
-            },
-            {
-                key: 'erroroccurred',
-                component: 'block_exaaichat'
-            },
-        ];
-        str.get_strings(strings).then((results) => {
-            questionString = results[0];
-            errorString = results[1];
-        });
+  require(['core/str'], function (str) {
+    var strings = [
+      {
+        key: 'askaquestion',
+        component: 'block_exaaichat'
+      },
+      {
+        key: 'erroroccurred',
+        component: 'block_exaaichat'
+      },
+    ];
+    str.get_strings(strings).then((results) => {
+      questionString = results[0];
+      errorString = results[1];
     });
+  });
 }
 
 /**
@@ -149,24 +150,24 @@ export const init = (data) => {
  * @param {int} blockId The ID of the block to manipulate
  */
 const addToChatLog = (type, message, blockId) => {
-    let messageContainer = document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #exaaichat_log`)
+  let messageContainer = document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #exaaichat_log`)
 
-    const messageElem = document.createElement('div')
-    messageElem.classList.add('openai_message')
-    for (let className of type.split(' ')) {
-        messageElem.classList.add(className)
-    }
+  const messageElem = document.createElement('div')
+  messageElem.classList.add('openai_message')
+  for (let className of type.split(' ')) {
+    messageElem.classList.add(className)
+  }
 
-    const messageText = document.createElement('span')
-    messageText.innerHTML = message
-    messageElem.append(messageText)
+  const messageText = document.createElement('span')
+  messageText.innerHTML = message
+  messageElem.append(messageText)
 
-    messageContainer.append(messageElem)
-    if (messageText.offsetWidth) {
-        messageElem.style.width = (messageText.offsetWidth + 40) + "px"
-    }
-    messageContainer.scrollTop = messageContainer.scrollHeight
-    messageContainer.closest('.block_exaaichat > div').scrollTop = messageContainer.scrollHeight
+  messageContainer.append(messageElem)
+  if (messageText.offsetWidth) {
+    messageElem.style.width = (messageText.offsetWidth + 40) + "px"
+  }
+  messageContainer.scrollTop = messageContainer.scrollHeight
+  messageContainer.closest('.block_exaaichat > div').scrollTop = messageContainer.scrollHeight
 }
 
 /**
@@ -174,15 +175,15 @@ const addToChatLog = (type, message, blockId) => {
  * @param {int} blockId The ID of the block to manipulate
  */
 const clearHistory = (blockId) => {
-    chatData = localStorage.getItem("block_exaaichat_data")
-    if (chatData) {
-        chatData = JSON.parse(chatData)
-        if (chatData[blockId]) {
-            chatData[blockId] = {}
-            localStorage.setItem("block_exaaichat_data", JSON.stringify(chatData));
-        }
+  chatData = localStorage.getItem("block_exaaichat_data")
+  if (chatData) {
+    chatData = JSON.parse(chatData)
+    if (chatData[blockId]) {
+      chatData[blockId] = {}
+      localStorage.setItem("block_exaaichat_data", JSON.stringify(chatData));
     }
-    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #exaaichat_log`).innerHTML = ""
+  }
+  document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #exaaichat_log`).innerHTML = ""
 }
 
 /**
@@ -192,68 +193,68 @@ const clearHistory = (blockId) => {
  * @param {string} api_type "assistant" | "chat" The type of API to use
  */
 const createCompletion = (message, blockId, api_type) => {
-    let threadId = null
-    let chatData
+  let threadId = null
+  let chatData
 
-    // If the type is assistant, attempt to fetch a thread ID
-    if (api_type === 'assistant' || api_type === 'responses') {
-        chatData = localStorage.getItem("block_exaaichat_data")
-        if (chatData) {
-            chatData = JSON.parse(chatData)
-            if (chatData[blockId]) {
-                threadId = chatData[blockId]['threadId'] || null
-            }
-        } else {
-            // create the chat data item if necessary
-            chatData = {[blockId]: {}}
-        }
+  // If the type is assistant, attempt to fetch a thread ID
+  if (api_type === 'assistant' || api_type === 'responses') {
+    chatData = localStorage.getItem("block_exaaichat_data")
+    if (chatData) {
+      chatData = JSON.parse(chatData)
+      if (chatData[blockId]) {
+        threadId = chatData[blockId]['threadId'] || null
+      }
+    } else {
+      // create the chat data item if necessary
+      chatData = {[blockId]: {}}
     }
+  }
 
-    const history = buildTranscript(blockId)
+  const history = buildTranscript(blockId)
 
-    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #control_bar`).classList.add('disabled')
-    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).classList.remove('error')
-    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).placeholder = questionString
-    document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).blur()
-    addToChatLog('bot loading', '...', blockId);
+  document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #control_bar`).classList.add('disabled')
+  document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).classList.remove('error')
+  document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).placeholder = questionString
+  document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).blur()
+  addToChatLog('bot loading', '...', blockId);
 
-    fetch(`${M.cfg.wwwroot}/blocks/exaaichat/api/completion.php`, {
-        method: 'POST',
-        body: JSON.stringify({
-            message: message,
-            history: history,
-            blockId: blockId,
-            threadId: threadId
-        })
+  fetch(`${M.cfg.wwwroot}/blocks/exaaichat/api/completion.php?sesskey=${M.cfg.sesskey}`, {
+    method: 'POST',
+    body: JSON.stringify({
+      message: message,
+      history: history,
+      blockId: blockId,
+      threadId: threadId
     })
+  })
     .then(response => {
-        let messageContainer = document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #exaaichat_log`)
-        messageContainer.removeChild(messageContainer.lastElementChild)
-        document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #control_bar`).classList.remove('disabled')
+      let messageContainer = document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #exaaichat_log`)
+      messageContainer.removeChild(messageContainer.lastElementChild)
+      document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #control_bar`).classList.remove('disabled')
 
-        if (!response.ok) {
-            throw Error(response.statusText)
-        } else {
-            return response.json()
-        }
+      if (!response.ok) {
+        throw Error(response.statusText)
+      } else {
+        return response.json()
+      }
     })
     .then(data => {
-        try {
-            addToChatLog('bot', data.message, blockId)
-            if (data.thread_id) {
-                chatData[blockId]['threadId'] = data.thread_id
-                localStorage.setItem("block_exaaichat_data", JSON.stringify(chatData));
-            }
-        } catch (error) {
-            logError(error);
-            addToChatLog('bot', data.error.message, blockId)
+      try {
+        addToChatLog('bot', data.message, blockId)
+        if (data.thread_id) {
+          chatData[blockId]['threadId'] = data.thread_id;
+          localStorage.setItem("block_exaaichat_data", JSON.stringify(chatData));
         }
-        document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).focus()
+      } catch (error) {
+        logError(error);
+        addToChatLog('bot', data.error.message, blockId)
+      }
+      document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).focus()
     })
     .catch(error => {
-        logError(error);
-        document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).classList.add('error')
-        document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).placeholder = errorString
+      logError(error);
+      document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).classList.add('error')
+      document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).placeholder = errorString
     })
 }
 
@@ -272,18 +273,18 @@ function logError(error) {
  * @return {JSONObject} A transcript of the conversation up to this point
  */
 const buildTranscript = (blockId) => {
-    let transcript = []
-    document.querySelectorAll(`.block_exaaichat[data-instance-id='${blockId}'] .openai_message`).forEach((message, index) => {
-        if (index === document.querySelectorAll(`.block_exaaichat[data-instance-id='${blockId}'] .openai_message`).length - 1) {
-            return
-        }
+  let transcript = []
+  document.querySelectorAll(`.block_exaaichat[data-instance-id='${blockId}'] .openai_message`).forEach((message, index) => {
+    if (index === document.querySelectorAll(`.block_exaaichat[data-instance-id='${blockId}'] .openai_message`).length - 1) {
+      return
+    }
 
-        let user = userName
-        if (message.classList.contains('bot')) {
-            user = assistantName
-        }
-        transcript.push({"user": user, "message": message.innerText})
-    })
+    let user = userName
+    if (message.classList.contains('bot')) {
+      user = assistantName
+    }
+    transcript.push({"user": user, "message": message.innerText})
+  })
 
-    return transcript
+  return transcript
 }

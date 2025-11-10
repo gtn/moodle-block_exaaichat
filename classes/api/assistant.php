@@ -67,6 +67,11 @@ class assistant extends base {
             ];
         }, callback_helper::get_functions()));
 
+        // $sourceoftruth = trim($block_settings['sourceoftruth'].' '.$block_settings['prompt']);
+        // $sourceoftruth = helper::generate_placeholders($sourceoftruth);
+        // $sourceoftruth = trim($this->sourceoftruth.' '.$this->prompt);
+        // $sourceoftruth = helper::generate_placeholders($sourceoftruth);
+
         $this->stream = $this->client->threads()->createAndRunStreamed(
             parameters: [
                 'assistant_id' => $this->assistant_id,

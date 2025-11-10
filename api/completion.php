@@ -40,6 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     die();
 }
 
+require_sesskey();
+
 $body = json_decode(file_get_contents('php://input'), true);
 $message = clean_param($body['message'], PARAM_NOTAGS);
 $history = clean_param_array($body['history'], PARAM_NOTAGS, true);
@@ -74,28 +76,43 @@ $setting_names = [
     'assistantname',
     'apikey',
     'model',
+    'endpoint',
     'temperature',
     'maxlength',
     'topp',
     'frequency',
     'presence',
     'assistant',
-    'vector_store_ids'
+    'vector_store_ids',
 ];
 foreach ($setting_names as $setting) {
     if ($instance->config && property_exists($instance->config, $setting)) {
-        $block_settings[$setting] = $instance->config->$setting ? $instance->config->$setting : "";
+        $block_settings[$setting] = $instance->config->$setting ?: "";
     } else {
         $block_settings[$setting] = "";
     }
 }
 
-$engine_class;
+// falls model "other" gewählt wurde, dann den Wert aus dem Eingabefeld model_other verwenden
+if (($block_settings['model'] ?? '') === 'other') {
+    $block_settings['model'] = $instance->config->model_other ?? '';
+}
+
 $model = get_config('block_exaaichat', 'model');
-$api_type = get_config('block_exaaichat', 'type');
+
+$api_type = '';
+if (get_config('block_exaaichat', 'allowinstancesettings')) {
+    // allow switching to different api
+    $api_type = $instance->config->api_type;
+}
+if (!$api_type) {
+    $api_type = block_exaaichat_get_api_type();
+}
+
 $engine_class = "\block_exaaichat\completion\\$api_type";
 
-$completion = new $engine_class(...[$model, $message, $history, $block_settings, $thread_id]);
+/* @var completion $completion */
+$completion = new $engine_class($model, $message, $history, $block_settings, $thread_id);
 $response = $completion->create_completion($PAGE->context);
 
 // Format the markdown of each completion message into HTML.
@@ -105,4 +122,6 @@ $response["message"] = format_text($response["message"], FORMAT_MARKDOWN, ['cont
 block_exaaichat_log_message($message, $response['message'], $context);
 
 $response = json_encode($response);
+
+header("Content-Type: application/json");
 echo $response;

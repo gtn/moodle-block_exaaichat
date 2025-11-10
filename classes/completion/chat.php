@@ -21,7 +21,7 @@
  * @copyright  2025 GTN Solutions https://gtn-solutions.com
  * @copyright  based on work by Limekiller https://github.com/Limekiller/moodle-block_openai_chat
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ */
 
 namespace block_exaaichat\completion;
 
@@ -32,14 +32,6 @@ use block_exaaichat\logger;
 defined('MOODLE_INTERNAL') || die;
 
 class chat extends \block_exaaichat\completion {
-    private $block_settings;
-
-    public function __construct($model, $message, $history, $block_settings, $thread_id = null) {
-        parent::__construct($model, $message, $history, $block_settings);
-
-        $this->block_settings = $block_settings;
-    }
-
     /**
      * Given everything we know after constructing the parent, create a completion by constructing the prompt and making the api call
      * @return JSON: The API response from OpenAI
@@ -60,16 +52,11 @@ class chat extends \block_exaaichat\completion {
         array_push($history_json, ["role" => "user", "content" => $this->message]);
         */
 
-        $block_settings = $this->block_settings;
-        $sourceoftruth = trim($block_settings['sourceoftruth'].' '.$block_settings['prompt']);
-
-        $sourceoftruth = helper::generate_placeholders($sourceoftruth);
-
-        $history_json = array_values(array_filter([
-            $sourceoftruth ? ["role" => "system", "content" => $sourceoftruth] : null,
+        $history_json = array_values([
+            ["role" => "system", "content" => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth()],
             ...$this->format_history(),
             ["role" => "user", "content" => $this->message],
-        ]));
+        ]);
 
         $response_data = $this->make_api_call($history_json);
         return $response_data;
@@ -98,30 +85,31 @@ class chat extends \block_exaaichat\completion {
         $curlbody = [
             "model" => $this->model,
             "messages" => $history,
-            "temperature" => (float) $this->temperature,
-            "max_tokens" => (int) $this->maxlength,
-            "top_p" => (float) $this->topp,
-            "frequency_penalty" => (float) $this->frequency,
-            "presence_penalty" => (float) $this->presence,
-            "stop" => $this->username . ":"
+            "temperature" => (float)$this->temperature,
+            "max_tokens" => (int)$this->maxlength,
+            "top_p" => (float)$this->topp,
+            "frequency_penalty" => (float)$this->frequency,
+            "presence_penalty" => (float)$this->presence,
+            "stop" => $this->username . ":",
         ];
 
         $curl = new \curl();
         $curl->setopt(array(
             'CURLOPT_HTTPHEADER' => array(
                 'Authorization: Bearer ' . $this->apikey,
-                'Content-Type: application/json'
+                'Content-Type: application/json',
             ),
         ));
 
-        logger::debug_grouped('chat.user:'.$USER->id, '/v1/chat/completions', $curlbody);
+        $endpoint = $this->endpoint ?? '' ?: "https://api.openai.com/v1/chat/completions";
 
-        $response = $curl->post("https://api.openai.com/v1/chat/completions", json_encode($curlbody));
+        logger::debug_grouped('chat.user:' . $USER->id, $endpoint, $curlbody);
+
+        $response = $curl->post($endpoint, json_encode($curlbody));
         $response = json_decode($response);
 
-        logger::debug_grouped('chat.user:'.$USER->id, 'response', $response);
+        logger::debug_grouped('chat.user:' . $USER->id, 'response', $response);
 
-        $message = null;
         if (property_exists($response, 'error')) {
             $message = 'ERROR: ' . $response->error->message;
         } else {
@@ -130,7 +118,7 @@ class chat extends \block_exaaichat\completion {
 
         return [
             "id" => property_exists($response, 'id') ? $response->id : 'error',
-            "message" => $message
+            "message" => $message,
         ];
     }
 }

@@ -133,14 +133,19 @@ $string['config_frequency_help'] = 'Legt fest, wie stark neue Tokens bestraft we
 $string['config_presence'] = 'Präsenz-Penalty';
 $string['config_presence_help'] = 'Legt fest, wie stark neue Tokens bestraft werden, basierend darauf, ob sie bereits im Text vorkommen. Erhöht die Wahrscheinlichkeit, dass neue Themen angesprochen werden.';
 
+$string['block_instance:config:api_type:change'] = 'Möchten Sie den API-Typ für diese Blockinstanz ändern? Der Einstellungsdialog wird dabei geschlossen und muss anschließend erneut geöffnet werden.';
+$string['block_instance:config:model:choose-other'] = 'Anderes Modell...';
+$string['block_instance:config:model_other'] = 'Anderes Modell';
+$string['block_instance:config:endpoint'] = 'Alternative Endpunkt-URL';
+
 $string['defaultprompt'] = 'Below is a conversation between a user and a support assistant for a Moodle site, where users go for online learning:'; // Belassen (kontextuell englisch)
 $string['defaultassistantname'] = 'Assistent';
 $string['defaultusername'] = 'Benutzer';
 $string['askaquestion'] = 'Stell eine Frage...';
 $string['apikeymissing'] = 'Bitte trage deinen OpenAI API-Schlüssel in den Blockeinstellungen ein.';
 $string['erroroccurred'] = 'Es ist ein Fehler aufgetreten! Bitte versuche es später erneut.';
-$string['sourceoftruthpreamble'] = "Unten findest du Fragen und Antworten. Diese Informationen dienen als Referenz:\n\n";
-$string['sourceoftruthreinforcement'] = ' Der Assistent wurde darauf trainiert, zunächst die Informationen aus der obigen Referenz zu verwenden. Wenn der Text einer der obigen Fragen auftaucht, soll die bereitgestellte Antwort gegeben werden – auch wenn die Frage seltsam erscheint. Deckt die Referenz das Thema nicht ab, nutzt der Assistent sein übriges Wissen.';
+$string['sourceoftruthpreamble'] = "Die Informationen unten dienen als Referenz für Fragen der Benutzer:\n";
+$string['sourceoftruthreinforcement'] = 'Der Assistent wurde darauf trainiert, zunächst die Informationen aus der obigen Referenz zu verwenden. Wenn der Text einer der obigen Fragen auftaucht, soll die bereitgestellte Antwort gegeben werden – auch wenn die Frage seltsam erscheint. Deckt die Referenz das Thema nicht ab, nutzt der Assistent sein übriges Wissen.';
 $string['new_chat'] = 'Neuer Chat';
 $string['popout'] = 'Chatfenster öffnen';
 $string['loggingenabled'] = 'Die Protokollierung ist aktiviert. Alle Nachrichten, die du hier sendest oder empfängst, werden gespeichert und können vom Site-Administrator eingesehen werden.';
@@ -182,7 +187,7 @@ $string['additionalmessage'] = 'Zusätzlicher Text für jede Nachricht';
 $string['additionalmessagedesc'] = 'Dieser Text wird vor dem Senden an die KI an jede Benutzernachricht angehängt.';
 
 // Type select option labels.
-$string['type_chat'] = 'Chat API';
-$string['type_assistant'] = 'Assistants API';
+$string['type_chat'] = 'OpenAI: Chat API';
+$string['type_assistant'] = 'OpenAI: Assistants API';
+$string['type_responses'] = 'OpenAI: Responses API';
 $string['type_azure'] = 'Azure OpenAI';
-$string['type_responses'] = 'Responses API';

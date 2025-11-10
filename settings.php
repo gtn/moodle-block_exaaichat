@@ -38,9 +38,9 @@ if ($hassiteconfig) {
 
     if ($ADMIN->fulltree) {
 
-        require_once($CFG->dirroot .'/blocks/exaaichat/lib.php');
+        require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
-        $type = block_exaaichat_get_type_to_display();
+        $type = block_exaaichat_get_api_type();
         $assistant_array = [];
         if ($type === 'assistant') {
             $assistant_array = block_exaaichat_fetch_assistants_array();
@@ -48,14 +48,6 @@ if ($hassiteconfig) {
 
         global $PAGE;
         $PAGE->requires->js_call_amd('block_exaaichat/settings', 'init');
-
-        $settings->add(new admin_setting_configtext(
-            'block_exaaichat/apikey',
-            get_string('apikey', 'block_exaaichat'),
-            get_string('apikeydesc', 'block_exaaichat'),
-            '',
-            PARAM_TEXT
-        ));
 
         $settings->add(new admin_setting_configselect(
             'block_exaaichat/type',
@@ -65,9 +57,17 @@ if ($hassiteconfig) {
             [
                 'chat' => get_string('type_chat', 'block_exaaichat'),
                 'assistant' => get_string('type_assistant', 'block_exaaichat'),
+                'responses' => get_string('type_responses', 'block_exaaichat'),
                 'azure' => get_string('type_azure', 'block_exaaichat'),
-                'responses' => get_string('type_responses', 'block_exaaichat')
             ]
+        ));
+
+        $settings->add(new admin_setting_configtext(
+            'block_exaaichat/apikey',
+            get_string('apikey', 'block_exaaichat'),
+            get_string('apikeydesc', 'block_exaaichat'),
+            '',
+            PARAM_TEXT
         ));
 
         $settings->add(new admin_setting_configcheckbox(
@@ -139,67 +139,63 @@ if ($hassiteconfig) {
                 1
             ));
 
-        } else {
-
-            // Chat settings //
-
-            if ($type === 'azure') {
-                $settings->add(new admin_setting_heading(
-                    'block_exaaichat/azureheading',
-                    get_string('azureheading', 'block_exaaichat'),
-                    get_string('azureheadingdesc', 'block_exaaichat')
-                ));
-
-                $settings->add(new admin_setting_configtext(
-                    'block_exaaichat/resourcename',
-                    get_string('resourcename', 'block_exaaichat'),
-                    get_string('resourcenamedesc', 'block_exaaichat'),
-                    "",
-                    PARAM_TEXT
-                ));
-
-                $settings->add(new admin_setting_configtext(
-                    'block_exaaichat/deploymentid',
-                    get_string('deploymentid', 'block_exaaichat'),
-                    get_string('deploymentiddesc', 'block_exaaichat'),
-                    "",
-                    PARAM_TEXT
-                ));
-
-                $settings->add(new admin_setting_configtext(
-                    'block_exaaichat/apiversion',
-                    get_string('apiversion', 'block_exaaichat'),
-                    get_string('apiversiondesc', 'block_exaaichat'),
-                    "2023-09-01-preview",
-                    PARAM_TEXT
-                ));
-            }
-
+        } elseif ($type === 'azure') {
             $settings->add(new admin_setting_heading(
-                'block_exaaichat/chatheading',
-                get_string('chatheading', 'block_exaaichat'),
-                get_string('chatheadingdesc', 'block_exaaichat')
+                'block_exaaichat/azureheading',
+                get_string('azureheading', 'block_exaaichat'),
+                get_string('azureheadingdesc', 'block_exaaichat')
             ));
 
-            $settings->add(new admin_setting_configtextarea(
-                'block_exaaichat/prompt',
-                get_string('prompt', 'block_exaaichat'),
-                get_string('promptdesc', 'block_exaaichat'),
-                get_string('defaultprompt', 'block_exaaichat'),
+            $settings->add(new admin_setting_configtext(
+                'block_exaaichat/resourcename',
+                get_string('resourcename', 'block_exaaichat'),
+                get_string('resourcenamedesc', 'block_exaaichat'),
+                "",
                 PARAM_TEXT
             ));
 
-            $settings->add(new admin_setting_configtextarea(
-                'block_exaaichat/sourceoftruth',
-                get_string('sourceoftruth', 'block_exaaichat'),
-                get_string('sourceoftruthdesc', 'block_exaaichat'),
-                '',
+            $settings->add(new admin_setting_configtext(
+                'block_exaaichat/deploymentid',
+                get_string('deploymentid', 'block_exaaichat'),
+                get_string('deploymentiddesc', 'block_exaaichat'),
+                "",
+                PARAM_TEXT
+            ));
+
+            $settings->add(new admin_setting_configtext(
+                'block_exaaichat/apiversion',
+                get_string('apiversion', 'block_exaaichat'),
+                get_string('apiversiondesc', 'block_exaaichat'),
+                "2023-09-01-preview",
                 PARAM_TEXT
             ));
         }
 
 
-        // Advanced Settings //
+        // Chat settings
+        $settings->add(new admin_setting_heading(
+            'block_exaaichat/chatheading',
+            get_string('chatheading', 'block_exaaichat'),
+            get_string('chatheadingdesc', 'block_exaaichat')
+        ));
+
+        $settings->add(new admin_setting_configtextarea(
+            'block_exaaichat/prompt',
+            get_string('prompt', 'block_exaaichat'),
+            get_string('promptdesc', 'block_exaaichat'),
+            get_string('defaultprompt', 'block_exaaichat'),
+            PARAM_TEXT
+        ));
+
+        $settings->add(new admin_setting_configtextarea(
+            'block_exaaichat/sourceoftruth',
+            get_string('sourceoftruth', 'block_exaaichat'),
+            get_string('sourceoftruthdesc', 'block_exaaichat'),
+            '',
+            PARAM_TEXT
+        ));
+
+        // Advanced Settings
 
         $settings->add(new admin_setting_heading(
             'block_exaaichat/advanced',

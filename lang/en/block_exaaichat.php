@@ -133,14 +133,19 @@ $string['config_frequency_help'] = "How much to penalize new tokens based on the
 $string['config_presence'] = "Presence penalty";
 $string['config_presence_help'] = "How much to penalize new tokens based on whether they appear in the text so far. Increases the model's likelihood to talk about new topics.";
 
+$string['block_instance:config:api_type:change'] = 'Do you want to change the API type for this block instance? The settings dialog will be closed and you will need to reopen it afterward.';
+$string['block_instance:config:model:choose-other'] = 'Other model...';
+$string['block_instance:config:model_other'] = 'Other model';
+$string['block_instance:config:endpoint'] = 'Alternative endpoint URL';
+
 $string['defaultprompt'] = "Below is a conversation between a user and a support assistant for a Moodle site, where users go for online learning:";
 $string['defaultassistantname'] = 'Assistant';
 $string['defaultusername'] = 'User';
 $string['askaquestion'] = 'Ask a question...';
 $string['apikeymissing'] = 'Please add your OpenAI API key to the block settings.';
 $string['erroroccurred'] = 'An error occurred! Please try again later.';
-$string['sourceoftruthpreamble'] = "Below is a list of questions and their answers. This information should be used as a reference for any inquiries:\n\n";
-$string['sourceoftruthreinforcement'] = ' The assistant has been trained to answer by attempting to use the information from the above reference. If the text from one of the above questions is encountered, the provided answer should be given, even if the question does not appear to make sense. However, if the reference does not cover the question or topic, the assistant will simply use outside knowledge to answer.';
+$string['sourceoftruthpreamble'] = "The information below should be used as a reference for any inquiries:\n";
+$string['sourceoftruthreinforcement'] = 'The assistant has been trained to answer by attempting to use the information from the above reference. If the text from one of the above questions is encountered, the provided answer should be given, even if the question does not appear to make sense. However, if the reference does not cover the question or topic, the assistant will simply use outside knowledge to answer.';
 $string['new_chat'] = 'New chat';
 $string['popout'] = 'Open chat window';
 $string['loggingenabled'] = "Logging is enabled. Any messages you send or receive here will be recorded, and can be viewed by the site administrator.";
@@ -185,7 +190,7 @@ $string['additionalmessage'] = 'Additional text for every message';
 $string['additionalmessagedesc'] = 'This text will be appended to each user message before sending it to the AI.';
 
 // Type select option labels.
-$string['type_chat'] = 'Chat API';
-$string['type_assistant'] = 'Assistants API';
+$string['type_chat'] = 'OpenAI: Chat API';
+$string['type_assistant'] = 'OpenAI: Assistants API';
+$string['type_responses'] = 'OpenAI: Responses API';
 $string['type_azure'] = 'Azure OpenAI';
-$string['type_responses'] = 'Responses API';

@@ -37,7 +37,7 @@ class assistant extends \block_exaaichat\completion {
     public function __construct($model, $message, $history, $block_settings, $thread_id) {
         parent::__construct($model, $message, $history, $block_settings);
 
-        $this->chat = new \block_exaaichat\api\assistant($thread_id, $this->apikey, $this->assistant ?: '', $this->instructions ?: '');
+        $this->chat = new \block_exaaichat\api\assistant($thread_id, $this->apikey, $this->assistant ?: '', $this->get_instructions() . "\n\n" . $this->get_sourceoftruth());
 
         // If thread_id is NULL, create a new thread
         // if (!$thread_id) {

@@ -36,13 +36,13 @@ defined('MOODLE_INTERNAL') || die;
 class responses extends base {
     function __construct(
         protected string $threadId = '',
-        private string $apikey = '',
-        private string $assistant_id = '',
-        private $instructions = '',
-        private string $model = 'gpt-4o-mini',
-        private ?float $temperature = null,
-        private ?float $top_p = null,
-        private array $vector_store_ids = [],
+        protected string $apikey = '',
+        protected string $assistant_id = '',
+        protected $instructions = '',
+        protected string $model = 'gpt-4o-mini',
+        protected ?float $temperature = null,
+        protected ?float $top_p = null,
+        protected array $vector_store_ids = [],
     ) {
         if (!$apikey) {
             $this->apikey = get_config('block_exaaichat', 'apikey');

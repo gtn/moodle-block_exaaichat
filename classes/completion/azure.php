@@ -21,11 +21,12 @@
  * @copyright  2025 GTN Solutions https://gtn-solutions.com
  * @copyright  based on work by Limekiller https://github.com/Limekiller/moodle-block_openai_chat
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ */
 
 namespace block_exaaichat\completion;
 
 use block_exaaichat\completion;
+
 defined('MOODLE_INTERNAL') || die;
 
 class azure extends \block_exaaichat\completion\chat {
@@ -47,6 +48,8 @@ class azure extends \block_exaaichat\completion\chat {
      * @return JSON: The API response from Azure
      */
     public function create_completion($context) {
+        // disabled block_openai_chat code:
+        /*
         if ($this->sourceoftruth) {
             $this->sourceoftruth = format_string($this->sourceoftruth, true, ['context' => $context]);
             $this->prompt .= get_string('sourceoftruthreinforcement', 'block_exaaichat');
@@ -58,6 +61,13 @@ class azure extends \block_exaaichat\completion\chat {
         array_unshift($history_json, ["role" => "system", "content" => $this->sourceoftruth]);
 
         array_push($history_json, ["role" => "user", "content" => $this->message]);
+        */
+
+        $history_json = array_values([
+            ["role" => "system", "content" => $this->get_sourceoftruth()],
+            ...$this->format_history(),
+            ["role" => "user", "content" => $this->message],
+        ]);
 
         $response_data = $this->make_api_call($history_json);
         return $response_data;
@@ -72,19 +82,19 @@ class azure extends \block_exaaichat\completion\chat {
         $curlbody = [
             "model" => $this->model,
             "messages" => $history,
-            "temperature" => (float) $this->temperature,
-            "max_tokens" => (int) $this->maxlength,
-            "top_p" => (float) $this->topp,
-            "frequency_penalty" => (float) $this->frequency,
-            "presence_penalty" => (float) $this->presence,
-            "stop" => $this->username . ":"
+            "temperature" => (float)$this->temperature,
+            "max_tokens" => (int)$this->maxlength,
+            "top_p" => (float)$this->topp,
+            "frequency_penalty" => (float)$this->frequency,
+            "presence_penalty" => (float)$this->presence,
+            "stop" => $this->username . ":",
         ];
 
         $curl = new \curl();
         $curl->setopt(array(
             'CURLOPT_HTTPHEADER' => array(
                 'api-key: ' . $this->apikey,
-                'Content-Type: application/json'
+                'Content-Type: application/json',
             ),
         ));
 
@@ -94,7 +104,6 @@ class azure extends \block_exaaichat\completion\chat {
         );
         $response = json_decode($response);
 
-        $message = null;
         if (property_exists($response, 'error')) {
             $message = 'ERROR: ' . $response->error->message;
         } else {
@@ -103,7 +112,7 @@ class azure extends \block_exaaichat\completion\chat {
 
         return [
             "id" => property_exists($response, 'id') ? $response->id : 'error',
-            "message" => $message
+            "message" => $message,
         ];
     }
 }

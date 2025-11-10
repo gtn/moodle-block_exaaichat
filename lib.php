@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * Fetch the current API type from the database, defaulting to "chat"
  * @return String: the API type (chat|azure|assistant)
  */
-function block_exaaichat_get_type_to_display() {
+function block_exaaichat_get_api_type() {
     $stored_type = get_config('block_exaaichat', 'type');
     if ($stored_type) {
         return $stored_type;

@@ -21,22 +21,22 @@
  * @copyright  2025 GTN Solutions https://gtn-solutions.com
  * @copyright  based on work by Limekiller https://github.com/Limekiller/moodle-block_openai_chat
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ */
 
 namespace block_exaaichat;
 defined('MOODLE_INTERNAL') || die;
 
 class completion {
 
-    protected $apikey;
+    protected string $apikey;
     protected $message;
     protected $history;
 
-    protected $assistantname;
-    protected $username;
-    protected $prompt;
-    protected $sourceoftruth;
-    protected $model;
+    protected string $assistantname;
+    protected string $username;
+    protected string $prompt;
+    protected string $sourceoftruth;
+    protected string $model;
     protected $temperature;
     protected $maxlength;
     protected $topp;
@@ -44,14 +44,15 @@ class completion {
     protected $presence;
 
     protected $assistant;
-    protected $instructions;
+    protected string $instructions;
+    protected string $endpoint;
 
     /**
      * Initialize all the class properties that we'll need regardless of model
-     * @param string $model: The name of the model we're using
-     * @param string $message: The most recent message sent by the user
-     * @param array $history: An array of objects containing the history of the conversation
-     * @param string $block_settings: An object containing the instance-level settings if applicable
+     * @param string $model : The name of the model we're using
+     * @param string $message : The most recent message sent by the user
+     * @param array $history : An array of objects containing the history of the conversation
+     * @param string $block_settings : An object containing the instance-level settings if applicable
      */
     public function __construct($model, $message, $history, $block_settings) {
         // Set default values
@@ -76,7 +77,7 @@ class completion {
         $this->instructions = $this->get_setting('instructions');
 
         // Then override with block settings if applicable
-        if (get_config('block_exaaichat', 'allowinstancesettings') === "1") {
+        if (get_config('block_exaaichat', 'allowinstancesettings')) {
             foreach ($block_settings as $name => $value) {
                 if ($value) {
                     $this->$name = $value;
@@ -116,7 +117,18 @@ class completion {
                 get_string('sourceoftruthpreamble', 'block_exaaichat')
                 . $sourceoftruth . "\n\n"
                 . $localsourceoftruth . "\n\n";
-            }
+        }
         $this->sourceoftruth = $sourceoftruth;
+    }
+
+    protected function get_sourceoftruth(): string {
+        $sourceoftruth = trim($this->sourceoftruth . ' ' . $this->prompt);
+        $sourceoftruth = helper::generate_placeholders($sourceoftruth);
+
+        return $sourceoftruth;
+    }
+
+    protected function get_instructions(): string {
+        return $this->instructions;
     }
 }

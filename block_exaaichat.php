@@ -55,12 +55,22 @@ class block_exaaichat extends block_base {
         if (!empty($this->config)) {
             $persistconvo = (property_exists($this->config, 'persistconvo') && get_config('block_exaaichat', 'allowinstancesettings')) ? $this->config->persistconvo : $persistconvo;
         }
+
+        $api_type = '';
+        if (get_config('block_exaaichat', 'allowinstancesettings')) {
+            // allow switching to different api
+            $api_type = $this->config->api_type;
+        }
+        if (!$api_type) {
+            $api_type = block_exaaichat_get_api_type();
+        }
+
         $this->page->requires->js_call_amd('block_exaaichat/lib', 'init', [[
             'blockId' => $this->instance->id,
-            'api_type' => get_config('block_exaaichat', 'type') ? get_config('block_exaaichat', 'type') : 'chat',
+            'api_type' => $api_type,
             'persistConvo' => $persistconvo
         ]]);
-        // $this->page->requires->js_call_amd('block_exaaichat/config_popup', 'init'); // this would load it on pageload, which is too early.
+        // $this->page->requires->js_call_amd('block_exaaichat/block_instance_config', 'init'); // this would load it on pageload, which is too early.
 
         // Determine if name labels should be shown.
         $showlabelscss = '';
