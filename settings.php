@@ -40,7 +40,7 @@ if ($hassiteconfig) {
 
         require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
-        $type = block_exaaichat_get_api_type();
+        $type = \block_exaaichat\locallib::get_api_type();
         $assistant_array = [];
         if ($type === 'assistant') {
             $assistant_array = block_exaaichat_fetch_assistants_array();

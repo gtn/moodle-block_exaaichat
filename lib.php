@@ -26,19 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Fetch the current API type from the database, defaulting to "chat"
- * @return String: the API type (chat|azure|assistant)
- */
-function block_exaaichat_get_api_type() {
-    $stored_type = get_config('block_exaaichat', 'type');
-    if ($stored_type) {
-        return $stored_type;
-    }
-
-    return 'chat';
-}
-
-/**
  * Use an API key to fetch a list of assistants from a user's OpenAI account
  * @param int|null $block_id The ID of a block instance. If this is passed, the API can be pulled from the block rather than the site level.
  * @return array The list of assistants

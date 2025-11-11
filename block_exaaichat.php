@@ -62,7 +62,7 @@ class block_exaaichat extends block_base {
             $api_type = $this->config->api_type;
         }
         if (!$api_type) {
-            $api_type = block_exaaichat_get_api_type();
+            $api_type = \block_exaaichat\locallib::get_api_type();
         }
 
         $this->page->requires->js_call_amd('block_exaaichat/lib', 'init', [[

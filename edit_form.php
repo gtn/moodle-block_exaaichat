@@ -114,7 +114,7 @@ class block_exaaichat_edit_form extends block_edit_form {
             $api_type = $this->get_block()->config->api_type;
         }
         if (!$api_type) {
-            $api_type = block_exaaichat_get_api_type();
+            $api_type = \block_exaaichat\locallib::get_api_type();
         }
 
         $mform->addElement('header', 'config_header', get_string('blocksettings', 'block'));

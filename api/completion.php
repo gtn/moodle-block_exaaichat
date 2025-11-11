@@ -106,7 +106,7 @@ if (get_config('block_exaaichat', 'allowinstancesettings')) {
     $api_type = $instance->config->api_type;
 }
 if (!$api_type) {
-    $api_type = block_exaaichat_get_api_type();
+    $api_type = \block_exaaichat\locallib::get_api_type();
 }
 
 $engine_class = "\block_exaaichat\completion\\$api_type";
