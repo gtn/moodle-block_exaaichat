@@ -132,6 +132,10 @@
     background: var(--blue);
     color: var(--white);
 }
+.block_exaaichat .openai_message.error {
+    background: #fdebeb;
+    color: black;
+}
 
 .block_exaaichat .openai_message.loading {
     animation: block_exaaichat_thinking 1s ease infinite;

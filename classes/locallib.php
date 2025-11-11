@@ -38,4 +38,48 @@ class locallib {
 
         return 'chat';
     }
+
+    public static function get_openai_api_url(): string {
+        return get_config('block_exaaichat', 'openai_api_url') ?: 'https://api.openai.com/v1';
+    }
+
+    /**
+     * Return a list of available models
+     * @return array The list of model info
+     */
+    public static function get_models(): array {
+        $configmodels = trim(get_config('block_exaaichat', 'models'));
+        if (!$configmodels) {
+            return static::get_default_models();
+        }
+
+        $configmodels = array_filter(array_map('trim', explode("\n", $configmodels)));
+        return array_combine($configmodels, $configmodels);
+    }
+
+    public static function get_default_models(): array {
+        return [
+            'gpt-4.1-mini' => 'gpt-4.1-mini',
+            'gpt-4o' => 'gpt-4o',
+            'gpt-4o-2024-11-20' => 'gpt-4o-2024-11-20',
+            'gpt-4o-2024-08-06' => 'gpt-4o-2024-08-06',
+            'gpt-4o-2024-05-13' => 'gpt-4o-2024-05-13',
+            'gpt-4o-mini-2024-07-18' => 'gpt-4o-mini-2024-07-18',
+            'gpt-4o-mini' => 'gpt-4o-mini',
+            'gpt-4-turbo-preview' => 'gpt-4-turbo-preview',
+            'gpt-4-turbo-2024-04-09' => 'gpt-4-turbo-2024-04-09',
+            'gpt-4-turbo' => 'gpt-4-turbo',
+            'gpt-4-32k-0314' => 'gpt-4-32k-0314',
+            'gpt-4-1106-preview' => 'gpt-4-1106-preview',
+            'gpt-4-0613' => 'gpt-4-0613',
+            'gpt-4-0314' => 'gpt-4-0314',
+            'gpt-4-0125-preview' => 'gpt-4-0125-preview',
+            'gpt-4' => 'gpt-4',
+            'gpt-3.5-turbo-16k-0613' => 'gpt-3.5-turbo-16k-0613',
+            'gpt-3.5-turbo-16k' => 'gpt-3.5-turbo-16k',
+            'gpt-3.5-turbo-1106' => 'gpt-3.5-turbo-1106',
+            'gpt-3.5-turbo-0125' => 'gpt-3.5-turbo-0125',
+            'gpt-3.5-turbo' => 'gpt-3.5-turbo',
+        ];
+    }
 }

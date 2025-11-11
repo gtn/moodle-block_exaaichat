@@ -24,6 +24,7 @@
 namespace block_exaaichat\api;
 
 use block_exaaichat\callback_helper;
+use block_exaaichat\locallib;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -77,7 +78,7 @@ class responses extends base {
             ]);
         }
 
-        $url = 'https://api.openai.com/v1/responses'; // Note: This is not a valid OpenAI endpoint. Likely you meant /v1/chat/completions or /v1/completions.
+        $url = locallib::get_openai_api_url() . '/responses';
 
         $data = [
             'model' => $this->model,
@@ -100,15 +101,18 @@ class responses extends base {
                 'Authorization: Bearer ' . $this->apikey,
             ],
         ]);
-        $response = $curl->post($url, json_encode($data));
+        $responseText = $curl->post($url, json_encode($data));
 
-        $this->debug('raw response:', $response);
+        $this->debug('raw response:', $responseText);
 
         if ($curl->get_errno()) {
-            throw new \moodle_exception('curl error: ' . $curl->get_errno());
+            $this->throw('curl error: ' . $curl->get_errno());
         }
 
-        $response = json_decode($response);
+        $response = json_decode($responseText);
+        if (!$response) {
+            $this->throw('invalid json response from API', $responseText);
+        }
 
         if ($response->error) {
             $this->throw('error while creating thread', $response->error);

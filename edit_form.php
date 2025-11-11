@@ -213,7 +213,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->setType('config_apikey', PARAM_TEXT);
                 $mform->addHelpButton('config_apikey', 'config_apikey', 'block_exaaichat');
 
-                $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), block_exaaichat_get_models()['models'] + ['other' => get_string('block_instance:config:model:choose-other', 'block_exaaichat')]);
+                $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), \block_exaaichat\locallib::get_models() + ['other' => get_string('block_instance:config:model:choose-other', 'block_exaaichat')]);
                 $mform->setDefault('config_model', get_config('block_exaaichat', 'model'));
                 $mform->setType('config_model', PARAM_TEXT);
                 $mform->addHelpButton('config_model', 'config_model', 'block_exaaichat');
@@ -266,7 +266,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->setType('config_apikey', PARAM_TEXT);
                 $mform->addHelpButton('config_apikey', 'config_apikey', 'block_exaaichat');
 
-                $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), block_exaaichat_get_models()['models'] + ['other' => get_string('block_instance:config:model:choose-other', 'block_exaaichat')]);
+                $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), \block_exaaichat\locallib::get_models() + ['other' => get_string('block_instance:config:model:choose-other', 'block_exaaichat')]);
                 $mform->setDefault('config_model', get_config('block_exaaichat', 'model'));
                 $mform->setType('config_model', PARAM_TEXT);
                 $mform->addHelpButton('config_model', 'config_model', 'block_exaaichat');

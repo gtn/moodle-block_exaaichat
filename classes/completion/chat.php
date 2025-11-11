@@ -101,7 +101,7 @@ class chat extends \block_exaaichat\completion {
             ),
         ));
 
-        $endpoint = $this->endpoint ?? '' ?: "https://api.openai.com/v1/chat/completions";
+        $endpoint = $this->endpoint ?: \block_exaaichat\locallib::get_openai_api_url() . "/chat/completions";
 
         logger::debug_grouped('chat.user:' . $USER->id, $endpoint, $curlbody);
 
@@ -110,8 +110,10 @@ class chat extends \block_exaaichat\completion {
 
         logger::debug_grouped('chat.user:' . $USER->id, 'response', $response);
 
-        if (property_exists($response, 'error')) {
-            $message = 'ERROR: ' . $response->error->message;
+        if ($response->error ?? false) {
+            return [
+                "error" => $response->error->message,
+            ];
         } else {
             $message = $response->choices[0]->message->content;
         }

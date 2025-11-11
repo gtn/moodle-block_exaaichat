@@ -28,13 +28,13 @@ defined('MOODLE_INTERNAL') || die;
 
 class completion {
 
-    protected string $apikey;
+    protected string $apikey = '';
     protected $message;
     protected $history;
 
-    protected string $assistantname;
-    protected string $username;
-    protected string $prompt;
+    protected string $assistantname = '';
+    protected string $username = '';
+    protected string $prompt = '';
     protected string $sourceoftruth;
     protected string $model;
     protected $temperature;
@@ -44,8 +44,8 @@ class completion {
     protected $presence;
 
     protected $assistant;
-    protected string $instructions;
-    protected string $endpoint;
+    protected string $instructions = '';
+    protected string $endpoint = '';
 
     /**
      * Initialize all the class properties that we'll need regardless of model

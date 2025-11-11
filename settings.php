@@ -223,12 +223,27 @@ if ($hassiteconfig) {
         if ($type === 'assistant') {
 
         } else {
+            $settings->add(new admin_setting_configtext(
+                'block_exaaichat/openai_api_url',
+                get_string('openai_api_url', 'block_exaaichat'),
+                get_string('openai_api_url:desc', 'block_exaaichat'),
+                'https://api.openai.com/v1',
+                PARAM_URL
+            ));
+
+            $settings->add(new admin_setting_configtextarea(
+                'block_exaaichat/models',
+                get_string('models', 'block_exaaichat'),
+                get_string('models:desc', 'block_exaaichat'),
+                ''
+            ));
+
             $settings->add(new admin_setting_configselect(
                 'block_exaaichat/model',
                 get_string('model', 'block_exaaichat'),
                 get_string('modeldesc', 'block_exaaichat'),
                 'text-davinci-003',
-                block_exaaichat_get_models()['models']
+                \block_exaaichat\locallib::get_models()
             ));
 
             $settings->add(new admin_setting_configtext(

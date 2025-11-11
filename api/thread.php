@@ -39,11 +39,11 @@ $curl->setopt(array(
     'CURLOPT_HTTPHEADER' => array(
         'Authorization: Bearer ' . $apikey,
         'Content-Type: application/json',
-        'OpenAI-Beta: assistants=v2'
+        'OpenAI-Beta: assistants=v2',
     ),
 ));
 
-$response = $curl->get("https://api.openai.com/v1/threads/$thread_id/messages");
+$response = $curl->get(\block_exaaichat\locallib::get_openai_api_url() . "/threads/$thread_id/messages");
 $response = json_decode($response);
 
 if (property_exists($response, 'error')) {
@@ -57,7 +57,7 @@ foreach ($message_list as $message) {
     array_push($api_response, [
         "id" => $message->id,
         "role" => $message->role,
-        "message" => $message->content[0]->text->value
+        "message" => $message->content[0]->text->value,
     ]);
 }
 

@@ -239,6 +239,16 @@ const createCompletion = (message, blockId, api_type) => {
       }
     })
     .then(data => {
+      if (data.error) {
+        const error = data.error;
+        logError(error);
+        addToChatLog('error', error, blockId)
+        document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).classList.add('error')
+        document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).placeholder = errorString
+        document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).focus()
+        return;
+      }
+
       try {
         addToChatLog('bot', data.message, blockId)
         if (data.thread_id) {
@@ -247,7 +257,7 @@ const createCompletion = (message, blockId, api_type) => {
         }
       } catch (error) {
         logError(error);
-        addToChatLog('bot', data.error.message, blockId)
+        addToChatLog('error', data.error.message, blockId)
       }
       document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).focus()
     })
@@ -255,6 +265,7 @@ const createCompletion = (message, blockId, api_type) => {
       logError(error);
       document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).classList.add('error')
       document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).placeholder = errorString
+      document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] #openai_input`).focus()
     })
 }
 

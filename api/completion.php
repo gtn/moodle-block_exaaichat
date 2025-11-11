@@ -113,7 +113,18 @@ $engine_class = "\block_exaaichat\completion\\$api_type";
 
 /* @var completion $completion */
 $completion = new $engine_class($model, $message, $history, $block_settings, $thread_id);
-$response = $completion->create_completion($PAGE->context);
+try {
+    $response = $completion->create_completion($PAGE->context);
+    if ($response['error'] ?? false) {
+        header("Content-Type: application/json");
+        echo json_encode($response);
+        exit;
+    }
+} catch (\moodle_exception $e) {
+    header("Content-Type: application/json");
+    echo json_encode(['error' => $e->getMessage()]);
+    exit;
+}
 
 // Format the markdown of each completion message into HTML.
 $response["message"] = format_text($response["message"], FORMAT_MARKDOWN, ['context' => $context]);

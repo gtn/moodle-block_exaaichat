@@ -78,7 +78,7 @@ class assistant extends \block_exaaichat\completion {
             ),
         ));
 
-        $response = $curl->post("https://api.openai.com/v1/threads");
+        $response = $curl->post(\block_exaaichat\locallib::get_openai_api_url() . "/threads");
         $response = json_decode($response);
 
         return $response->id;
@@ -100,7 +100,7 @@ class assistant extends \block_exaaichat\completion {
         ));
 
         $response = $curl->post(
-            "https://api.openai.com/v1/threads/" . $this->thread_id . "/messages",
+            \block_exaaichat\locallib::get_openai_api_url() . "/threads/" . $this->thread_id ."/messages",
             json_encode($curlbody)
         );
         $response = json_decode($response);
@@ -132,7 +132,7 @@ class assistant extends \block_exaaichat\completion {
         ));
 
         $response = $curl->post(
-            "https://api.openai.com/v1/threads/" . $this->thread_id . "/runs",
+            \block_exaaichat\locallib::get_openai_api_url() . "/v1/threads/" . $this->thread_id . "/runs",
             json_encode($curlbody)
         );
         $response = json_decode($response);
@@ -165,7 +165,7 @@ class assistant extends \block_exaaichat\completion {
                 'OpenAI-Beta: assistants=v2',
             ),
         ));
-        $response = $curl->get("https://api.openai.com/v1/threads/" . $this->thread_id . '/messages');
+        $response = $curl->get(\block_exaaichat\locallib::get_openai_api_url() . "/threads/" . $this->thread_id . '/messages');
         $response = json_decode($response);
 
         return [
@@ -185,7 +185,7 @@ class assistant extends \block_exaaichat\completion {
             ),
         ));
 
-        $response = $curl->get("https://api.openai.com/v1/threads/" . $this->thread_id . "/runs/" . $run_id);
+        $response = $curl->get(\block_exaaichat\locallib::get_openai_api_url() . "/threads/" . $this->thread_id . "/runs/" . $run_id);
         $response = json_decode($response);
 
         if ($response->status === 'completed' || property_exists($response, 'error')) {
