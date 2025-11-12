@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_exaaichat\locallib;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -75,6 +77,8 @@ function block_exaaichat_fetch_assistants_array(int $block_id = null) {
  */
 function block_exaaichat_log_message($usermessage, $airesponse, $context) {
     global $USER, $DB;
+
+    locallib::clean_log();
 
     if (!get_config('block_exaaichat', 'logging')) {
         return;

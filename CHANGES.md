@@ -1,3 +1,7 @@
+### next ###
+* New Block Setting: Retention Period (days)
+  How long (in days) to keep the logs. After this period, logs will be automatically deleted.
+
 ### v3.1 (2025111200) ###
 * Allow inserting grades and grade ranges in the sourceoftruth field
 * Allow configuring different Endpoints in Moodle Admin Settings and Block Instance Settings

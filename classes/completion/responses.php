@@ -44,7 +44,7 @@ class responses extends \block_exaaichat\completion {
             $vector_store_ids = [];
         }
 
-        $this->chat = new \block_exaaichat\api\responses($thread_id, $this->apikey, $this->assistant ?: '', $this->instructions . "\n\n" . $this->get_sourceoftruth(),
+        $this->chat = new \block_exaaichat\api\responses($thread_id, $this->apikey, $this->assistant ?: '', $this->get_instructions() . "\n\n" . $this->get_sourceoftruth(),
             model: $this->model, temperature: $this->temperature, top_p: $this->topp,
             vector_store_ids: $vector_store_ids);
 

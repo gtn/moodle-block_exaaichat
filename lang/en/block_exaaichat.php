@@ -46,40 +46,42 @@ $string['downloadfilename'] = 'block_exaaichat_logs';
 $string['blocktitle'] = 'Block title';
 
 $string['restrictusage'] = 'Restrict usage to logged-in users';
-$string['restrictusagedesc'] = 'If this box is checked, only logged-in users will be able to use the chat box.';
+$string['restrictusage:desc'] = 'If this box is checked, only logged-in users will be able to use the chat box.';
 $string['apikey'] = 'API Key';
-$string['apikeydesc'] = 'The API Key for your OpenAI account or Azure API key';
+$string['apikey:desc'] = 'The API Key for your OpenAI account or Azure API key';
 $string['type'] = 'API Type';
-$string['typedesc'] = 'The API type that the plugin should use';
+$string['type:desc'] = 'The API type that the plugin should use';
 $string['logging'] = 'Enable logging';
-$string['loggingdesc'] = 'If this setting is active, all user messages and AI responses will be logged.';
+$string['logging:desc'] = 'If this setting is active, all user messages and AI responses will be logged.';
+$string['logging_retention_period'] = 'Retention Period (days)';
+$string['logging_retention_period:desc'] = 'How long (in days) to keep the logs. After this period, logs will be automatically deleted. Set to 0 to keep logs indefinitely.';
 
 $string['assistantheading'] = 'Assistant API Settings';
-$string['assistantheadingdesc'] = 'These settings only apply to the Assistant API type.';
+$string['assistantheading:desc'] = 'These settings only apply to the Assistant API type.';
 $string['assistant'] = 'Assistant';
-$string['assistantdesc'] = 'The default assistant attached to your OpenAI account that you would like to use for the response';
+$string['assistant:desc'] = 'The default assistant attached to your OpenAI account that you would like to use for the response';
 $string['noassistants'] = 'You haven\'t created any assistants yet. You need to create one <a target="_blank" href="https://platform.openai.com/assistants">in your OpenAI account</a> before you can select it here.';
 $string['persistconvo'] = 'Persist conversations';
-$string['persistconvodesc'] = 'If this box is checked, the assistant will remember the conversation between page loads. However, separate block instances will maintain separate conversations. For example, a user\'s conversation will be retained between page loads within the same course, but chatting with an assistant in a different course will not carry on the same conversation.';
+$string['persistconvo:desc'] = 'If this box is checked, the assistant will remember the conversation between page loads. However, separate block instances will maintain separate conversations. For example, a user\'s conversation will be retained between page loads within the same course, but chatting with an assistant in a different course will not carry on the same conversation.';
 
 $string['azureheading'] = 'Azure API Settings';
-$string['azureheadingdesc'] = 'These settings only apply to the Azure API type.';
+$string['azureheading:desc'] = 'These settings only apply to the Azure API type.';
 $string['resourcename'] = 'Resource name';
-$string['resourcenamedesc'] = 'The name of your Azure OpenAI Resource.';
+$string['resourcename:desc'] = 'The name of your Azure OpenAI Resource.';
 $string['deploymentid'] = 'Deployment ID';
-$string['deploymentiddesc'] = 'The deployment name you chose when you deployed the model.';
+$string['deploymentid:desc'] = 'The deployment name you chose when you deployed the model.';
 $string['apiversion'] = 'API Version';
-$string['apiversiondesc'] = 'The API version to use for this operation. This follows the YYYY-MM-DD format.';
+$string['apiversion:desc'] = 'The API version to use for this operation. This follows the YYYY-MM-DD format.';
 $string['chatheading'] = 'Chat API Settings';
-$string['chatheadingdesc'] = 'These settings only apply to the Chat API and Azure API types.';
+$string['chatheading:desc'] = 'These settings only apply to the Chat API and Azure API types.';
 $string['prompt'] = 'Completion prompt';
-$string['promptdesc'] = 'The prompt the AI will be given before the conversation transcript';
+$string['prompt:desc'] = 'The prompt the AI will be given before the conversation transcript';
 $string['assistantname'] = 'Assistant name';
-$string['assistantnamedesc'] = 'The name that the AI will use for itself internally. It is also used for the UI headings in the chat window.';
+$string['assistantname:desc'] = 'The name that the AI will use for itself internally. It is also used for the UI headings in the chat window.';
 $string['username'] = 'User name';
-$string['usernamedesc'] = 'The name that the AI will use for the user internally. It is also used for the UI headings in the chat window.';
+$string['username:desc'] = 'The name that the AI will use for the user internally. It is also used for the UI headings in the chat window.';
 $string['sourceoftruth'] = 'Source of truth';
-$string['sourceoftruthdesc'] = 'Although the AI is very capable out-of-the-box, if it doesn\'t know the answer to a question, it is more likely to give incorrect information confidently than to refuse to answer. In this textbox, you can add common questions and their answers for the AI to pull from. Please put questions and answers in the following format: <pre>Q: Question 1<br />A: Answer 1<br /><br />Q: Question 2<br />A: Answer 2</pre>
+$string['sourceoftruth:desc'] = 'Although the AI is very capable out-of-the-box, if it doesn\'t know the answer to a question, it is more likely to give incorrect information confidently than to refuse to answer. In this textbox, you can add common questions and their answers for the AI to pull from. Please put questions and answers in the following format: <pre>Q: Question 1<br />A: Answer 1<br /><br />Q: Question 2<br />A: Answer 2</pre>
 You can also specify placeholders like this:
 My name is {user.fullname}.
 Today is {userdate}.
@@ -88,25 +90,25 @@ Course total grade range is {range:coursetotal}.
 ';
 $string['showlabels'] = 'Show labels';
 $string['advanced'] = 'Advanced';
-$string['advanceddesc'] = 'Advanced arguments sent to OpenAI. Don\'t touch unless you know what you\'re doing!';
+$string['advanced:desc'] = 'Advanced arguments sent to OpenAI. Don\'t touch unless you know what you\'re doing!';
 $string['allowinstancesettings'] = 'Instance-level settings';
-$string['allowinstancesettingsdesc'] = 'This setting will allow teachers, or anyone with the capability to add a block in a context, to adjust settings at a per-block level. Enabling this could incur additional charges by allowing non-admins to choose higher-cost models or other settings.';
+$string['allowinstancesettings:desc'] = 'This setting will allow teachers, or anyone with the capability to add a block in a context, to adjust settings at a per-block level. Enabling this could incur additional charges by allowing non-admins to choose higher-cost models or other settings.';
 $string['openai_api_url'] = 'API URL';
 $string['openai_api_url:desc'] = 'The API URL for the requests to OpenAPI or other compatible endpoint.';
 $string['model'] = 'Model';
-$string['modeldesc'] = 'The model which will  generate the completion. Some models are suitable for natural language tasks, others specialize in code.';
+$string['model:desc'] = 'The model which will  generate the completion. Some models are suitable for natural language tasks, others specialize in code.';
 $string['models'] = 'Models';
 $string['models:desc'] = 'A list of all available models, if empty all the default models can be used';
 $string['temperature'] = 'Temperature';
-$string['temperaturedesc'] = 'Controls randomness: Lowering results in less random completions. As the temperature approaches zero, the model will become deterministic and repetitive.';
+$string['temperature:desc'] = 'Controls randomness: Lowering results in less random completions. As the temperature approaches zero, the model will become deterministic and repetitive.';
 $string['maxlength'] = 'Maximum length';
-$string['maxlengthdesc'] = 'The maximum number of token to generate. Requests can use up to 2,048 or 4,000 tokens shared between prompt and completion. The exact limit varies by model. (One token is roughly 4 characters for normal English text)';
+$string['maxlength:desc'] = 'The maximum number of token to generate. Requests can use up to 2,048 or 4,000 tokens shared between prompt and completion. The exact limit varies by model. (One token is roughly 4 characters for normal English text)';
 $string['topp'] = 'Top P';
-$string['toppdesc'] = 'Controls diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered.';
+$string['topp:desc'] = 'Controls diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options are considered.';
 $string['frequency'] = 'Frequency penalty';
-$string['frequencydesc'] = 'How much to penalize new tokens based on their existing frequency in the text so far. Decreases the model\'s likelihood to repeat the same line verbatim.';
+$string['frequency:desc'] = 'How much to penalize new tokens based on their existing frequency in the text so far. Decreases the model\'s likelihood to repeat the same line verbatim.';
 $string['presence'] = 'Presence penalty';
-$string['presencedesc'] = 'How much to penalize new tokens based on whether they appear in the text so far. Increases the model\'s likelihood to talk about new topics.';
+$string['presence:desc'] = 'How much to penalize new tokens based on whether they appear in the text so far. Increases the model\'s likelihood to talk about new topics.';
 
 $string['config_assistant'] = "Assistant";
 $string['config_assistant_help'] = "Choose the assistant you would like to use for this block. More assistants can be created in the OpenAI account that this block is configured to use.";
@@ -187,11 +189,11 @@ $string['vectorstoreids'] = 'Vector store IDs';
 
 // Debug file logging setting.
 $string['debugfilelogging'] = 'Enable debug logging';
-$string['debugfileloggingdesc'] = "All API calls (user messages, AI responses and function calls) will be logged to moodledata/log/exaaichat.log<br/>\nThis can be useful for debugging issues with the AI responses, but the log file can grow very large very quickly, so it should only be enabled temporarily.";
+$string['debugfilelogging:desc'] = "All API calls (user messages, AI responses and function calls) will be logged to moodledata/log/exaaichat.log<br/>\nThis can be useful for debugging issues with the AI responses, but the log file can grow very large very quickly, so it should only be enabled temporarily.";
 
 // Additional message (responses type) setting.
 $string['additionalmessage'] = 'Additional text for every message';
-$string['additionalmessagedesc'] = 'This text will be appended to each user message before sending it to the AI.';
+$string['additionalmessage:desc'] = 'This text will be appended to each user message before sending it to the AI.';
 
 // Type select option labels.
 $string['type_chat'] = 'OpenAI: Chat API';

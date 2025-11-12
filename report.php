@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_exaaichat\locallib;
 use \block_exaaichat\report;
 
 require_once('../../config.php');
@@ -48,6 +49,8 @@ $PAGE->set_url($pageurl);
 require_login($course);
 $context = context_course::instance($courseid);
 require_capability('block/exaaichat:viewreport', $context);
+
+locallib::clean_log();
 
 $datetime = new DateTime();
 $table = new \block_exaaichat\report(time());

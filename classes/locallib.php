@@ -82,4 +82,14 @@ class locallib {
             'gpt-3.5-turbo' => 'gpt-3.5-turbo',
         ];
     }
+
+    public static function clean_log(): void {
+        global $DB;
+
+        if (!$days = get_config('block_exaaichat', 'logging_retention_period')) {
+            return;
+        }
+
+        $DB->execute('DELETE FROM {block_exaaichat_log} WHERE timecreated < ?', [time() - ($days * 24 * 60 * 60)]);
+    }
 }
