@@ -186,7 +186,7 @@ $string['vectorstoreids'] = 'Vektorspeicher-IDs';
 
 // Debug file logging setting.
 $string['debugfilelogging'] = 'Debug-Protokollierung aktivieren';
-$string['debugfilelogging:desc'] = 'Alle API-Aufrufe (Benutzernachrichten, KI-Antworten und Funktionsaufrufe) werden in der Datei moodledata/log/exaaichat.log protokolliert.<br/>\nDies kann bei der Fehlersuche hilfreich sein, aber die Protokolldatei kann sehr schnell sehr groß werden. Daher sollte diese Einstellung nur vorübergehend aktiviert werden.';
+$string['debugfilelogging:desc'] = "Alle API-Aufrufe (Benutzernachrichten, KI-Antworten und Funktionsaufrufe) werden in der Datei moodledata/log/exaaichat.log protokolliert.<br/>\nDies kann bei der Fehlersuche hilfreich sein, aber die Protokolldatei kann sehr schnell sehr groß werden. Daher sollte diese Einstellung nur vorübergehend aktiviert werden.";
 $string['additionalmessage'] = 'Zusätzlicher Text für jede Nachricht';
 $string['additionalmessage:desc'] = 'Dieser Text wird vor dem Senden an die KI an jede Benutzernachricht angehängt.';
 

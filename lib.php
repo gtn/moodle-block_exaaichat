@@ -39,10 +39,16 @@ function block_exaaichat_fetch_assistants_array(int $block_id = null) {
 
     if (!$block_id) {
         $apikey = get_config('block_exaaichat', 'apikey');
+        $endpoint = \block_exaaichat\locallib::get_openai_api_url() . "/assistants?order=desc";
     } else {
         $instance_record = $DB->get_record('block_instances', ['blockname' => 'exaaichat', 'id' => $block_id], '*');
         $instance = block_instance('exaaichat', $instance_record);
-        $apikey = $instance->config->apikey ? $instance->config->apikey : get_config('block_exaaichat', 'apikey');
+        $apikey = $instance->config->apikey ?: get_config('block_exaaichat', 'apikey');
+        if ($instance->config->endpoint ?? '') {
+            $endpoint = dirname($instance->config->endpoint) . "/assistants?order=desc";
+        } else {
+            $endpoint = \block_exaaichat\locallib::get_openai_api_url() . "/assistants?order=desc";
+        }
     }
 
     if (!$apikey) {
@@ -54,11 +60,11 @@ function block_exaaichat_fetch_assistants_array(int $block_id = null) {
         'CURLOPT_HTTPHEADER' => array(
             'Authorization: Bearer ' . $apikey,
             'Content-Type: application/json',
-            'OpenAI-Beta: assistants=v2'
+            'OpenAI-Beta: assistants=v2',
         ),
     ));
 
-    $response = $curl->get(\block_exaaichat\locallib::get_openai_api_url() . "/assistants?order=desc");
+    $response = $curl->get($endpoint);
     $response = json_decode($response);
     $assistant_array = [];
     if ($response && property_exists($response, 'data')) {
@@ -84,12 +90,12 @@ function block_exaaichat_log_message($usermessage, $airesponse, $context) {
         return;
     }
 
-    $DB->insert_record('block_exaaichat_log', (object) [
+    $DB->insert_record('block_exaaichat_log', (object)[
         'userid' => $USER->id,
         'usermessage' => $usermessage,
         'airesponse' => $airesponse,
         'contextid' => $context->id,
-        'timecreated' => time()
+        'timecreated' => time(),
     ]);
 }
 

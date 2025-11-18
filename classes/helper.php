@@ -145,7 +145,7 @@ class helper {
      */
     public static function generate_placeholders(string $string): string {
         return preg_replace_callback('!{(?<placeholder>[^}]+)}!', function($matches) {
-            global $USER, $COURSE, $CFG;
+            global $USER;
             $placeholder = $matches['placeholder'];
 
             if ($placeholder == 'user.fullname') {

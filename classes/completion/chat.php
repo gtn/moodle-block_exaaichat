@@ -25,33 +25,16 @@
 
 namespace block_exaaichat\completion;
 
-use block_exaaichat\completion;
-use block_exaaichat\helper;
 use block_exaaichat\logger;
 
 defined('MOODLE_INTERNAL') || die;
 
-class chat extends \block_exaaichat\completion {
+class chat extends \block_exaaichat\completion\completion_base {
     /**
      * Given everything we know after constructing the parent, create a completion by constructing the prompt and making the api call
-     * @return JSON: The API response from OpenAI
+     * @return array The API response from OpenAI
      */
-    public function create_completion($context) {
-        // disabled block_openai_chat code:
-        /*
-        if ($this->sourceoftruth) {
-            $this->sourceoftruth = format_string($this->sourceoftruth, true, ['context' => $context]);
-            $this->prompt .= get_string('sourceoftruthreinforcement', 'block_exaaichat');
-        }
-        $this->prompt .= "\n\n";
-
-        $history_json = $this->format_history();
-        array_unshift($history_json, ["role" => "system", "content" => $this->prompt]);
-        array_unshift($history_json, ["role" => "system", "content" => $this->sourceoftruth]);
-
-        array_push($history_json, ["role" => "user", "content" => $this->message]);
-        */
-
+    public function create_completion(): array {
         $history_json = array_values([
             ["role" => "system", "content" => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth()],
             ...$this->format_history(),
@@ -66,7 +49,7 @@ class chat extends \block_exaaichat\completion {
      * Format the history JSON into a string that we can pass in the prompt
      * @return string: The string representing the chat history to add to the prompt
      */
-    protected function format_history() {
+    protected function format_history(): array {
         $history = [];
         foreach ($this->history as $index => $message) {
             $role = $index % 2 === 0 ? 'user' : 'assistant';
@@ -77,9 +60,9 @@ class chat extends \block_exaaichat\completion {
 
     /**
      * Make the actual API call to OpenAI
-     * @return JSON: The response from OpenAI
+     * @return array The response from OpenAI
      */
-    private function make_api_call($history) {
+    private function make_api_call($history): array {
         global $USER;
 
         $curlbody = [

@@ -25,8 +25,6 @@
 
 namespace block_exaaichat\completion;
 
-use block_exaaichat\completion;
-
 defined('MOODLE_INTERNAL') || die;
 
 class azure extends \block_exaaichat\completion\chat {
@@ -35,36 +33,21 @@ class azure extends \block_exaaichat\completion\chat {
     private $deploymentid;
     private $apiversion;
 
-    public function __construct($model, $message, $history, $block_settings, $thread_id = null) {
-        parent::__construct($model, $message, $history, $block_settings);
+    public function __construct(object $config, protected string $message, protected string $thread_id = '', protected array $history = []) {
+        parent::__construct($config, $message, $thread_id, $history);
 
-        $this->resourcename = $this->get_setting('resourcename');
-        $this->deploymentid = $this->get_setting('deploymentid');
-        $this->apiversion = $this->get_setting('apiversion');
+        $this->resourcename = $this->get_plugin_setting('resourcename');
+        $this->deploymentid = $this->get_plugin_setting('deploymentid');
+        $this->apiversion = $this->get_plugin_setting('apiversion');
     }
 
     /**
      * Given everything we know after constructing the parent, create a completion by constructing the prompt and making the api call
      * @return JSON: The API response from Azure
      */
-    public function create_completion($context) {
-        // disabled block_openai_chat code:
-        /*
-        if ($this->sourceoftruth) {
-            $this->sourceoftruth = format_string($this->sourceoftruth, true, ['context' => $context]);
-            $this->prompt .= get_string('sourceoftruthreinforcement', 'block_exaaichat');
-        }
-        $this->prompt .= "\n\n";
-
-        $history_json = $this->format_history();
-        array_unshift($history_json, ["role" => "system", "content" => $this->prompt]);
-        array_unshift($history_json, ["role" => "system", "content" => $this->sourceoftruth]);
-
-        array_push($history_json, ["role" => "user", "content" => $this->message]);
-        */
-
+    public function create_completion(): array {
         $history_json = array_values([
-            ["role" => "system", "content" => $this->get_sourceoftruth()],
+            ["role" => "system", "content" => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth()],
             ...$this->format_history(),
             ["role" => "user", "content" => $this->message],
         ]);

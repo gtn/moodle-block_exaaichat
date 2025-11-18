@@ -1,6 +1,6 @@
 <?php
 
-use block_exaaichat\api\responses;
+use block_exaaichat\completion\responses;
 use block_exaaichat\logger;
 
 require __DIR__ . '/../../../config.php';
@@ -8,8 +8,9 @@ require __DIR__ . '/../../../config.php';
 require_login();
 // require_admin();
 
-$api_key = '';
-$chat = new responses('', $api_key);
+$chat = new responses((object)[
+    // 'model' => 'gpt-4.1-mini',
+], '');
 
 /*
 echo json_encode(array_map(function($function_definition) {

@@ -138,24 +138,22 @@ class block_exaaichat_edit_form extends block_edit_form {
         }
 
         // azure ist noch nicht für die Placeholder-Logik angepasst
-        if ($api_type != 'azure') {
-            $mform->addElement('textarea', 'config_instructions', get_string('config_instructions', 'block_exaaichat'));
-            $mform->setDefault('config_instructions', '');
-            $mform->setType('config_instructions', PARAM_TEXT);
-            $mform->addHelpButton('config_instructions', 'config_instructions', 'block_exaaichat');
+        $mform->addElement('textarea', 'config_instructions', get_string('config_instructions', 'block_exaaichat'));
+        $mform->setDefault('config_instructions', '');
+        $mform->setType('config_instructions', PARAM_TEXT);
+        $mform->addHelpButton('config_instructions', 'config_instructions', 'block_exaaichat');
 
-            $el = $mform->addElement('textarea', 'config_sourceoftruth', get_string('sourceoftruth', 'block_exaaichat'));
-            $el->updateAttributes(['rows' => 10]);
-            $mform->setDefault('config_sourceoftruth', '');
-            $mform->setType('config_sourceoftruth', PARAM_TEXT);
-            $mform->addHelpButton('config_sourceoftruth', 'config_sourceoftruth', 'block_exaaichat');
+        $el = $mform->addElement('textarea', 'config_sourceoftruth', get_string('sourceoftruth', 'block_exaaichat'));
+        $el->updateAttributes(['rows' => 10]);
+        $mform->setDefault('config_sourceoftruth', '');
+        $mform->setType('config_sourceoftruth', PARAM_TEXT);
+        $mform->addHelpButton('config_sourceoftruth', 'config_sourceoftruth', 'block_exaaichat');
 
-            // Dropdown menu for placeholders
-            $mform->addElement('static', 'user_message_options', '', $OUTPUT->render_from_template('block_exaaichat/block_config_source_of_truth', [
-                'placeholders' => $this->get_placeholders(),
-                'placeholders_gradebook' => $this->get_placeholders_gradebook(),
-            ]));
-        }
+        // Dropdown menu for placeholders
+        $mform->addElement('static', 'user_message_options', '', $OUTPUT->render_from_template('block_exaaichat/block_config_source_of_truth', [
+            'placeholders' => $this->get_placeholders(),
+            'placeholders_gradebook' => $this->get_placeholders_gradebook(),
+        ]));
 
         if ($api_type === 'assistant') {
             // Assistant settings
@@ -169,14 +167,6 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addElement('advcheckbox', 'config_persistconvo', get_string('persistconvo', 'block_exaaichat'));
                 $mform->addHelpButton('config_persistconvo', 'config_persistconvo', 'block_exaaichat');
                 $mform->setDefault('config_persistconvo', 1);
-
-                // Feld wird nicht mehr benötigt
-                /*
-                $mform->addElement('text', 'config_username', get_string('username', 'block_exaaichat'));
-                $mform->setDefault('config_username', '');
-                $mform->setType('config_username', PARAM_TEXT);
-                $mform->addHelpButton('config_username', 'config_username', 'block_exaaichat');
-                */
 
                 $mform->addElement('text', 'config_assistantname', get_string('assistantname', 'block_exaaichat'));
                 $mform->setDefault('config_assistantname', '');
@@ -193,14 +183,6 @@ class block_exaaichat_edit_form extends block_edit_form {
 
         } elseif ($api_type === 'responses') {
             if (get_config('block_exaaichat', 'allowinstancesettings')) {
-                // Feld wird nicht mehr benötigt
-                /*
-                $mform->addElement('text', 'config_username', get_string('username', 'block_exaaichat'));
-                $mform->setDefault('config_username', '');
-                $mform->setType('config_username', PARAM_TEXT);
-                $mform->addHelpButton('config_username', 'config_username', 'block_exaaichat');
-                */
-
                 $mform->addElement('text', 'config_assistantname', get_string('assistantname', 'block_exaaichat'));
                 $mform->setDefault('config_assistantname', '');
                 $mform->setType('config_assistantname', PARAM_TEXT);
@@ -222,6 +204,10 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->setDefault('config_model_other', '');
                 $mform->setType('config_model_other', PARAM_TEXT);
                 $mform->hideIf('config_model_other', 'config_model', 'notselected', 'other');
+
+                $mform->addElement('text', 'config_endpoint', get_string('block_instance:config:endpoint', 'block_exaaichat'));
+                $mform->setDefault('config_endpoint', '');
+                $mform->setType('config_endpoint', PARAM_URL);
 
                 $mform->addElement('text', 'config_temperature', get_string('temperature', 'block_exaaichat'));
                 $mform->setDefault('config_temperature', 0.5);
@@ -245,14 +231,6 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->setDefault('config_prompt', '');
                 $mform->setType('config_prompt', PARAM_TEXT);
                 $mform->addHelpButton('config_prompt', 'config_prompt', 'block_exaaichat');
-
-                // Feld wird nicht mehr benötigt
-                /*
-                $mform->addElement('text', 'config_username', get_string('username', 'block_exaaichat'));
-                $mform->setDefault('config_username', '');
-                $mform->setType('config_username', PARAM_TEXT);
-                $mform->addHelpButton('config_username', 'config_username', 'block_exaaichat');
-                */
 
                 $mform->addElement('text', 'config_assistantname', get_string('assistantname', 'block_exaaichat'));
                 $mform->setDefault('config_assistantname', '');

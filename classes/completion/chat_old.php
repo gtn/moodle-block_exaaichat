@@ -21,8 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace block_exaaichat\api;
+namespace block_exaaichat\completion;
 
+use block_exaaichat\api\base;
 use block_exaaichat\callback_helper;
 use block_exaaichat\helper;
 use OpenAI;
@@ -35,7 +36,7 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * OpenAI chat API
  */
-class chat extends base {
+class chat_old extends base {
     private Client $client;
     private StreamResponse $stream;
 

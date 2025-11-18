@@ -23,8 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use \block_exaaichat\completion;
-
 require_once('../../../config.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
@@ -67,54 +65,9 @@ if ($context instanceof \context_course) {
 
 $PAGE->set_context($context);
 
-$block_settings = [];
-$setting_names = [
-    'sourceoftruth',
-    'prompt',
-    'instructions',
-    'username',
-    'assistantname',
-    'apikey',
-    'model',
-    'endpoint',
-    'temperature',
-    'maxlength',
-    'topp',
-    'frequency',
-    'presence',
-    'assistant',
-    'vector_store_ids',
-];
-foreach ($setting_names as $setting) {
-    if ($instance->config && property_exists($instance->config, $setting)) {
-        $block_settings[$setting] = $instance->config->$setting ?: "";
-    } else {
-        $block_settings[$setting] = "";
-    }
-}
-
-// falls model "other" gewählt wurde, dann den Wert aus dem Eingabefeld model_other verwenden
-if (($block_settings['model'] ?? '') === 'other') {
-    $block_settings['model'] = $instance->config->model_other ?? '';
-}
-
-$model = get_config('block_exaaichat', 'model');
-
-$api_type = '';
-if (get_config('block_exaaichat', 'allowinstancesettings')) {
-    // allow switching to different api
-    $api_type = $instance->config->api_type;
-}
-if (!$api_type) {
-    $api_type = \block_exaaichat\locallib::get_api_type();
-}
-
-$engine_class = "\block_exaaichat\completion\\$api_type";
-
-/* @var completion $completion */
-$completion = new $engine_class($model, $message, $history, $block_settings, $thread_id);
+$completion = \block_exaaichat\completion\completion_base::create_from_config($instance->config, $message, $thread_id, $history);
 try {
-    $response = $completion->create_completion($PAGE->context);
+    $response = $completion->create_completion();
     if ($response['error'] ?? false) {
         header("Content-Type: application/json");
         echo json_encode($response);

@@ -25,173 +25,203 @@
 
 namespace block_exaaichat\completion;
 
+use block_exaaichat\callback_helper;
 use block_exaaichat\helper;
+use OpenAI;
+use OpenAI\Client;
+use OpenAI\Responses\StreamResponse;
+use OpenAI\Responses\Threads\Runs\ThreadRunResponseRequiredActionFunctionToolCall;
 
 defined('MOODLE_INTERNAL') || die;
 
-class assistant extends \block_exaaichat\completion {
+require_once __DIR__ . '/../../vendor/autoload.php';
 
-    private $thread_id;
-    private \block_exaaichat\api\assistant $chat;
+class assistant extends \block_exaaichat\completion\completion_base {
+    private Client $client;
+    private StreamResponse $stream;
 
-    public function __construct($model, $message, $history, $block_settings, $thread_id) {
-        parent::__construct($model, $message, $history, $block_settings);
+    protected string $assistant_id;
 
-        $this->chat = new \block_exaaichat\api\assistant($thread_id, $this->apikey, $this->assistant ?: '', $this->get_instructions() . "\n\n" . $this->get_sourceoftruth());
+    public function __construct(object $config, protected string $message, protected string $thread_id = '', protected array $history = []) {
+        parent::__construct($config, $message, $thread_id, $history);
 
-        // If thread_id is NULL, create a new thread
-        // if (!$thread_id) {
-        //     $thread_id = $this->create_thread();
-        // }
-        $this->thread_id = $thread_id;
+        $this->assistant_id = $config->assistant ?? '' ?: $this->get_plugin_setting('assistant', '');
+        $this->client = OpenAI::client($this->apikey);
     }
 
     /**
      * Given everything we know after constructing the parent, create a completion by constructing the prompt and making the api call
      * @return JSON: The API response from OpenAI
      */
-    public function create_completion($context) {
-        $response = $this->chat->message($this->message);
+    public function create_completion(): array {
+        $response = $this->message($this->message);
 
         return [
             "id" => $response->id,
             "message" => helper::clean_text_response($response->content[0]->text->value),
             "thread_id" => $response->threadId,
         ];
-
-        // disabled block_openai_chat code:
-        /*
-        $this->add_message_to_thread();
-        return $this->run();
-        */
-    }
-
-    // disabled block_openai_chat code:
-    /*
-    private function create_thread() {
-        $curl = new \curl();
-        $curl->setopt(array(
-            'CURLOPT_HTTPHEADER' => array(
-                'Authorization: Bearer ' . $this->apikey,
-                'Content-Type: application/json',
-                'OpenAI-Beta: assistants=v2',
-            ),
-        ));
-
-        $response = $curl->post(\block_exaaichat\locallib::get_openai_api_url() . "/threads");
-        $response = json_decode($response);
-
-        return $response->id;
-    }
-
-    private function add_message_to_thread() {
-        $curlbody = [
-            "role" => "user",
-            "content" => $this->message,
-        ];
-
-        $curl = new \curl();
-        $curl->setopt(array(
-            'CURLOPT_HTTPHEADER' => array(
-                'Authorization: Bearer ' . $this->apikey,
-                'Content-Type: application/json',
-                'OpenAI-Beta: assistants=v2',
-            ),
-        ));
-
-        $response = $curl->post(
-            \block_exaaichat\locallib::get_openai_api_url() . "/threads/" . $this->thread_id ."/messages",
-            json_encode($curlbody)
-        );
-        $response = json_decode($response);
-
-        return $response->id;
     }
 
     /**
-     * Make the actual API call to OpenAI
-     * @return JSON: The response from OpenAI
+     * Create a new thread with the given message
+     *
+     * @param string $message The initial message to start the thread with.
+     * @return \OpenAI\Responses\Threads\Messages\ThreadMessageResponse
      */
-    /*
-    private function run() {
+    public function create_thread(string $message = '') {
+        $tools = array_values(array_map(function($function_definition) {
+            unset($function_definition['callback']);
 
-        $curlbody = [
-            "assistant_id" => $this->assistant,
-        ];
-        if ($this->instructions) {
-            $curlbody["instructions"] = $this->instructions;
-        }
+            return [
+                'type' => 'function',
+                'function' => $function_definition,
+            ];
+        }, callback_helper::get_functions()));
 
-        $curl = new \curl();
-        $curl->setopt(array(
-            'CURLOPT_HTTPHEADER' => array(
-                'Authorization: Bearer ' . $this->apikey,
-                'Content-Type: application/json',
-                'OpenAI-Beta: assistants=v2',
-            ),
-        ));
-
-        $response = $curl->post(
-            \block_exaaichat\locallib::get_openai_api_url() . "/v1/threads/" . $this->thread_id . "/runs",
-            json_encode($curlbody)
+        $this->stream = $this->client->threads()->createAndRunStreamed(
+            parameters: [
+                'assistant_id' => $this->assistant_id,
+                'instructions' => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth(),
+                'thread' => $message ? [
+                    'messages' => [
+                        ['role' => 'user', 'content' => $message],
+                    ],
+                ] : (object)[],
+                'tools' => $tools,
+            ]
         );
-        $response = json_decode($response);
 
-        if (isset($response->error)) {
-            throw new \Exception($response->error->message);
+        return $this->get_response();
+    }
+
+    /**
+     * Send a message to the assistant and get a response.
+     *
+     * @param string $message The message to send to the assistant.
+     * @return \OpenAI\Responses\Threads\Messages\ThreadMessageResponse
+     */
+    public function message(string $message): \OpenAI\Responses\Threads\Messages\ThreadMessageResponse {
+        $this->debug("User: {$message}");
+
+        if (!$this->thread_id) {
+            $response = $this->create_thread($message);
+        } else {
+            /* @var $run OpenAI\Responses\Threads\Runs\ThreadRunResponse */
+            $this->client->threads()->messages()->create($this->thread_id, [
+                'role' => 'user',
+                'content' => $message,
+            ]);
+            $this->stream = $this->client->threads()->runs()->createStreamed(
+                threadId: $this->thread_id,
+                parameters: [
+                    'assistant_id' => $this->assistant_id,
+                ],
+            );
+
+            $response = $this->get_response();
         }
 
-        $run_id = $response->id;
-        $run_completed = false;
-        $iters = 0;
-        while (!$run_completed) {
-            $iters++;
-            if ($iters >= 60) {
-                return [
-                    "id" => 0,
-                    "message" => get_string('openaitimedout', 'block_cloudlearn_ai'),
-                    "thread_id" => 0
-                ];
+        $this->debug("AI:\n====================================================================\n" .
+            $response->content[0]->text->value .
+            "\n====================================================================\n");
+
+        return $response;
+    }
+
+    /**
+     * Get the response from the stream.
+     *
+     * @return \OpenAI\Responses\Threads\Messages\ThreadMessageResponse
+     */
+    private function get_response(): \OpenAI\Responses\Threads\Messages\ThreadMessageResponse {
+        // $chatResponse = '';
+        $completedResponse = null;
+
+        $completed = false;
+        $responseInfo = false;
+
+        while (!$completed) {
+            foreach ($this->stream as $responseInfo) {
+                // $responseInfo->event // 'thread.run.created' | 'thread.run.in_progress' | .....
+                // $responseInfo->response // ThreadResponse | ThreadRunResponse | ThreadRunStepResponse | ThreadRunStepDeltaResponse | ThreadMessageResponse | ThreadMessageDeltaResponse
+
+                if ($responseInfo->event != 'thread.message.delta' && $responseInfo->event != 'thread.run.step.delta') {
+                    // $this->debug($responseInfo);
+                    $this->debug('event:', $responseInfo->event);
+                    // $this->debug($responseInfo->response);
+                }
+
+                $response = $responseInfo->response;
+
+                if ($responseInfo->event == 'thread.message.completed') {
+                    /* @var $response OpenAI\Responses\Threads\Messages\ThreadMessageResponse */
+                    // if ($chatResponse) {
+                    //     $chatResponse .= "\n";
+                    // }
+                    // // var_dump($response);
+                    // $chatResponse .= $response->content[0]->text->value;
+
+                    if ($completedResponse) {
+                        die('already completed, completed again?!?');
+                    }
+                    $completedResponse = $response;
+                }
+
+                if ($responseInfo->event == 'thread.run.requires_action') {
+                    /* @var $response OpenAI\Responses\Threads\Runs\ThreadRunResponse */
+                    if ($response->requiredAction) {
+                        $tool_outputs = [];
+
+                        foreach ($response->requiredAction->submitToolOutputs->toolCalls as $toolCall) {
+                            /* @var $toolCall ThreadRunResponseRequiredActionFunctionToolCall */
+                            $function = $toolCall->function;
+
+                            $output = callback_helper::call_tool($function);
+
+                            $tool_outputs[] = [
+                                'tool_call_id' => $toolCall->id,
+                                'output' => $output,
+                            ];
+                        }
+
+                        $this->stream = $this->client->threads()->runs()->submitToolOutputsStreamed(
+                            threadId: $response->threadId,
+                            runId: $response->id,
+                            parameters: [
+                                'tool_outputs' => $tool_outputs,
+                            ]
+                        );
+                    }
+                }
+
+                if ($response instanceof OpenAI\Responses\Threads\Runs\ThreadRunResponse) {
+                    $this->thread_id = $response->threadId;
+
+                    $completed = ($response->status == 'completed'
+                        || $response->failedAt
+                        // TODO: gibts die property wirklich (code von chatGPT übernommen)
+                        || property_exists($response, 'error'));
+                }
             }
-            $run_completed = $this->check_run_status($run_id);
-            sleep(1);
         }
 
-        $curl = new \curl();
-        $curl->setopt(array(
-            'CURLOPT_HTTPHEADER' => array(
-                'Authorization: Bearer ' . $this->apikey,
-                'Content-Type: application/json',
-                'OpenAI-Beta: assistants=v2',
-            ),
-        ));
-        $response = $curl->get(\block_exaaichat\locallib::get_openai_api_url() . "/threads/" . $this->thread_id . '/messages');
-        $response = json_decode($response);
-
-        return [
-            "id" => $response->data[0]->id,
-            "message" => $response->data[0]->content[0]->text->value,
-            "thread_id" => $response->data[0]->thread_id,
-        ];
-    }
-
-    private function check_run_status($run_id) {
-        $curl = new \curl();
-        $curl->setopt(array(
-            'CURLOPT_HTTPHEADER' => array(
-                'Authorization: Bearer ' . $this->apikey,
-                'Content-Type: application/json',
-                'OpenAI-Beta: assistants=v2',
-            ),
-        ));
-
-        $response = $curl->get(\block_exaaichat\locallib::get_openai_api_url() . "/threads/" . $this->thread_id . "/runs/" . $run_id);
-        $response = json_decode($response);
-
-        if ($response->status === 'completed' || property_exists($response, 'error')) {
-            return true;
+        if (!$completedResponse) {
+            $this->debug('response was not completed, last response:', $responseInfo);
         }
-        return false;
+
+        return $completedResponse;
+        // return $chatResponse;
     }
-    */
+
+    /**
+     * Send a message to the assistant and return the cleaned response.
+     *
+     * @param string $message The message to send to the assistant.
+     * @return string The cleaned response from the assistant.
+     */
+    public function message_simple(string $message): string {
+        $response = $this->message($message);
+        return helper::clean_text_response($response->content[0]->text->value);
+    }
 }
