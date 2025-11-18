@@ -155,10 +155,20 @@ class block_exaaichat_edit_form extends block_edit_form {
             'placeholders_gradebook' => $this->get_placeholders_gradebook(),
         ]));
 
+        if (get_config('block_exaaichat', 'allowinstancesettings')) {
+            $mform->addElement('text', 'config_assistantname', get_string('assistantname', 'block_exaaichat'));
+            $mform->setDefault('config_assistantname', '');
+            $mform->setType('config_assistantname', PARAM_TEXT);
+            $mform->addHelpButton('config_assistantname', 'config_assistantname', 'block_exaaichat');
+        }
+
         if ($api_type === 'assistant') {
             // Assistant settings
 
             if (get_config('block_exaaichat', 'allowinstancesettings')) {
+                $mform->addElement('header', 'config_assistant_header', get_string('assistant', 'block_exaaichat'));
+                $mform->setExpanded('config_assistant_header', true);
+
                 $mform->addElement('select', 'config_assistant', get_string('assistant', 'block_exaaichat'), block_exaaichat_fetch_assistants_array($block_id));
                 $mform->setDefault('config_assistant', get_config('block_exaaichat', 'assistant'));
                 $mform->setType('config_assistant', PARAM_TEXT);
@@ -168,12 +178,8 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addHelpButton('config_persistconvo', 'config_persistconvo', 'block_exaaichat');
                 $mform->setDefault('config_persistconvo', 1);
 
-                $mform->addElement('text', 'config_assistantname', get_string('assistantname', 'block_exaaichat'));
-                $mform->setDefault('config_assistantname', '');
-                $mform->setType('config_assistantname', PARAM_TEXT);
-                $mform->addHelpButton('config_assistantname', 'config_assistantname', 'block_exaaichat');
-
                 $mform->addElement('header', 'config_adv_header', get_string('advanced', 'block_exaaichat'));
+                $mform->setExpanded('config_adv_header', true);
 
                 $mform->addElement('text', 'config_apikey', get_string('apikey', 'block_exaaichat'));
                 $mform->setDefault('config_apikey', '');
@@ -183,12 +189,8 @@ class block_exaaichat_edit_form extends block_edit_form {
 
         } elseif ($api_type === 'responses') {
             if (get_config('block_exaaichat', 'allowinstancesettings')) {
-                $mform->addElement('text', 'config_assistantname', get_string('assistantname', 'block_exaaichat'));
-                $mform->setDefault('config_assistantname', '');
-                $mform->setType('config_assistantname', PARAM_TEXT);
-                $mform->addHelpButton('config_assistantname', 'config_assistantname', 'block_exaaichat');
-
                 $mform->addElement('header', 'config_adv_header', get_string('advanced', 'block_exaaichat'));
+                $mform->setExpanded('config_adv_header', true);
 
                 $mform->addElement('text', 'config_apikey', get_string('apikey', 'block_exaaichat'));
                 $mform->setDefault('config_apikey', '');
@@ -225,19 +227,16 @@ class block_exaaichat_edit_form extends block_edit_form {
             }
         } else {
             // Chat settings
-
             if (get_config('block_exaaichat', 'allowinstancesettings')) {
+                /*
                 $mform->addElement('textarea', 'config_prompt', get_string('prompt', 'block_exaaichat'));
                 $mform->setDefault('config_prompt', '');
                 $mform->setType('config_prompt', PARAM_TEXT);
                 $mform->addHelpButton('config_prompt', 'config_prompt', 'block_exaaichat');
-
-                $mform->addElement('text', 'config_assistantname', get_string('assistantname', 'block_exaaichat'));
-                $mform->setDefault('config_assistantname', '');
-                $mform->setType('config_assistantname', PARAM_TEXT);
-                $mform->addHelpButton('config_assistantname', 'config_assistantname', 'block_exaaichat');
+                */
 
                 $mform->addElement('header', 'config_adv_header', get_string('advanced', 'block_exaaichat'));
+                $mform->setExpanded('config_adv_header', true);
 
                 $mform->addElement('text', 'config_apikey', get_string('apikey', 'block_exaaichat'));
                 $mform->setDefault('config_apikey', '');

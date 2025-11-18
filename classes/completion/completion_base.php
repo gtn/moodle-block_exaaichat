@@ -37,7 +37,7 @@ abstract class completion_base {
     protected string $assistantname = '';
     protected string $username = '';
 
-    protected string $prompt = '';
+    // protected string $prompt = '';
     protected string $sourceoftruth;
     protected string $model;
     protected float $temperature;
@@ -78,7 +78,7 @@ abstract class completion_base {
                 'temperature',
                 'topp',
                 'vector_store_ids',
-                'prompt',
+                // 'prompt',
                 'maxlength',
                 'frequency',
                 'presence',
@@ -113,7 +113,7 @@ abstract class completion_base {
             $this->vector_store_ids = preg_split('![\s,]+!', $vector_store_ids);
         }
 
-        $this->prompt = $config->prompt ?? $this->get_plugin_setting('prompt', get_string('defaultprompt', 'block_exaaichat'));
+        // $this->prompt = $config->prompt ?? $this->get_plugin_setting('prompt', get_string('defaultprompt', 'block_exaaichat'));
 
         $this->maxlength = $config->maxlength ?? $this->get_plugin_setting('maxlength', 500);
         $this->frequency = $config->frequency ?? $this->get_plugin_setting('frequency', 1);
@@ -161,7 +161,7 @@ abstract class completion_base {
             $sourceoftruth = '';
         }
 
-        $sourceoftruth = trim($sourceoftruth . ' ' . $this->prompt);
+        $sourceoftruth = trim($sourceoftruth); //  . ' ' . $this->prompt);
         $sourceoftruth = helper::generate_placeholders($sourceoftruth);
 
         return $sourceoftruth;
