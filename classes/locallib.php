@@ -150,14 +150,15 @@ class locallib {
                     return $property->getValue($instance);
                 };
 
+                $model = $processor instanceof \aiprovider_openai\process_generate_text ? $call_private_method($processor, 'get_model') : '';
                 $ais[] = (object)[
                     'id' => 'provider-' . $provider->get_name(),
-                    'name' => get_string('pluginname', $provider->get_name()),
+                    'name' => $model,
                     'apikey' => $get_private_property($provider, 'apikey'),
                     'api_type' => 'chat',
                     // globalratelimit
                     // userratelimit
-                    'model' => $processor instanceof \aiprovider_openai\process_generate_text ? $call_private_method($processor, 'get_model') : '',
+                    'model' => $model,
                     'endpoint' => (string)$call_private_method($processor, 'get_endpoint'),
                     'modelsettings' => [],
                 ];

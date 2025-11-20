@@ -100,7 +100,7 @@ class block_exaaichat extends block_base {
 
             $ai_providers = [
                 ['id' => '', 'label' => $model],
-                ...array_map(fn($ai_provider) => ['id' => $ai_provider->id, 'label' => $ai_provider->name . ($ai_provider->model ? ' (' . $ai_provider->model . ')' : '')], locallib::get_moodle_ai_providers()),
+                ...array_map(fn($ai_provider) => ['id' => $ai_provider->id, 'label' => $ai_provider->name . ($ai_provider->model && $ai_provider->model != $ai_provider->name ? ' (' . $ai_provider->model . ')' : '')], locallib::get_moodle_ai_providers()),
             ];
         } else {
             $ai_providers = [];

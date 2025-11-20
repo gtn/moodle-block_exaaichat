@@ -115,11 +115,11 @@
     overflow: hidden;
 }
 
-/* inside the drawer, textfield in one line and buttons below */
-.drawer-right .block_exaaichat:not(.expanded) .exaaichat_input_bar {
+/* inside the drawer, if ai_provider_select is visible, textfield in one line and buttons below */
+.drawer-right .block_exaaichat:not(.expanded) .exaaichat_input_bar.with_ai_provider_select {
     flex-wrap: wrap;
 }
-.drawer-right .block_exaaichat:not(.expanded) .exaaichat_input_bar .exaaichat_input {
+.drawer-right .block_exaaichat:not(.expanded) .exaaichat_input_bar.with_ai_provider_select .exaaichat_input {
     width: 100%;
     margin-bottom: 10px;
     border-radius: 0.5rem

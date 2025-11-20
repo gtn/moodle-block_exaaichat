@@ -50,8 +50,7 @@
     {{/show_top_buttons}}
 </div>
 <div class="exaaichat_control_bar">
-    <div class="exaaichat_input_bar" id="input_bar">
-
+    <div class="exaaichat_input_bar {{#show_ai_provider_select}}with_ai_provider_select{{/show_ai_provider_select}}" id="input_bar">
         <textarea class="exaaichat_input" aria-label="{{#str}}askaquestion, block_exaaichat{{/str}}" rows=1 placeholder="{{#str}}askaquestion, block_exaaichat{{/str}}" name="message"></textarea>
         {{#show_ai_provider_select}}
             <select name="ai_provider">
