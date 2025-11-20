@@ -116,6 +116,8 @@ class block_exaaichat extends block_base {
                 'logging_enabled' => get_config('block_exaaichat', 'logging'),
                 'show_top_buttons' => !$PAGE->user_is_editing() || $as_aiplacement_content,
                 'settings_url' => $as_aiplacement_content ?
+                    // auf die editmode.php verlinken und dann zum block edit weiterleiten
+                    // weil block editieren nur mit aktivem editmode geht!
                     (new \moodle_url('/editmode.php', ['setmode' => 1, 'context' => \context_system::instance()->id, 'sesskey' => sesskey(),
                         'pageurl' => (new \moodle_url('/course/view.php', ['id' => $COURSE->id, 'bui_editid' => $this->instance->id]))->out(false),
                     ]))->out(false) : null,
