@@ -50,7 +50,7 @@
     {{/show_top_buttons}}
 </div>
 <div class="exaaichat_control_bar">
-    <div class="exaaichat_input_bar {{#show_ai_provider_select}}with_ai_provider_select{{/show_ai_provider_select}}" id="input_bar">
+    <div class="exaaichat_input_bar {{#show_ai_provider_select}}with_ai_provider_select{{/show_ai_provider_select}}">
         <textarea class="exaaichat_input" aria-label="{{#str}}askaquestion, block_exaaichat{{/str}}" rows=1 placeholder="{{#str}}askaquestion, block_exaaichat{{/str}}" name="message"></textarea>
         {{#show_ai_provider_select}}
             <select name="ai_provider">
@@ -62,7 +62,7 @@
         <button class="btn btn-primary exaaichat_input_submit_btn" title="{{#str}}askaquestion, block_exaaichat{{/str}}">
             <img src="{{{config.wwwroot}}}{{{ pix_arrow_right }}}" alt="{{#str}}askaquestion, block_exaaichat{{/str}}" class="exaaichat_input_submit_btn_icon"/>
         </button>
-        <button class="btn btn-secondary exaaichat_input_refresh_btn" title="{{#str}}new_chat, block_exaaichat {{/str}}" id="refresh">
+        <button class="btn btn-secondary exaaichat_input_refresh_btn" title="{{#str}}new_chat, block_exaaichat {{/str}}">
             <img src="{{{config.wwwroot}}}{{{ pix_refresh }}}" class="exaaichat_input_refresh_btn_icon" alt="{{#str}}new_chat, block_exaaichat {{/str}}" />
         </button>
     </div>
