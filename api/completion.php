@@ -45,20 +45,27 @@ require_sesskey();
 $body = json_decode(file_get_contents('php://input'), true);
 $message = clean_param($body['message'], PARAM_NOTAGS);
 $history = clean_param_array($body['history'], PARAM_NOTAGS, true);
-$block_id = clean_param($body['blockId'], PARAM_INT, true);
-$thread_id = clean_param($body['threadId'], PARAM_NOTAGS, true);
+$block_id = clean_param($body['blockId'], PARAM_TEXT); // block_id can be string or int
+$thread_id = clean_param($body['threadId'], PARAM_NOTAGS);
 $provider_id = clean_param($body['providerId'] ?? null, PARAM_NOTAGS);
 
+if (preg_match('!^course-(.*)$!', $block_id, $matches)) {
+    $courseid = $matches[1];
 
-// So that we're not leaking info to the client like API key, the block makes an API request including its ID
-// Then we can look up that specific block to pull out its config data
-$instance_record = $DB->get_record('block_instances', ['blockname' => 'exaaichat', 'id' => $block_id], '*');
-$instance = block_instance('exaaichat', $instance_record);
-if (!$instance) {
-    throw new \moodle_exception('invalidblockinstance', 'error');
+    $config = (object)[];
+    $context = context_course::instance($courseid);
+} else {
+    // So that we're not leaking info to the client like API key, the block makes an API request including its ID
+    // Then we can look up that specific block to pull out its config data
+    $instance_record = $DB->get_record('block_instances', ['blockname' => 'exaaichat', 'id' => $block_id], '*');
+    $instance = block_instance('exaaichat', $instance_record);
+    if (!$instance) {
+        throw new \moodle_exception('invalidblockinstance', 'error');
+    }
+
+    $config = clone $instance->config;
+    $context = context::instance_by_id($instance_record->parentcontextid);
 }
-
-$context = context::instance_by_id($instance_record->parentcontextid);
 
 if ($context instanceof \context_course) {
     require_login($context->instanceid);
@@ -76,8 +83,6 @@ if (get_config('block_exaaichat', 'allowproviderselection') && $provider_id) {
         throw new \moodle_exception('invalidprovider', 'block_exaaichat');
     }
 
-    $config = clone $instance->config;
-
     $extra_config = (object)[];
     $extra_config->api_type = $provider->api_type;
     $extra_config->apikey = $provider->apikey;
@@ -91,7 +96,7 @@ if (get_config('block_exaaichat', 'allowproviderselection') && $provider_id) {
 
     $completion = \block_exaaichat\completion\completion_base::create_from_config($config, $message, $thread_id, $history);
 } else {
-    $completion = \block_exaaichat\completion\completion_base::create_from_config($instance->config, $message, $thread_id, $history);
+    $completion = \block_exaaichat\completion\completion_base::create_from_config($config, $message, $thread_id, $history);
 }
 
 try {
