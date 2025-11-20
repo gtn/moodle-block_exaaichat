@@ -1,6 +1,10 @@
-### next ###
+### v3.2 (2025112000) ###
 * New Block Setting: Retention Period (days)
   How long (in days) to keep the logs. After this period, logs will be automatically deleted.
+* Moodle AI Provider integration
+* Users can now select different AI providers in the chat dialog
+* Chat history is now saved in the Browser (localstorage), so after page reload the chat history is still available
+* Modernize chat styling and input styling
 
 ### v3.1 (2025111200) ###
 * Allow inserting grades and grade ranges in the sourceoftruth field

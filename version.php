@@ -29,4 +29,4 @@ $plugin->component = 'block_exaaichat';
 $plugin->version = 2025112000;
 $plugin->requires = 2022041600;
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '3.1';
+$plugin->release = '3.2';
