@@ -219,6 +219,13 @@ if ($hassiteconfig) {
             0
         ));
 
+        $settings->add(new admin_setting_configcheckbox(
+            'block_exaaichat/allowproviderselection',
+            get_string('allowproviderselection', 'block_exaaichat'),
+            get_string('allowproviderselection:desc', 'block_exaaichat'),
+            1
+        ));
+
         if ($type === 'responses') {
             $settings->add(new admin_setting_configtext(
                 'block_exaaichat/additional_message',

@@ -85,7 +85,9 @@ abstract class completion_base {
             ];
 
             foreach ($global_configs_to_use as $cfgname) {
-                unset($config->{$cfgname});
+                if (!in_array($cfgname, $config->settings_to_keep ?? [])) {
+                    unset($config->{$cfgname});
+                }
             }
         }
 

@@ -51,10 +51,15 @@ class chat extends \block_exaaichat\completion\completion_base {
      */
     protected function format_history(): array {
         $history = [];
-        foreach ($this->history as $index => $message) {
-            $role = $index % 2 === 0 ? 'user' : 'assistant';
-            array_push($history, ["role" => $role, "content" => $message["message"]]);
+        foreach ($this->history as $message) {
+            if ($message['type'] == 'error') {
+                // don't send errors in chat history to ai
+                continue;
+            }
+
+            $history[] = ["role" => $message['type'], "content" => $message["message"]];
         }
+
         return $history;
     }
 

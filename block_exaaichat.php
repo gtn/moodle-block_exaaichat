@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+use block_exaaichat\locallib;
 
 /**
  * Block class
@@ -22,7 +23,6 @@
  * @copyright  based on work by Limekiller https://github.com/Limekiller/moodle-block_openai_chat
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class block_exaaichat extends block_base {
     public function init() {
         $this->title = get_string('exaaichat', 'block_exaaichat');
@@ -42,9 +42,8 @@ class block_exaaichat extends block_base {
         }
     }
 
-    public function get_content() {
-        global $OUTPUT;
-        global $PAGE;
+    public function get_content(bool $as_aiplacement_content = false) {
+        global $COURSE, $OUTPUT, $PAGE;
 
         if ($this->content !== null) {
             return $this->content;
@@ -65,29 +64,9 @@ class block_exaaichat extends block_base {
             $api_type = \block_exaaichat\locallib::get_api_type();
         }
 
-        $this->page->requires->js_call_amd('block_exaaichat/lib', 'init', [[
-            'blockId' => $this->instance->id,
-            'api_type' => $api_type,
-            'persistConvo' => $persistconvo
-        ]]);
-        // $this->page->requires->js_call_amd('block_exaaichat/block_instance_config', 'init'); // this would load it on pageload, which is too early.
-
-        // Determine if name labels should be shown.
-        $showlabelscss = '';
-        if (!empty($this->config) && !$this->config->showlabels) {
-            $showlabelscss = '
-                .openai_message:before {
-                    display: none;
-                }
-                .openai_message {
-                    margin-bottom: 0.5rem;
-                }
-            ';
-        }
-
         // First, fetch the global settings for these (and the defaults if not set)
-        $assistantname = get_config('block_exaaichat', 'assistantname') ? get_config('block_exaaichat', 'assistantname') : get_string('defaultassistantname', 'block_exaaichat');
-        $username = get_config('block_exaaichat', 'username') ? get_config('block_exaaichat', 'username') : get_string('defaultusername', 'block_exaaichat');
+        $assistantname = get_config('block_exaaichat', 'assistantname') ?: get_string('defaultassistantname', 'block_exaaichat');
+        $username = get_config('block_exaaichat', 'username') ?: get_string('defaultusername', 'block_exaaichat');
 
         // Then, override with local settings if available
         if (!empty($this->config)) {
@@ -97,41 +76,62 @@ class block_exaaichat extends block_base {
         $assistantname = format_string($assistantname, true, ['context' => $this->context]);
         $username = format_string($username, true, ['context' => $this->context]);
 
+        $this->page->requires->js_call_amd('block_exaaichat/lib', 'init', [[
+            'blockId' => (int)$this->instance->id,
+            'api_type' => $api_type,
+            'persistConvo' => (bool)$persistconvo,
+            'assistantName' => $assistantname,
+            'userName' => $username,
+            'showlabels' => (bool)$this->config->showlabels,
+        ]]);
+
         $this->content = new stdClass;
-        $this->content->text = '
-            <script>
-                var assistantName = "' . $assistantname . '";
-                var userName = "' . $username . '";
-            </script>
+        $this->content->text = '';
 
-            <style>
-                ' . $showlabelscss . '
-                .openai_message.user:before {
-                    content: "' . $username . '";
+        if (get_config('block_exaaichat', 'allowproviderselection')) {
+            if (get_config('block_exaaichat', 'allowinstancesettings')) {
+                $config = $this->config;
+                // falls model "other" gewählt wurde, dann den Wert aus dem Eingabefeld model_other verwenden
+                if (($config->model ?? '') === 'other') {
+                    $config->model = $config->model_other ?? '';
                 }
-                .openai_message.bot:before {
-                    content: "' . $assistantname . '";
-                }
-            </style>
+            }
+            $model = $config->model ?? '' ?: get_config('block_exaaichat', 'model') ?: 'chat';
 
-            <div id="exaaichat_log" role="log"></div>
-        ';
+            $ai_providers = [
+                ['id' => '', 'label' => $model],
+                ...array_map(fn($ai_provider) => ['id' => $ai_provider->id, 'label' => $ai_provider->name . ($ai_provider->model ? ' (' . $ai_provider->model . ')' : '')], locallib::get_moodle_ai_providers()),
+            ];
+        } else {
+            $ai_providers = [];
+        }
 
         if (
             empty(get_config('block_exaaichat', 'apikey')) &&
             (!get_config('block_exaaichat', 'allowinstancesettings') || empty($this->config->apikey))
         ) {
-            $this->content->footer = get_string('apikeymissing', 'block_exaaichat');
+            $this->content->text .= get_string('apikeymissing', 'block_exaaichat');
         } else {
             $contextdata = [
                 'logging_enabled' => get_config('block_exaaichat', 'logging'),
-                'is_edit_mode' => $PAGE->user_is_editing(),
+                'show_top_buttons' => !$PAGE->user_is_editing() || $as_aiplacement_content,
+                'settings_url' => $as_aiplacement_content ?
+                    (new \moodle_url('/editmode.php', ['setmode' => 1, 'context' => \context_system::instance()->id, 'sesskey' => sesskey(),
+                        'pageurl' => (new \moodle_url('/course/view.php', ['id' => $COURSE->id, 'bui_editid' => $this->instance->id]))->out(false),
+                    ]))->out(false) : null,
                 'pix_popout' => '/blocks/exaaichat/pix/arrow-up-right-from-square.svg',
                 'pix_arrow_right' => '/blocks/exaaichat/pix/arrow-right.svg',
                 'pix_refresh' => '/blocks/exaaichat/pix/refresh.svg',
+                'show_ai_provider_select' => count($ai_providers) > 1,
+                'ai_providers' => $ai_providers,
             ];
 
-            $this->content->footer = $OUTPUT->render_from_template('block_exaaichat/control_bar', $contextdata);
+            $this->content->text .= $OUTPUT->render_from_template('block_exaaichat/chat_component', $contextdata);
+        }
+
+        if ($PAGE->requires->get_jsrev() == -1 && $_SERVER['HTTP_HOST'] == 'localhost') {
+            // for debugging prevent moodle to clear localstorage on each page load
+            $this->content->text .= "<script> localStorage.clear = function() { console.log('localStorage.clear() disabled by block_exaaichat for debugging')}; </script>";
         }
 
         return $this->content;

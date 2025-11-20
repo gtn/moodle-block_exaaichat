@@ -93,6 +93,8 @@ $string['advanced'] = 'Erweitert';
 $string['advanced:desc'] = 'Erweiterte Parameter, die an OpenAI gesendet werden. Bitte nur ändern, wenn du genau weißt, was du tust!';
 $string['allowinstancesettings'] = 'Instanzbezogene Einstellungen';
 $string['allowinstancesettings:desc'] = 'Diese Einstellung erlaubt es Lehrenden bzw. jedem mit der Berechtigung, einen Block im jeweiligen Kontext hinzuzufügen, instanzspezifische Einstellungen vorzunehmen. Dies kann zu zusätzlichen Kosten führen (z. B. durch Auswahl teurerer Modelle).';
+$string['allowproviderselection'] = 'Benutzer können eine KI wählen (aus den Moodle KI-Provider)';
+$string['allowproviderselection:desc'] = '';
 $string['model'] = 'Modell';
 $string['model:desc'] = 'Das Modell, das die Generierung der Antwort übernimmt. Einige Modelle sind auf natürliche Sprache spezialisiert, andere auf Code.';
 $string['models'] = 'Modelle';
@@ -144,7 +146,7 @@ $string['block_instance:config:endpoint'] = 'Alternative Endpunkt-URL';
 
 $string['defaultprompt'] = 'Below is a conversation between a user and a support assistant for a Moodle site, where users go for online learning:'; // Belassen (kontextuell englisch)
 $string['defaultassistantname'] = 'Assistent';
-$string['defaultusername'] = 'Benutzer';
+$string['defaultusername'] = 'Ich';
 $string['askaquestion'] = 'Stell eine Frage...';
 $string['apikeymissing'] = 'Bitte trage deinen OpenAI API-Schlüssel in den Blockeinstellungen ein.';
 $string['erroroccurred'] = 'Es ist ein Fehler aufgetreten! Bitte versuche es später erneut.';

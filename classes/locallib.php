@@ -23,6 +23,8 @@
 
 namespace block_exaaichat;
 
+use core_ai\aiactions\generate_text;
+
 defined('MOODLE_INTERNAL') || die;
 
 class locallib {
@@ -91,5 +93,77 @@ class locallib {
         }
 
         $DB->execute('DELETE FROM {block_exaaichat_log} WHERE timecreated < ?', [time() - ($days * 24 * 60 * 60)]);
+    }
+
+    public static function get_moodle_ai_providers(): array {
+        global $CFG;
+
+        $ais = [];
+
+        if (version_compare($CFG->release, '5.0', '>=')) {
+            // TODO: works with moodle 5.1, but also with 5.0?
+            $providers = \core\di::get(\core_ai\manager::class)->get_sorted_providers();
+
+            foreach ($providers as $provider) {
+                if (!$provider->enabled) {
+                    continue;
+                }
+
+                $actionconfig = $provider->actionconfig['core_ai\aiactions\generate_text'] ?? null;
+                if (!$actionconfig || !$actionconfig['enabled']) {
+                    continue;
+                }
+
+                $ais[] = (object)[
+                    'id' => $provider->id,
+                    'name' => $provider->name,
+                    'apikey' => $provider->config['apikey'] ?? '',
+                    'api_type' => 'chat',
+                    // globalratelimit
+                    // userratelimit
+                    'model' => $actionconfig['settings']['model'] ?? '',
+                    'endpoint' => $actionconfig['settings']['endpoint'] ?? '',
+                    'modelsettings' => $actionconfig['modelsettings'][$actionconfig['model'] ?? ''] ?? [],
+                ];
+            }
+
+            return $ais;
+        } elseif (version_compare($CFG->release, '4.5', '>=')) {
+            $providers = current(\core_ai\manager::get_providers_for_actions([generate_text::class], true));
+            $action = new generate_text(1, 1, '');
+            foreach ($providers as $provider) {
+                /* @var \core_ai\provider $provider */
+                $classname = 'process_' . $action->get_basename();
+                $classpath = substr($provider::class, 0, strpos($provider::class, '\\') + 1);
+                $processclass = $classpath . $classname;
+                $processor = new $processclass($provider, $action);
+
+                $call_private_method = function($instance, $methodName) {
+                    $method = new \ReflectionMethod($instance, $methodName);
+                    $method->setAccessible(true); // allow access
+                    return $method->invoke($instance);
+                };
+
+                $get_private_property = function($instance, $propertyName) {
+                    $property = new \ReflectionProperty($instance, $propertyName);
+                    $property->setAccessible(true); // allow access
+                    return $property->getValue($instance);
+                };
+
+                $ais[] = (object)[
+                    'id' => 'provider-' . $provider->get_name(),
+                    'name' => get_string('pluginname', $provider->get_name()),
+                    'apikey' => $get_private_property($provider, 'apikey'),
+                    'api_type' => 'chat',
+                    // globalratelimit
+                    // userratelimit
+                    'model' => $processor instanceof \aiprovider_openai\process_generate_text ? $call_private_method($processor, 'get_model') : '',
+                    'endpoint' => (string)$call_private_method($processor, 'get_endpoint'),
+                    'modelsettings' => [],
+                ];
+            }
+        }
+
+        return $ais;
     }
 }

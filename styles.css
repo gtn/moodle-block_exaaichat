@@ -4,79 +4,104 @@
     position: relative;
 }
 
-.block_exaaichat #exaaichat_log {
+.block_exaaichat .exaaichat_log {
     display: flex;
     flex-direction: column;
     max-height: 20rem;
-    overflow-y: scroll;
+    overflow-y: auto;
     margin-bottom: 0.5rem;
+    gap: 8px;
+    padding: 15px 15px 15px 0;
+}
+.block_exaaichat .exaaichat_log.hidden {
+    display: none;
 }
 
-.block_exaaichat #exaaichat_log p {
+.block_exaaichat .exaaichat_log p {
     margin: 0;
 }
 
-.block_exaaichat #exaaichat_log a {
-    /*color: white;*/
-    /*text-decoration: underline;*/
+.block_exaaichat .exaaichat_log a {
+    color: inherit;
+    text-decoration: underline;
+    opacity: 75%;
 }
 
-.block_exaaichat #control_bar {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.block_exaaichat #control_bar button:hover {
+.block_exaaichat .exaaichat_control_bar button:hover {
     filter: brightness(0.8);
 }
 
-.block_exaaichat #control_bar #go {
+.block_exaaichat .exaaichat_control_bar .exaaichat_input_submit_btn {
     border-radius: 0 0.5rem 0.5rem 0;
 }
 
-.block_exaaichat #control_bar button {
+.block_exaaichat .exaaichat_control_bar button {
     transition: filter 0.2s ease;
     border: none;
     border-radius: 0.5rem;
-    width: 2.5rem;
+    width: 2.2rem;
+    padding: 4px !important;
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
-.openai_input_submit_btn {
+/* can not be inside .block_exaaichat, because then the var() won't work */
+.exaaichat_input_submit_btn {
     background-color: var(--primary);
     color: var(--white);
 }
 
-.openai_input_refresh_btn {
+/* can not be inside .block_exaaichat, because then the var() won't work */
+.exaaichat_input_refresh_btn {
     background-color: var(--secondary);
     color: black;
+    margin-left: 0.5rem;
 }
 
-.block_exaaichat .openai_input_popout_btn {
+.block_exaaichat .exaaichat_top-buttons {
     position: absolute;
+    display: flex;
     top: 0.75rem;
     right: 0.5rem;
+    z-index: 100;
+}
+.block_exaaichat .exaaichat_top-buttons > * {
+    margin-right: 6px;
+}
+.block_exaaichat .exaaichat_btn {
     width: 2rem;
     height: 2rem;
     border-radius: 99rem;
-    padding: 0.4rem;
     display: flex;
+    padding: 0;
     border: none;
-    z-index: 2;
+    align-items: center;
+    justify-content: center;
 }
-.block_exaaichat .openai_input_popout_btn img {
-    max-width: 1.25rem;
+
+.block_exaaichat .exaaichat_btn img {
+    max-width: 1.25rem !important; /* needs to be important, because .card img is important */
     pointer-events: none;
+}
+.block_exaaichat .exaaichat_btn_close {
+    display: none;
+}
+.block_exaaichat.expanded .exaaichat_popout_btn {
+    display: none;
+}
+.block_exaaichat.expanded .exaaichat_btn_close {
+    display: flex;
 }
 .drawercontent {
     position: unset;
 }
 
-.openai_input_submit_btn_icon,
-.openai_input_refresh_btn_icon {
+.exaaichat_input_submit_btn_icon,
+.exaaichat_input_refresh_btn_icon {
     width: 80%;
 }
 
-.openai_input_bar {
+.exaaichat_input_bar {
     display: flex;
     width: 100%;
 }
@@ -85,8 +110,22 @@
     transform: scale(0.7);
 }
 
-.block_exaaichat #openai_input,
-.openai_input_bar input {
+.exaaichat_input_bar .exaaichat_input {
+    resize: none;
+    overflow: hidden;
+}
+
+/* inside the drawer, textfield in one line and buttons below */
+.drawer-right .block_exaaichat:not(.expanded) .exaaichat_input_bar {
+    flex-wrap: wrap;
+}
+.drawer-right .block_exaaichat:not(.expanded) .exaaichat_input_bar .exaaichat_input {
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 0.5rem
+}
+
+.block_exaaichat .exaaichat_input {
     padding: 0.5rem;
     border-radius: 0.5rem 0 0 0.5rem;
     border: 1px solid gray;
@@ -94,56 +133,63 @@
     transition: background 0.4s ease;
 }
 
-.block_exaaichat #openai_input.error {
+.block_exaaichat .exaaichat_input.error {
     border: 1px solid red;
 }
 
-.block_exaaichat .openai_message {
-    padding: 0.75rem 1rem;
-    background: #f4f4f4;
-    border-radius: 0.5rem;
-    margin-bottom: 1.75rem;
-    width: fit-content;
-    max-width: 90%;
+/* Whole chat message */
+.block_exaaichat .chat_message {
+    max-width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
     animation: block_exaaichat_popup 0.4s cubic-bezier(0.87, 0, 0.13, 1);
-    position: relative;
 }
 
-.block_exaaichat .openai_message:before {
-    position: absolute;
-    top: -1.5rem;
-    left: 0;
-    color: gray;
-    opacity: 0;
-    animation: block_exaaichat_fade-in 0.4s ease 0.4s forwards;
-}
-
-.block_exaaichat .openai_message.user {
+/* Align user messages to the right */
+.block_exaaichat .chat_message.user {
     align-self: flex-end;
     text-align: right;
 }
 
-.block_exaaichat .openai_message.user:before {
-    right: 0;
-    left: unset;
+/* Username label */
+.block_exaaichat .chat_message_label {
+    font-size: 0.85rem;
+    margin-bottom: 3px;
+    color: gray;
+    font-weight: bold;
+    padding: 0 4px;
 }
 
-.block_exaaichat .openai_message.bot {
-    background: var(--blue);
-    color: var(--white);
+/* Bubble */
+.block_exaaichat .chat_message_content {
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #f1f1f1;
+    color: #222;
 }
-.block_exaaichat .openai_message.error {
+
+/* User bubble style */
+.block_exaaichat .chat_message.user .chat_message_content {
+    background: #d3e8ff;
+}
+
+.block_exaaichat .chat_message.user {
+    align-self: flex-end;
+    text-align: right;
+}
+
+.block_exaaichat .chat_message.assistant .chat_message_content {
+    background: #f0f0f0;
+    color: black;
+}
+.block_exaaichat .chat_message.error .chat_message_content {
     background: #fdebeb;
     color: black;
 }
 
-.block_exaaichat .openai_message.loading {
+.block_exaaichat .chat_message.loading .chat_message_content {
     animation: block_exaaichat_thinking 1s ease infinite;
-}
-
-.block_exaaichat .openai_message.loading:before {
-    animation: none;
-    opacity: 0;
 }
 
 .block_exaaichat.disabled,
@@ -155,55 +201,41 @@
 .block_exaaichat.expanded {
     position: fixed;
     height: 70vh;
-    width: 30rem;
+    width: 80vw;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
     outline: 100vw solid #00000029;
-    z-index: 2;
+    z-index: 2000;
     background-color: white !important;
 }
 
-.block_exaaichat.expanded .card-body {
-    overflow-y: auto;
+.block_exaaichat.expanded .card-body,
+.block_exaaichat.expanded .card-text {
+    height: 100%;
 }
 
-.block_exaaichat.expanded #exaaichat_log {
-    max-height: unset;
-    overflow-y: unset;
-    padding-bottom: 3rem !important;
+.block_exaaichat.expanded .exaaichat_log {
     padding-top: 1rem;
     min-height: 2rem;
+    max-height: calc(100% - 80px);
 }
 
-.block_exaaichat.expanded #control_bar {
-    display: flex;
-    gap: .5rem;
+.block_exaaichat.expanded .exaaichat_control_bar {
     position: fixed;
     bottom: 1rem;
     width: calc(100% - 2rem);
 }
 
-.block_exaaichat.expanded .openai_message {
-    width: fit-content !important;
-}
-
 .block_exaaichat .recording {
     width: 0.5rem;
     height: 0.5rem;
+    margin-top: 12px;
+    margin-right: 8px;
     background: #ff0000;
-    position: absolute;
-    top: 1.5rem;
-    right: 3rem;
     border-radius: 99rem;
     filter: opacity(0.5);
     animation: block_exaaichat_thinking 3s linear infinite;
-}
-
-.block_exaaichat input {
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    border: 1px solid grey;
 }
 
 .block_exaaichat .report_container {
@@ -212,26 +244,20 @@
     margin-bottom: 1rem;
 }
 
-/* dumbass remui styles */
+/* remui styles */
 .block_exaaichat.expanded .block-header-wrapper {
     padding: 1rem !important;
 }
 .block_exaaichat.expanded .edw-block-body {
     box-shadow: none !important;
 }
-.block_exaaichat .edw-block-body #popout {
-    top: 0;
-}
 .block_exaaichat .edw-block-body .recording {
-    top: 0.75rem;
-}
-.block_exaaichat.expanded .edw-block-body #popout {
     top: 0.75rem;
 }
 .block_exaaichat.expanded .edw-block-body .recording {
     top: 1.5rem;
 }
-.block_exaaichat.expanded .edw-block-body #control_bar {
+.block_exaaichat.expanded .edw-block-body .exaaichat_control_bar {
     width: calc(100% - 4rem);
 }
 .block_exaaichat.expanded .block-body-wrapper {
@@ -260,12 +286,6 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-    }
-    .block_exaaichat.expanded .openai_input_popout_btn {
-        right: 3rem;
-    }
-    .block_exaaichat.expanded .recording {
-        right: 5.5rem;
     }
     .block_exaaichat .report_container {
         flex-direction: column;

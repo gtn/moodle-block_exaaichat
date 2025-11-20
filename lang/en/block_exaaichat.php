@@ -93,6 +93,8 @@ $string['advanced'] = 'Advanced';
 $string['advanced:desc'] = 'Advanced arguments sent to OpenAI. Don\'t touch unless you know what you\'re doing!';
 $string['allowinstancesettings'] = 'Instance-level settings';
 $string['allowinstancesettings:desc'] = 'This setting will allow teachers, or anyone with the capability to add a block in a context, to adjust settings at a per-block level. Enabling this could incur additional charges by allowing non-admins to choose higher-cost models or other settings.';
+$string['allowproviderselection'] = 'User can switch between the moodle AI Providers';
+$string['allowproviderselection:desc'] = '';
 $string['openai_api_url'] = 'API URL';
 $string['openai_api_url:desc'] = 'The API URL for the requests to OpenAPI or other compatible endpoint.';
 $string['model'] = 'Model';
@@ -146,7 +148,7 @@ $string['block_instance:config:endpoint'] = 'Alternative endpoint URL';
 
 $string['defaultprompt'] = "Below is a conversation between a user and a support assistant for a Moodle site, where users go for online learning:";
 $string['defaultassistantname'] = 'Assistant';
-$string['defaultusername'] = 'User';
+$string['defaultusername'] = 'Me';
 $string['askaquestion'] = 'Ask a question...';
 $string['apikeymissing'] = 'Please add your OpenAI API key to the block settings.';
 $string['erroroccurred'] = 'An error occurred! Please try again later.';

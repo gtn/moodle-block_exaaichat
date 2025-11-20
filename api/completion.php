@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_exaaichat\locallib;
+
 require_once('../../../config.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
@@ -45,6 +47,7 @@ $message = clean_param($body['message'], PARAM_NOTAGS);
 $history = clean_param_array($body['history'], PARAM_NOTAGS, true);
 $block_id = clean_param($body['blockId'], PARAM_INT, true);
 $thread_id = clean_param($body['threadId'], PARAM_NOTAGS, true);
+$provider_id = clean_param($body['providerId'] ?? null, PARAM_NOTAGS);
 
 
 // So that we're not leaking info to the client like API key, the block makes an API request including its ID
@@ -65,7 +68,32 @@ if ($context instanceof \context_course) {
 
 $PAGE->set_context($context);
 
-$completion = \block_exaaichat\completion\completion_base::create_from_config($instance->config, $message, $thread_id, $history);
+if (get_config('block_exaaichat', 'allowproviderselection') && $provider_id) {
+    $providers = locallib::get_moodle_ai_providers();
+    $provider = current(array_filter($providers, fn($provider) => $provider->id == $provider_id));
+
+    if (!$provider) {
+        throw new \moodle_exception('invalidprovider', 'block_exaaichat');
+    }
+
+    $config = clone $instance->config;
+
+    $extra_config = (object)[];
+    $extra_config->api_type = $provider->api_type;
+    $extra_config->apikey = $provider->apikey;
+    $extra_config->model = $provider->model;
+    $extra_config->endpoint = $provider->endpoint;
+    // TODO: modelsettings
+
+    $config = (object)array_merge((array)$config, (array)$extra_config);
+    $config->is_moodle_ai_provider = true;
+    $config->settings_to_keep = array_keys((array)$extra_config);
+
+    $completion = \block_exaaichat\completion\completion_base::create_from_config($config, $message, $thread_id, $history);
+} else {
+    $completion = \block_exaaichat\completion\completion_base::create_from_config($instance->config, $message, $thread_id, $history);
+}
+
 try {
     $response = $completion->create_completion();
     if ($response['error'] ?? false) {
