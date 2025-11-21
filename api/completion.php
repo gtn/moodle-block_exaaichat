@@ -48,6 +48,7 @@ $history = clean_param_array($body['history'], PARAM_NOTAGS, true);
 $block_id = clean_param($body['blockId'], PARAM_TEXT); // block_id can be string or int
 $thread_id = clean_param($body['threadId'], PARAM_NOTAGS);
 $provider_id = clean_param($body['providerId'] ?? null, PARAM_NOTAGS);
+$page_content = clean_param($body['pageContent'] ?? null, PARAM_NOTAGS);
 
 if (preg_match('!^course-(.*)$!', $block_id, $matches)) {
     $courseid = $matches[1];
@@ -93,11 +94,9 @@ if (get_config('block_exaaichat', 'allowproviderselection') && $provider_id) {
     $config = (object)array_merge((array)$config, (array)$extra_config);
     $config->is_moodle_ai_provider = true;
     $config->settings_to_keep = array_keys((array)$extra_config);
-
-    $completion = \block_exaaichat\completion\completion_base::create_from_config($config, $message, $thread_id, $history);
-} else {
-    $completion = \block_exaaichat\completion\completion_base::create_from_config($config, $message, $thread_id, $history);
 }
+
+$completion = \block_exaaichat\completion\completion_base::create_from_config($config, $message, $thread_id, $history, $page_content);
 
 try {
     $response = $completion->create_completion();

@@ -34,12 +34,15 @@ import $ from 'jquery';
  * @param {object} data
  */
 export async function init(data) {
-  const blockId = data['blockId'];
-  const api_type = data['api_type'];
-  const persistConvo = data['persistConvo'];
-  const userName = data['userName'];
-  const assistantName = data['assistantName'];
-  const showlabels = data['showlabels'];
+  const {
+    blockId,
+    api_type,
+    persistConvo,
+    userName,
+    assistantName,
+    showlabels,
+    allow_access_to_current_page,
+  } = data;
 
   const [questionString, errorString] = await getStrings([{
     key: 'askaquestion', component: 'block_exaaichat'
@@ -150,6 +153,7 @@ export async function init(data) {
   /**
    * clear the data for a specific block
    */
+
   /*
   function clearBlockChatData() {
     let chatData = getAllChatsData();
@@ -176,6 +180,26 @@ export async function init(data) {
     $form.find('.exaaichat_log')
       .html('')
       .addClass('hidden');
+  }
+
+  /**
+   * Get the text content of the main region.
+   * @return {String} The text content.
+   */
+  function getPageContent() {
+    const mainRegion = document.querySelector('[role="main"]');
+    if (!mainRegion) {
+      return "";
+    }
+
+    // Clone the main region so we don't touch the real DOM
+    const clone = mainRegion.cloneNode(true);
+
+    // Remove all unwanted blocks
+    clone.querySelectorAll('.block_exaaichat, #ai-features').forEach(el => el.remove());
+
+    // Return text without that block
+    return clone.innerText || clone.textContent;
   }
 
   /**
@@ -209,7 +233,8 @@ export async function init(data) {
 
     fetch(`${M.cfg.wwwroot}/blocks/exaaichat/api/completion.php?sesskey=${M.cfg.sesskey}`, {
       method: 'POST', body: JSON.stringify({
-        message, history, blockId, providerId, threadId
+        message, history, blockId, providerId, threadId,
+        pageContent: allow_access_to_current_page ? getPageContent() : null,
       })
     })
       .then(response => {
@@ -363,6 +388,9 @@ export async function init(data) {
   $form.find('select[name="ai_provider"]').on('change', function () {
     setBlockChatData({ai_provider: this.value});
   });
+
+  // enable inputs after page loaded
+  $form.find('.disabled').removeClass('disabled');
 
   if (!useMoodleLocalStorage) {
     // handle changes from other windows/tabs

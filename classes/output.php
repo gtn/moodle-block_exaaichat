@@ -119,12 +119,13 @@ class output {
         }
 
         $PAGE->requires->js_call_amd('block_exaaichat/lib', 'init', [[
-            'blockId' => $instance_id, // can be string or int
-            'api_type' => $api_type,
+            'blockId' => (string)$instance_id, // can be string or int
+            'api_type' => (string)$api_type,
             'persistConvo' => (bool)$persistconvo,
             'assistantName' => $assistantname,
             'userName' => $username,
             'showlabels' => (bool)($config->showlabels ?? true),
+            'allow_access_to_current_page' => (bool)get_config('block_exaaichat', 'allow_access_to_current_page'),
         ]]);
 
         $contextdata = [

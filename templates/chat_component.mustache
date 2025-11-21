@@ -31,7 +31,7 @@
 
 <div class="exaaichat_log hidden" role="log"></div>
 
-<div class="exaaichat_top-buttons">
+<div class="exaaichat_top-buttons disabled">
     {{#show_top_buttons}}
         {{#logging_enabled}}
             <div title="{{#str}}loggingenabled, block_exaaichat{{/str}}" class="recording"></div>
@@ -49,7 +49,7 @@
         </button>
     {{/show_top_buttons}}
 </div>
-<div class="exaaichat_control_bar">
+<div class="exaaichat_control_bar disabled">
     <div class="exaaichat_input_bar {{#show_ai_provider_select}}with_ai_provider_select{{/show_ai_provider_select}}">
         <textarea class="exaaichat_input" aria-label="{{#str}}askaquestion, block_exaaichat{{/str}}" rows=1 placeholder="{{#str}}askaquestion, block_exaaichat{{/str}}" name="message"></textarea>
         {{#show_ai_provider_select}}

@@ -35,11 +35,16 @@ class chat extends \block_exaaichat\completion\completion_base {
      * @return array The API response from OpenAI
      */
     public function create_completion(): array {
-        $history_json = array_values([
-            ["role" => "system", "content" => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth()],
-            ...$this->format_history(),
-            ["role" => "user", "content" => $this->message],
-        ]);
+        $history_json = [];
+        $history_json[] = ["role" => "system", "content" => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth()];
+        if (trim($this->page_content)) {
+            $history_json[] = ["role" => "user", "content" => get_string('page_content_ai_message', 'block_exaaichat') . "\n" . $this->page_content];
+            // needed for conova APIs
+            // Error: Conversation roles must alternate user/assistant/user/assistant/...
+            $history_json[] = ["role" => "assistant", "content" => 'ok'];
+        }
+        $history_json = array_merge($history_json, $this->format_history());
+        $history_json[] = ["role" => "user", "content" => $this->message];
 
         $response_data = $this->make_api_call($history_json);
         return $response_data;
@@ -57,6 +62,8 @@ class chat extends \block_exaaichat\completion\completion_base {
                 continue;
             }
 
+            // TODO: maybe check that type is only user and asisstant
+            // type system is not allowed here?
             $history[] = ["role" => $message['type'], "content" => $message["message"]];
         }
 

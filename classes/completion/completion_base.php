@@ -60,7 +60,7 @@ abstract class completion_base {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function __construct(object $config, protected string $message, protected string $thread_id = '', protected array $history = []) {
+    public function __construct(object $config, protected string $message, protected string $thread_id = '', protected array $history = [], protected string $page_content = '') {
         $config = clone $config;
 
         if (!get_config('block_exaaichat', 'allowinstancesettings')) {
@@ -122,7 +122,7 @@ abstract class completion_base {
         $this->presence = $config->presence ?? $this->get_plugin_setting('presence', 1);
     }
 
-    public static function create_from_config(object $config, string $message, string $thread_id = '', array $history = []): static {
+    public static function create_from_config(object $config, string $message, string $thread_id = '', array $history = [], string $page_content = ''): static {
         if (get_config('block_exaaichat', 'allowinstancesettings')) {
             $api_type = $config->api_type ?? '';
              } else {
@@ -131,7 +131,7 @@ abstract class completion_base {
         $api_type = $api_type ?: get_config('block_exaaichat', 'api_type') ?: 'chat';
         $engine_class = "\block_exaaichat\completion\\{$api_type}";
 
-        return new $engine_class($config, $message, $thread_id, $history);
+        return new $engine_class($config, $message, $thread_id, $history, $page_content);
     }
 
     public abstract function create_completion(): array;

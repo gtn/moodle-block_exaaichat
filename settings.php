@@ -110,6 +110,34 @@ if ($hassiteconfig) {
         $settings->hide_if('block_exaaichat/logging_retention_period', 'block_exaaichat/logging', 'notchecked');
 
         $settings->add(new admin_setting_configcheckbox(
+            'block_exaaichat/allowinstancesettings',
+            get_string('allowinstancesettings', 'block_exaaichat'),
+            get_string('allowinstancesettings:desc', 'block_exaaichat'),
+            0
+        ));
+
+        $settings->add(new admin_setting_configcheckbox(
+            'block_exaaichat/persistconvo',
+            get_string('persistconvo', 'block_exaaichat'),
+            get_string('persistconvo:desc', 'block_exaaichat'),
+            1
+        ));
+
+        $settings->add(new admin_setting_configcheckbox(
+            'block_exaaichat/allowproviderselection',
+            get_string('allowproviderselection', 'block_exaaichat'),
+            get_string('allowproviderselection:desc', 'block_exaaichat'),
+            1
+        ));
+
+        $settings->add(new admin_setting_configcheckbox(
+            'block_exaaichat/allow_access_to_current_page',
+            get_string('allow_access_to_page_content', 'block_exaaichat'),
+            get_string('allow_access_to_page_content:desc', 'block_exaaichat'),
+            0
+        ));
+
+        $settings->add(new admin_setting_configcheckbox(
             'block_exaaichat/debug_file_logging',
             get_string('debugfilelogging', 'block_exaaichat'),
             get_string('debugfilelogging:desc', 'block_exaaichat'),
@@ -140,14 +168,6 @@ if ($hassiteconfig) {
                     get_string('noassistants', 'block_exaaichat'),
                 ));
             }
-
-            $settings->add(new admin_setting_configcheckbox(
-                'block_exaaichat/persistconvo',
-                get_string('persistconvo', 'block_exaaichat'),
-                get_string('persistconvo:desc', 'block_exaaichat'),
-                1
-            ));
-
         } elseif ($type === 'azure') {
             $settings->add(new admin_setting_heading(
                 'block_exaaichat/azureheading',
@@ -204,28 +224,6 @@ if ($hassiteconfig) {
             PARAM_TEXT
         ));
 
-        // Advanced Settings
-
-        $settings->add(new admin_setting_heading(
-            'block_exaaichat/advanced',
-            get_string('advanced', 'block_exaaichat'),
-            get_string('advanced:desc', 'block_exaaichat')
-        ));
-
-        $settings->add(new admin_setting_configcheckbox(
-            'block_exaaichat/allowinstancesettings',
-            get_string('allowinstancesettings', 'block_exaaichat'),
-            get_string('allowinstancesettings:desc', 'block_exaaichat'),
-            0
-        ));
-
-        $settings->add(new admin_setting_configcheckbox(
-            'block_exaaichat/allowproviderselection',
-            get_string('allowproviderselection', 'block_exaaichat'),
-            get_string('allowproviderselection:desc', 'block_exaaichat'),
-            1
-        ));
-
         if ($type === 'responses') {
             $settings->add(new admin_setting_configtext(
                 'block_exaaichat/additional_message',
@@ -236,6 +234,14 @@ if ($hassiteconfig) {
             ));
         }
 
+
+        // Advanced Settings
+
+        $settings->add(new admin_setting_heading(
+            'block_exaaichat/advanced',
+            get_string('advanced', 'block_exaaichat'),
+            get_string('advanced:desc', 'block_exaaichat')
+        ));
         if ($type === 'assistant') {
 
         } else {
