@@ -1,4 +1,4 @@
-### v3.2 (2025112000) ###
+### v3.2 (2025112100) ###
 * New Block Setting: Retention Period (days)
   How long (in days) to keep the logs. After this period, logs will be automatically deleted.
 * Moodle AI Provider integration
