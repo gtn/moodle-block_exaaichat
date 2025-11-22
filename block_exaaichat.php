@@ -16,6 +16,8 @@
 use block_exaaichat\locallib;
 use block_exaaichat\output;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Block class
  *
