@@ -101,9 +101,10 @@ class output {
             if ($api_key) {
                 $ai_providers[] = ['id' => '', 'label' => $model];
             }
+            $moodle_ai_proviers = locallib::get_moodle_ai_providers();
             $ai_providers = [
                 ...$ai_providers,
-                ...array_map(fn($ai_provider) => ['id' => $ai_provider->id, 'label' => $ai_provider->name . ($ai_provider->model && $ai_provider->model != $ai_provider->name ? ' (' . $ai_provider->model . ')' : '')], locallib::get_moodle_ai_providers()),
+                ...array_map(fn($ai_provider) => ['id' => $ai_provider->id, 'label' => $ai_provider->name . ($ai_provider->model && $ai_provider->model != $ai_provider->name ? ' (' . $ai_provider->model . ')' : '')], $moodle_ai_proviers),
             ];
 
             if (!$ai_providers) {
