@@ -150,16 +150,23 @@ class locallib {
                     return $property->getValue($instance);
                 };
 
-                $model = $processor instanceof \aiprovider_openai\process_generate_text ? $call_private_method($processor, 'get_model') : '';
+                $model = $call_private_method($processor, 'get_model');
+                $endpoint = $call_private_method($processor, 'get_endpoint');
+
+                if (!$model && preg_match('!^https://generativelanguage.googleapis.com/v1beta/models/([^/:]+)!', $endpoint, $matches)) {
+                    // For Gemini model is inside the url
+                    $model = $matches[1];
+                }
+
                 $ais[] = (object)[
                     'id' => 'provider-' . $provider->get_name(),
-                    'name' => $model,
+                    'name' => $model ?: ucfirst(str_replace('aiprovider_', '', $provider->get_name())),
                     'apikey' => $get_private_property($provider, 'apikey'),
                     'api_type' => 'chat',
                     // globalratelimit
                     // userratelimit
                     'model' => $model,
-                    'endpoint' => (string)$call_private_method($processor, 'get_endpoint'),
+                    'endpoint' => (string)$endpoint,
                     'modelsettings' => [],
                 ];
             }

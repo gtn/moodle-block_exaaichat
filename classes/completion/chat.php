@@ -77,8 +77,20 @@ class chat extends \block_exaaichat\completion\completion_base {
     private function make_api_call($history): array {
         global $USER;
 
+        $endpoint = $this->endpoint ?: \block_exaaichat\locallib::get_openai_api_url() . "/chat/completions";
+        $model = $this->model;
+
+        if (!$model && preg_match('!^https://generativelanguage.googleapis.com/v1beta/models/([^/:]+)!', $endpoint, $matches)) {
+            $model = $matches[1];
+        }
+
+        if (str_starts_with($endpoint, 'https://generativelanguage.googleapis.com/v1beta/')) {
+            // Google Gemini Endpoint
+            $endpoint = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+        }
+
         $curlbody = [
-            "model" => $this->model,
+            "model" => $model,
             "messages" => $history,
             "temperature" => (float)$this->temperature,
             "max_tokens" => (int)$this->maxlength,
@@ -96,26 +108,45 @@ class chat extends \block_exaaichat\completion\completion_base {
             ),
         ));
 
-        $endpoint = $this->endpoint ?: \block_exaaichat\locallib::get_openai_api_url() . "/chat/completions";
+        if (str_starts_with($endpoint, 'https://generativelanguage.googleapis.com/v1beta/openai/')) {
+            // not supported by gemini
+            unset($curlbody['frequency_penalty']);
+            unset($curlbody['presence_penalty']);
+        }
 
         logger::debug_grouped('chat.user:' . $USER->id, $endpoint, $curlbody);
 
-        $response = $curl->post($endpoint, json_encode($curlbody));
-        $response = json_decode($response);
+        $rawResponse = $curl->post($endpoint, json_encode($curlbody));
+        $response = json_decode($rawResponse);
 
         logger::debug_grouped('chat.user:' . $USER->id, 'response', $response);
 
-        if ($response->error ?? false) {
+        if (!$response) {
             return [
-                "error" => $response->error->message,
+                'id' => 'error',
+                "error" => strip_tags($rawResponse),
             ];
-        } else {
-            $message = $response->choices[0]->message->content;
+        }
+
+        if (is_object($response)) {
+            if ($response->error ?? false) {
+                return [
+                    "error" => $response->error->message,
+                ];
+            } else {
+                $message = $response->choices[0]->message->content;
+                return [
+                    "id" => property_exists($response, 'id') ? $response->id : 'error',
+                    "message" => $message,
+                ];
+            }
         }
 
         return [
-            "id" => property_exists($response, 'id') ? $response->id : 'error',
-            "message" => $message,
+            "id" => 'error',
+            "message" =>
+            // gemini error format (array with one error object)
+                $response[0]->error->message ?? 'Unknown error',
         ];
     }
 }

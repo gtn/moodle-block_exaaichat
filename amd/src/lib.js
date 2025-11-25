@@ -237,56 +237,43 @@ export async function init(data) {
         pageContent: allow_access_to_current_page ? getPageContent() : null,
       })
     })
-      .then(response => {
+      .then(async (response) => {
         let messageContainer = document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] .exaaichat_log`)
         messageContainer.removeChild(messageContainer.lastElementChild)
         $form.find('.exaaichat_control_bar').removeClass('disabled');
 
         if (!response.ok) {
-          throw Error(response.statusText)
+          const errorMessage = $(await response.text()).find('.errormessage').text();
+          throw Error(errorMessage || response.statusText)
         } else {
           return response.json()
         }
       })
       .then(data => {
         if (data.error) {
-          const error = data.error;
-          logError(error);
-          addToChatLog('error', error, blockId)
-
-          addHistory([
-            {"type": "user", "message": message},
-            {"type": "error", "message": error},
-          ]);
-
-          document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] .exaaichat_input`).classList.add('error')
-          document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] .exaaichat_input`).placeholder = errorString
-          $input.focus();
-          return;
+          throw new Error(data.error);
         }
 
-        try {
-          addToChatLog('assistant', data.message, blockId)
-          if (data.thread_id) {
-            setBlockChatData({threadId: data.thread_id});
-          }
-
-          addHistory([
-            {"type": "user", "message": message},
-            {"type": "assistant", "message": data.message},
-          ]);
-        } catch (error) {
-          logError(error);
-          addToChatLog('error', data.error.message, blockId)
-          addHistory([
-            {"type": "user", "message": message},
-            {"type": "error", "message": data.error.message},
-          ]);
+        addToChatLog('assistant', data.message, blockId)
+        if (data.thread_id) {
+          setBlockChatData({threadId: data.thread_id});
         }
+
+        addHistory([
+          {"type": "user", "message": message},
+          {"type": "assistant", "message": data.message},
+        ]);
+
         $input.focus();
       })
       .catch(error => {
         logError(error);
+        addToChatLog('error', error.message, blockId)
+        addHistory([
+          {"type": "user", "message": message},
+          {"type": "error", "message": error.message},
+        ]);
+
         document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] .exaaichat_input`).classList.add('error')
         document.querySelector(`.block_exaaichat[data-instance-id='${blockId}'] .exaaichat_input`).placeholder = errorString
         $input.focus();
