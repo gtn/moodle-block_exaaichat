@@ -244,16 +244,18 @@ if ($hassiteconfig) {
         $settings->add(new admin_setting_configtextarea(
             'block_exaaichat/sourceoftruth',
             get_string('sourceoftruth', 'block_exaaichat'),
-            get_string('sourceoftruth:desc', 'block_exaaichat'),
+            '',
             '',
             PARAM_TEXT
         ));
 
         // Dropdown menu for placeholders
         $settings->add(new admin_setting_description('user_message_options', '', $OUTPUT->render_from_template('block_exaaichat/config_source_of_truth', [
-            'placeholders' => locallib::get_placeholders(),
-            'placeholders_gradebook' => locallib::get_placeholders_gradebook_additional(),
-        ])));
+                'placeholders' => locallib::get_placeholders(),
+                'placeholders_gradebook' => locallib::get_placeholders_gradebook_additional(),
+            ]) .
+            '<div class="mt-2">' . get_string('sourceoftruth:desc', 'block_exaaichat') . '</div>'
+        ));
 
 
         if ($api_type === 'responses') {
