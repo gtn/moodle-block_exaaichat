@@ -33,12 +33,24 @@ class locallib {
      * @return String: the API type (chat|azure|assistant)
      */
     public static function get_api_type() {
-        $stored_type = get_config('block_exaaichat', 'type');
+        $stored_type = get_config('block_exaaichat', 'api_type');
         if ($stored_type) {
             return $stored_type;
         }
 
         return 'chat';
+    }
+
+    public static function get_default_model(): string {
+        $model = get_config('block_exaaichat', 'model');
+        if ($model == 'other') {
+            $model = get_config('block_exaaichat', 'model_other');
+        }
+        if (!$model) {
+            $model = 'chat';
+        }
+
+        return $model;
     }
 
     public static function get_openai_api_url(): string {
@@ -57,32 +69,6 @@ class locallib {
 
         $configmodels = array_filter(array_map('trim', explode("\n", $configmodels)));
         return array_combine($configmodels, $configmodels);
-    }
-
-    public static function get_default_models(): array {
-        return [
-            'gpt-4.1-mini' => 'gpt-4.1-mini',
-            'gpt-4o' => 'gpt-4o',
-            'gpt-4o-2024-11-20' => 'gpt-4o-2024-11-20',
-            'gpt-4o-2024-08-06' => 'gpt-4o-2024-08-06',
-            'gpt-4o-2024-05-13' => 'gpt-4o-2024-05-13',
-            'gpt-4o-mini-2024-07-18' => 'gpt-4o-mini-2024-07-18',
-            'gpt-4o-mini' => 'gpt-4o-mini',
-            'gpt-4-turbo-preview' => 'gpt-4-turbo-preview',
-            'gpt-4-turbo-2024-04-09' => 'gpt-4-turbo-2024-04-09',
-            'gpt-4-turbo' => 'gpt-4-turbo',
-            'gpt-4-32k-0314' => 'gpt-4-32k-0314',
-            'gpt-4-1106-preview' => 'gpt-4-1106-preview',
-            'gpt-4-0613' => 'gpt-4-0613',
-            'gpt-4-0314' => 'gpt-4-0314',
-            'gpt-4-0125-preview' => 'gpt-4-0125-preview',
-            'gpt-4' => 'gpt-4',
-            'gpt-3.5-turbo-16k-0613' => 'gpt-3.5-turbo-16k-0613',
-            'gpt-3.5-turbo-16k' => 'gpt-3.5-turbo-16k',
-            'gpt-3.5-turbo-1106' => 'gpt-3.5-turbo-1106',
-            'gpt-3.5-turbo-0125' => 'gpt-3.5-turbo-0125',
-            'gpt-3.5-turbo' => 'gpt-3.5-turbo',
-        ];
     }
 
     public static function clean_log(): void {
@@ -117,8 +103,9 @@ class locallib {
                 $ais[] = (object)[
                     'id' => $provider->id,
                     'name' => $provider->name,
-                    'apikey' => $provider->config['apikey'] ?? '',
-                    'api_type' => 'chat',
+                    'apikey' => ($provider->config['apikey'] ?? '') ?: ($provider->config['password'] /* for ollama */ ?? ''),
+                    'api_type' => \aiprovider_ollama\provider::class ? 'ollama' :
+                        (\aiprovider_deepseek\provider::class ? 'deepseek' : 'chat'),
                     // globalratelimit
                     // userratelimit
                     'model' => $actionconfig['settings']['model'] ?? '',
@@ -173,5 +160,35 @@ class locallib {
         }
 
         return $ais;
+    }
+
+    public static function get_placeholders(): array {
+        $placeholders = [];
+        $placeholders[] = [
+            'placeholder' => get_string('placeholders:user.fullname:placeholder', 'block_exaaichat', '{user.fullname}'),
+            'label' => get_string('placeholders:user.fullname:name', 'block_exaaichat'),
+        ];
+        $placeholders[] = [
+            'placeholder' => get_string('placeholders:userdate:placeholder', 'block_exaaichat', '{userdate}'),
+            'label' => get_string('placeholders:userdate:name', 'block_exaaichat'),
+        ];
+
+        return $placeholders;
+    }
+
+    public static function get_placeholders_gradebook_additional(): array {
+        $placeholders = [];
+
+        // New syntax examples for course total.
+        $placeholders[] = [
+            'placeholder' => get_string('placeholders:grade:coursetotal:placeholder', 'block_exaaichat', '{grade:coursetotal}'),
+            'label' => get_string('placeholders:grade:coursetotal:name', 'block_exaaichat'),
+        ];
+        $placeholders[] = [
+            'placeholder' => get_string('placeholders:range:coursetotal:placeholder', 'block_exaaichat', '{range:coursetotal}'),
+            'label' => get_string('placeholders:range:coursetotal:name', 'block_exaaichat'),
+        ];
+
+        return $placeholders;
     }
 }

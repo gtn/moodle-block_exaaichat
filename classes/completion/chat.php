@@ -29,7 +29,7 @@ use block_exaaichat\logger;
 
 defined('MOODLE_INTERNAL') || die;
 
-class chat extends \block_exaaichat\completion\completion_base {
+class chat extends completion_base {
     /**
      * Given everything we know after constructing the parent, create a completion by constructing the prompt and making the api call
      * @return array The API response from OpenAI
@@ -77,7 +77,7 @@ class chat extends \block_exaaichat\completion\completion_base {
     private function make_api_call($history): array {
         global $USER;
 
-        $endpoint = $this->endpoint ?: \block_exaaichat\locallib::get_openai_api_url() . "/chat/completions";
+        $endpoint = $this->endpoint ?: $this->get_default_endpoint();
         $model = $this->model;
 
         if (!$model && preg_match('!^https://generativelanguage.googleapis.com/v1beta/models/([^/:]+)!', $endpoint, $matches)) {
@@ -131,7 +131,7 @@ class chat extends \block_exaaichat\completion\completion_base {
         if (is_object($response)) {
             if ($response->error ?? false) {
                 return [
-                    "error" => $response->error->message,
+                    "error" => is_string($response->error) ? /* ollama */ $response->error : $response->error->message,
                 ];
             } else {
                 $message = $response->choices[0]->message->content;
@@ -148,5 +148,9 @@ class chat extends \block_exaaichat\completion\completion_base {
             // gemini error format (array with one error object)
                 $response[0]->error->message ?? 'Unknown error',
         ];
+    }
+
+    protected function get_default_endpoint(): string {
+        return \block_exaaichat\locallib::get_openai_api_url() . "/chat/completions";
     }
 }

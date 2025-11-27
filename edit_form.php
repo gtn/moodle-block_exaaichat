@@ -23,28 +23,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_exaaichat\completion\completion_base;
 use block_exaaichat\helper;
+use block_exaaichat\locallib;
 
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
 class block_exaaichat_edit_form extends block_edit_form {
-
-    private function get_placeholders(): array {
-        $placeholders = [];
-        $placeholders[] = [
-            'placeholder' => get_string('placeholders:user.fullname:placeholder', 'block_exaaichat', '{user.fullname}'),
-            'label' => get_string('placeholders:user.fullname:name', 'block_exaaichat'),
-        ];
-        $placeholders[] = [
-            'placeholder' => get_string('placeholders:userdate:placeholder', 'block_exaaichat', '{userdate}'),
-            'label' => get_string('placeholders:userdate:name', 'block_exaaichat'),
-        ];
-
-        return $placeholders;
-    }
-
     private function get_placeholders_gradebook(): array {
         $gradedata = helper::get_student_grades_for_course_flattened();
         $placeholders = [];
@@ -87,15 +74,7 @@ class block_exaaichat_edit_form extends block_edit_form {
             ];
         }
 
-        // New syntax examples for course total.
-        $placeholders[] = [
-            'placeholder' => get_string('placeholders:grade:coursetotal:placeholder', 'block_exaaichat', '{grade:coursetotal}'),
-            'label' => get_string('placeholders:grade:coursetotal:name', 'block_exaaichat'),
-        ];
-        $placeholders[] = [
-            'placeholder' => get_string('placeholders:range:coursetotal:placeholder', 'block_exaaichat', '{range:coursetotal}'),
-            'label' => get_string('placeholders:range:coursetotal:name', 'block_exaaichat'),
-        ];
+        $placeholders += locallib::get_placeholders_gradebook_additional();
 
         return $placeholders;
     }
@@ -116,6 +95,7 @@ class block_exaaichat_edit_form extends block_edit_form {
         if (!$api_type) {
             $api_type = \block_exaaichat\locallib::get_api_type();
         }
+        $completion = completion_base::create_from_type($api_type);
 
         $mform->addElement('header', 'config_header', get_string('blocksettings', 'block'));
 
@@ -127,13 +107,18 @@ class block_exaaichat_edit_form extends block_edit_form {
         $mform->setDefault('config_showlabels', 1);
 
         if (get_config('block_exaaichat', 'allowinstancesettings')) {
-            $mform->addElement('select', 'config_api_type', get_string('type', 'block_exaaichat'), [
+            $mform->addElement('select', 'config_api_type', get_string('moodle_settings:api_type', 'block_exaaichat'), [
+                '' => \block_exaaichat\locallib::get_api_type()
+                    ? get_string('default', 'block_exaaichat', get_string('type_' . $api_type, 'block_exaaichat'))
+                    : get_string('type_choose', 'block_exaaichat'),
+                'ollama' => get_string('type_ollama', 'block_exaaichat'),
+                'gemini' => get_string('type_gemini', 'block_exaaichat'),
                 'chat' => get_string('type_chat', 'block_exaaichat'),
                 'assistant' => get_string('type_assistant', 'block_exaaichat'),
                 'responses' => get_string('type_responses', 'block_exaaichat'),
                 'azure' => get_string('type_azure', 'block_exaaichat'),
             ]);
-            $mform->setDefault('config_api_type', get_config('block_exaaichat', 'type'));
+            $mform->setDefault('config_api_type', '');
             $mform->setType('config_api_type', PARAM_TEXT);
         }
 
@@ -150,8 +135,8 @@ class block_exaaichat_edit_form extends block_edit_form {
         $mform->addHelpButton('config_sourceoftruth', 'config_sourceoftruth', 'block_exaaichat');
 
         // Dropdown menu for placeholders
-        $mform->addElement('static', 'user_message_options', '', $OUTPUT->render_from_template('block_exaaichat/block_config_source_of_truth', [
-            'placeholders' => $this->get_placeholders(),
+        $mform->addElement('static', 'user_message_options', '', $OUTPUT->render_from_template('block_exaaichat/config_source_of_truth', [
+            'placeholders' => locallib::get_placeholders(),
             'placeholders_gradebook' => $this->get_placeholders_gradebook(),
         ]));
 
@@ -162,6 +147,12 @@ class block_exaaichat_edit_form extends block_edit_form {
             $mform->addHelpButton('config_assistantname', 'config_assistantname', 'block_exaaichat');
         }
 
+        $models = [];
+        if (locallib::get_default_model()) {
+            $models += ['' => get_string('default', 'block_exaaichat', locallib::get_default_model())];
+        }
+        $models += $completion?->get_models() ?? [];
+        $models += ['other' => get_string('block_instance:config:model:choose-other', 'block_exaaichat')];
         if ($api_type === 'assistant') {
             // Assistant settings
 
@@ -197,7 +188,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->setType('config_apikey', PARAM_TEXT);
                 $mform->addHelpButton('config_apikey', 'config_apikey', 'block_exaaichat');
 
-                $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), \block_exaaichat\locallib::get_models() + ['other' => get_string('block_instance:config:model:choose-other', 'block_exaaichat')]);
+                $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), $models);
                 $mform->setDefault('config_model', get_config('block_exaaichat', 'model'));
                 $mform->setType('config_model', PARAM_TEXT);
                 $mform->addHelpButton('config_model', 'config_model', 'block_exaaichat');
@@ -205,7 +196,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addElement('text', 'config_model_other', get_string('block_instance:config:model_other', 'block_exaaichat'));
                 $mform->setDefault('config_model_other', '');
                 $mform->setType('config_model_other', PARAM_TEXT);
-                $mform->hideIf('config_model_other', 'config_model', 'notselected', 'other');
+                $mform->hideIf('config_model_other', 'config_model', 'neq', 'other');
 
                 $mform->addElement('text', 'config_endpoint', get_string('block_instance:config:endpoint', 'block_exaaichat'));
                 $mform->setDefault('config_endpoint', '');
@@ -243,7 +234,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->setType('config_apikey', PARAM_TEXT);
                 $mform->addHelpButton('config_apikey', 'config_apikey', 'block_exaaichat');
 
-                $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), \block_exaaichat\locallib::get_models() + ['other' => get_string('block_instance:config:model:choose-other', 'block_exaaichat')]);
+                $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), $models);
                 $mform->setDefault('config_model', get_config('block_exaaichat', 'model'));
                 $mform->setType('config_model', PARAM_TEXT);
                 $mform->addHelpButton('config_model', 'config_model', 'block_exaaichat');
@@ -251,7 +242,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addElement('text', 'config_model_other', get_string('block_instance:config:model_other', 'block_exaaichat'));
                 $mform->setDefault('config_model_other', '');
                 $mform->setType('config_model_other', PARAM_TEXT);
-                $mform->hideIf('config_model_other', 'config_model', 'notselected', 'other');
+                $mform->hideIf('config_model_other', 'config_model', 'neq', 'other');
 
                 $mform->addElement('text', 'config_endpoint', get_string('block_instance:config:endpoint', 'block_exaaichat'));
                 $mform->setDefault('config_endpoint', '');

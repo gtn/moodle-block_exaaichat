@@ -138,7 +138,7 @@ class output {
                     $config->model = $config->model_other ?? '';
                 }
             }
-            $model = $config->model ?? '' ?: get_config('block_exaaichat', 'model') ?: 'chat';
+            $model = $config->model ?? '' ?: locallib::get_default_model();
 
             $ai_providers = [];
             if ($apikey) {

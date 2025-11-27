@@ -26,6 +26,7 @@
 namespace block_exaaichat\completion;
 
 use block_exaaichat\helper;
+use block_exaaichat\locallib;
 use block_exaaichat\logger;
 
 defined('MOODLE_INTERNAL') || die;
@@ -91,7 +92,7 @@ abstract class completion_base {
             }
         }
 
-        $default_api_type = get_config('block_exaaichat', 'api_type') ?: 'chat';
+        $default_api_type = locallib::get_api_type();
         $current_api_type = preg_replace('!^.*\\\\!', '', static::class);
         $this->apikey = $config->apikey ?? '';
         if (($config->is_moodle_ai_provider ?? false) || ($config->endpoint ?? '') || ($default_api_type != $current_api_type)) {
@@ -100,8 +101,8 @@ abstract class completion_base {
             $this->apikey = $this->apikey ?: $this->get_plugin_setting('apikey', '');
         }
 
-        $this->instructions = $config->instructions ?? '' ?: $this->get_plugin_setting('instructions', '');
-        $this->sourceoftruth = $config->sourceoftruth ?? '' ?: $this->get_plugin_setting('sourceoftruth', '');
+        $this->instructions = trim($config->instructions ?? '') ?: $this->get_plugin_setting('instructions', '');
+        $this->sourceoftruth = trim($config->sourceoftruth ?? '') ?: $this->get_plugin_setting('sourceoftruth', '');
 
         // $this->persistconvo = $config->persistconvo ?? $this->get_plugin_setting( 'persistconvo', 0);
         $this->username = $config->username ?? '' ?: $this->get_plugin_setting('username', get_string('defaultusername', 'block_exaaichat'));
@@ -111,7 +112,7 @@ abstract class completion_base {
         if (($config->model ?? '') === 'other') {
             $config->model = $config->model_other ?? '';
         }
-        $this->model = $config->model ?? '' ?: $this->get_plugin_setting('model', 'chat');
+        $this->model = $config->model ?? '' ?: locallib::get_default_model();
 
         $this->endpoint = $config->endpoint ?? '';
         $this->temperature = $config->temperature ?? $this->get_plugin_setting('temperature', 0.5);;
@@ -135,10 +136,20 @@ abstract class completion_base {
         } else {
             $api_type = '';
         }
-        $api_type = $api_type ?: get_config('block_exaaichat', 'api_type') ?: 'chat';
+        $api_type = $api_type ?: locallib::get_api_type();
         $engine_class = "\block_exaaichat\completion\\{$api_type}";
 
         return new $engine_class($config, $message, $thread_id, $history, $page_content);
+    }
+
+    public static function create_from_type(string $api_type): ?static {
+        $engine_class = "\block_exaaichat\completion\\{$api_type}";
+
+        if (!class_exists($engine_class)) {
+            return null;
+        }
+
+        return new $engine_class((object)[], '');
     }
 
     public abstract function create_completion(): array;
@@ -159,6 +170,7 @@ abstract class completion_base {
 
     protected function get_sourceoftruth(): string {
         // TOOD: die logik hier überdenken
+        /*
         $sourceoftruth = get_config('block_exaaichat', 'sourceoftruth');
 
         if ($sourceoftruth || $this->sourceoftruth) {
@@ -171,7 +183,11 @@ abstract class completion_base {
         }
 
         $sourceoftruth = trim($sourceoftruth); //  . ' ' . $this->prompt);
-        $sourceoftruth = helper::generate_placeholders($sourceoftruth);
+        */
+        $sourceoftruth = helper::generate_placeholders($this->sourceoftruth);
+        if ($sourceoftruth) {
+            $sourceoftruth = get_string('sourceoftruthpreamble', 'block_exaaichat') . $sourceoftruth;
+        }
 
         return $sourceoftruth;
     }
@@ -181,6 +197,7 @@ abstract class completion_base {
     }
 
     /**
+     *
      * add debug output to the logger
      * @param mixed ...$args
      * @return void
@@ -197,5 +214,34 @@ abstract class completion_base {
     protected function throw(...$args): void {
         $this->debug($args);
         throw new \moodle_exception(json_encode($args));
+    }
+
+    public function get_models(): array {
+        return [
+            'gpt-5' => 'gpt-5',
+            'gpt-5-mini' => 'gpt-5-mini',
+            'gpt-5-nano' => 'gpt-5-nano',
+            'gpt-4.1-mini' => 'gpt-4.1-mini',
+            'gpt-4o' => 'gpt-4o',
+            'gpt-4o-2024-11-20' => 'gpt-4o-2024-11-20',
+            'gpt-4o-2024-08-06' => 'gpt-4o-2024-08-06',
+            'gpt-4o-2024-05-13' => 'gpt-4o-2024-05-13',
+            'gpt-4o-mini-2024-07-18' => 'gpt-4o-mini-2024-07-18',
+            'gpt-4o-mini' => 'gpt-4o-mini',
+            'gpt-4-turbo-preview' => 'gpt-4-turbo-preview',
+            'gpt-4-turbo-2024-04-09' => 'gpt-4-turbo-2024-04-09',
+            'gpt-4-turbo' => 'gpt-4-turbo',
+            'gpt-4-32k-0314' => 'gpt-4-32k-0314',
+            'gpt-4-1106-preview' => 'gpt-4-1106-preview',
+            'gpt-4-0613' => 'gpt-4-0613',
+            'gpt-4-0314' => 'gpt-4-0314',
+            'gpt-4-0125-preview' => 'gpt-4-0125-preview',
+            'gpt-4' => 'gpt-4',
+            'gpt-3.5-turbo-16k-0613' => 'gpt-3.5-turbo-16k-0613',
+            'gpt-3.5-turbo-16k' => 'gpt-3.5-turbo-16k',
+            'gpt-3.5-turbo-1106' => 'gpt-3.5-turbo-1106',
+            'gpt-3.5-turbo-0125' => 'gpt-3.5-turbo-0125',
+            'gpt-3.5-turbo' => 'gpt-3.5-turbo',
+        ];
     }
 }

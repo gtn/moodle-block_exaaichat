@@ -27,7 +27,7 @@ namespace block_exaaichat\completion;
 
 defined('MOODLE_INTERNAL') || die;
 
-class azure extends \block_exaaichat\completion\chat {
+class azure extends chat {
 
     private $resourcename;
     private $deploymentid;

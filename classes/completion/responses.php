@@ -30,7 +30,7 @@ use block_exaaichat\helper;
 
 defined('MOODLE_INTERNAL') || die;
 
-class responses extends \block_exaaichat\completion\completion_base {
+class responses extends completion_base {
     /**
      * Send a request to the OpenAI Responses API to create a new thread or continue an existing one.
      *

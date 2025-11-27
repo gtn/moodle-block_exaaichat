@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-class assistant extends \block_exaaichat\completion\completion_base {
+class assistant extends completion_base {
     private Client $client;
     private StreamResponse $stream;
 

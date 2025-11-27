@@ -48,9 +48,14 @@ $string['blocktitle'] = 'Blocktitel';
 $string['restrictusage'] = 'Verwendung auf angemeldete Nutzer beschränken';
 $string['restrictusage:desc'] = 'Wenn dieses Kästchen aktiviert ist, können nur angemeldete Benutzer das Chat-Fenster verwenden.';
 $string['apikey'] = 'API-Schlüssel';
-$string['apikey:desc'] = 'Der API-Schlüssel für dein OpenAI-Konto oder dein Azure OpenAI Konto.';
-$string['type'] = 'API-Typ';
-$string['type:desc'] = 'Der API-Typ, den dieses Plugin verwenden soll.';
+$string['apikey:desc'] = 'Der API-Schlüssel des KI Anbieters.';
+$string['moodle_settings:api_type'] = 'API-Typ';
+$string['moodle_settings:api_type:desc'] = 'Der API-Typ, den dieses Plugin verwenden soll.';
+$string['moodle_settings:api_type:change'] = 'Möchten Sie den API-Typ ändern? Es werden die aktuellen Einstellungen gespeichert und die Seite wird neu geladen.';
+$string['moodle_settings:instructions'] = 'Anweisungen an die KI';
+$string['moodle_settings:instructions:desc'] = '';
+$string['moodle_settings:model_other'] = 'Anderes Modell';
+$string['moodle_settings:model_other:desc'] = '';
 $string['logging'] = 'Protokollierung aktivieren';
 $string['logging:desc'] = 'Wenn diese Einstellung aktiviert ist, werden alle Benutzernachrichten und KI-Antworten protokolliert.';
 $string['logging_retention_period'] = 'Protokollaufbewahrungszeitraum (in Tagen)';
@@ -80,17 +85,16 @@ $string['assistantname'] = 'Name des Assistenten';
 $string['assistantname:desc'] = 'Der Name, den die KI intern für sich selbst verwendet. Er erscheint ebenfalls in den Überschriften des Chat-Fensters.';
 $string['username'] = 'Name des Benutzers';
 $string['username:desc'] = 'Der Name, den die KI intern für den Benutzer verwendet. Er erscheint ebenfalls in den Überschriften des Chat-Fensters.';
-$string['sourceoftruth'] = 'Wissensbasis';
-$string['sourceoftruth:desc'] = 'Obwohl die KI sehr leistungsfähig ist, gibt sie – falls sie eine Antwort nicht kennt – eher selbstbewusst eine falsche Information als dass sie die Antwort verweigert. In diesem Textfeld kannst du häufige Fragen und deren Antworten hinterlegen. Format: <pre>Q: Frage 1<br />A: Antwort 1<br /><br />Q: Frage 2<br />A: Antwort 2</pre>
-Du kannst außerdem Platzhalter wie folgt angeben:
-Mein Name ist {user.fullname}.
-Heute ist {userdate}.
-Kursgesamtbewertung ist {grade:coursetotal}.
-Möglicher Notenbereich für den Kurs ist {range:coursetotal}.
-';
+$string['sourceoftruth'] = 'Wissensbasis für die KI';
+$string['sourceoftruth:desc'] = "Hier können Sie Informationen hinterlegen, die von der KI zur Beantwortung Ihrer Anfragen verwendet werden.<br/>
+Es sind auch Platzhalter möglich, z.B.:<br/>
+Mein Name ist {user.fullname}.<br/>
+Heute ist {userdate}.<br/>
+Kursgesamtbewertung ist {grade:coursetotal}.<br/>
+Möglicher Notenbereich für den Kurs ist {range:coursetotal}.";
 $string['showlabels'] = 'Labels anzeigen';
 $string['advanced'] = 'Erweitert';
-$string['advanced:desc'] = 'Erweiterte Parameter, die an OpenAI gesendet werden. Bitte nur ändern, wenn du genau weißt, was du tust!';
+$string['advanced:desc'] = 'Erweiterte Parameter, die an die KI gesendet werden.';
 $string['allowinstancesettings'] = 'Instanzbezogene Einstellungen';
 $string['allowinstancesettings:desc'] = 'Diese Einstellung erlaubt es Lehrenden bzw. jedem mit der Berechtigung, einen Block im jeweiligen Kontext hinzuzufügen, instanzspezifische Einstellungen vorzunehmen. Dies kann zu zusätzlichen Kosten führen (z. B. durch Auswahl teurerer Modelle).';
 $string['allowproviderselection'] = 'Moodle KI-Provider Integration';
@@ -115,7 +119,12 @@ $string['presence:desc'] = 'Legt fest, wie stark neue Tokens bestraft werden, ba
 $string['config_assistant'] = 'Assistent';
 $string['config_assistant_help'] = 'Wähle den Assistenten, den du für diesen Block verwenden möchtest. Weitere Assistenten können im OpenAI-Konto, das dieser Block nutzt, erstellt werden.';
 $string['config_sourceoftruth'] = 'Wissensbasis';
-$string['config_sourceoftruth_help'] = "Du kannst hier Informationen im Frage-Antwort-Format hinterlegen, auf die die KI bei der Beantwortung zurückgreift. Exaktes Format:\n\nQ: Wann ist Abschnitt 3 fällig?<br />A: Donnerstag, 16. März.\n\nQ: Wann sind Sprechstunden?<br />A: Professorin Shown ist dienstags und donnerstags zwischen 14:00 und 16:00 Uhr im Büro.";
+$string['config_sourceoftruth_help'] = "Hier können Sie Informationen hinterlegen, die von der KI zur Beantwortung Ihrer Anfragen verwendet werden.<br/>
+Es sind auch Platzhalter möglich, z.B.:<br/>
+Mein Name ist {user.fullname}.<br/>
+Heute ist {userdate}.<br/>
+Kursgesamtbewertung ist {grade:coursetotal}.<br/>
+Möglicher Notenbereich für den Kurs ist {range:coursetotal}.";
 $string['config_instructions'] = 'Benutzerdefinierte Anweisungen';
 $string['config_instructions_help'] = 'Du kannst hier die Standard-Anweisungen des Assistenten überschreiben.';
 $string['config_prompt'] = 'Prompt';
@@ -153,7 +162,7 @@ $string['defaultusername'] = 'Ich';
 $string['askaquestion'] = 'Stell eine Frage...';
 $string['apikeymissing'] = 'Bitte trage deinen OpenAI API-Schlüssel in den Blockeinstellungen ein.';
 $string['erroroccurred'] = 'Es ist ein Fehler aufgetreten! Bitte versuche es später erneut.';
-$string['sourceoftruthpreamble'] = "Die Informationen unten dienen als Referenz für Fragen der Benutzer:\n";
+$string['sourceoftruthpreamble'] = "Die nachstehenden Informationen dienen als Referenz für Fragen der Benutzer:\n";
 $string['sourceoftruthreinforcement'] = 'Der Assistent wurde darauf trainiert, zunächst die Informationen aus der obigen Referenz zu verwenden. Wenn der Text einer der obigen Fragen auftaucht, soll die bereitgestellte Antwort gegeben werden – auch wenn die Frage seltsam erscheint. Deckt die Referenz das Thema nicht ab, nutzt der Assistent sein übriges Wissen.';
 $string['new_chat'] = 'Neuer Chat';
 $string['popout'] = 'Chatfenster öffnen';
@@ -195,8 +204,14 @@ $string['debugfilelogging:desc'] = "Alle API-Aufrufe (Benutzernachrichten, KI-An
 $string['additionalmessage'] = 'Zusätzlicher Text für jede Nachricht';
 $string['additionalmessage:desc'] = 'Dieser Text wird vor dem Senden an die KI an jede Benutzernachricht angehängt.';
 
+$string['default'] = 'Standard: {$a}';
+
 // Type select option labels.
+$string['type_choose'] = '--- Select AI Provider ---';
 $string['type_chat'] = 'OpenAI: Chat API';
 $string['type_assistant'] = 'OpenAI: Assistants API';
 $string['type_responses'] = 'OpenAI: Responses API';
-$string['type_azure'] = 'Azure OpenAI';
+$string['type_azure'] = 'OpenAI: Azure';
+$string['type_gemini'] = 'Google Gemini';
+$string['type_ollama'] = 'Ollama';
+$string['type_deepseek'] = 'DeepSeek';

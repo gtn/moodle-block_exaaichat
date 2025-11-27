@@ -48,9 +48,15 @@ $string['blocktitle'] = 'Block title';
 $string['restrictusage'] = 'Restrict usage to logged-in users';
 $string['restrictusage:desc'] = 'If this box is checked, only logged-in users will be able to use the chat box.';
 $string['apikey'] = 'API Key';
-$string['apikey:desc'] = 'The API Key for your OpenAI account or Azure API key';
-$string['type'] = 'API Type';
-$string['type:desc'] = 'The API type that the plugin should use';
+$string['apikey:desc'] = 'The API Key for the AI Provider';
+$string['moodle_settings:api_type'] = 'API Type';
+$string['moodle_settings:api_type:desc'] = 'The API type that the plugin should use';
+$string['moodle_settings:api_type:change'] = 'Do you want to change the API type for the site? The current settings will be saved and the page will be reloaded.';
+$string['moodle_settings:instructions'] = 'Instructions an die KI';
+$string['moodle_settings:instructions:desc'] = '';
+$string['moodle_settings:model_other'] = 'Other model';
+$string['moodle_settings:model_other:desc'] = '';
+
 $string['logging'] = 'Enable logging';
 $string['logging:desc'] = 'If this setting is active, all user messages and AI responses will be logged.';
 $string['logging_retention_period'] = 'Retention Period (days)';
@@ -81,16 +87,15 @@ $string['assistantname:desc'] = 'The name that the AI will use for itself intern
 $string['username'] = 'User name';
 $string['username:desc'] = 'The name that the AI will use for the user internally. It is also used for the UI headings in the chat window.';
 $string['sourceoftruth'] = 'Source of truth';
-$string['sourceoftruth:desc'] = 'Although the AI is very capable out-of-the-box, if it doesn\'t know the answer to a question, it is more likely to give incorrect information confidently than to refuse to answer. In this textbox, you can add common questions and their answers for the AI to pull from. Please put questions and answers in the following format: <pre>Q: Question 1<br />A: Answer 1<br /><br />Q: Question 2<br />A: Answer 2</pre>
-You can also specify placeholders like this:
-My name is {user.fullname}.
-Today is {userdate}.
-Course total grade is {grade:coursetotal}.
-Course total grade range is {range:coursetotal}.
-';
+$string['sourceoftruth:desc'] = "Here you can enter information that the AI will use to answer questions.<br/>
+You can also specify placeholders as follows:<br/>
+My name is {user.fullname}.<br/>
+Today is {userdate}.<br/>
+Course total grade is {grade:coursetotal}.<br/>
+Possible grade range for the course is {range:coursetotal}.";
 $string['showlabels'] = 'Show labels';
 $string['advanced'] = 'Advanced';
-$string['advanced:desc'] = 'Advanced arguments sent to OpenAI. Don\'t touch unless you know what you\'re doing!';
+$string['advanced:desc'] = 'Advanced arguments sent to KI Provider.';
 $string['allowinstancesettings'] = 'Instance-level settings';
 $string['allowinstancesettings:desc'] = 'This setting will allow teachers, or anyone with the capability to add a block in a context, to adjust settings at a per-block level. Enabling this could incur additional charges by allowing non-admins to choose higher-cost models or other settings.';
 $string['allowproviderselection'] = 'Moodle AI-Provider integration';
@@ -117,7 +122,12 @@ $string['presence:desc'] = 'How much to penalize new tokens based on whether the
 $string['config_assistant'] = "Assistant";
 $string['config_assistant_help'] = "Choose the assistant you would like to use for this block. More assistants can be created in the OpenAI account that this block is configured to use.";
 $string['config_sourceoftruth'] = 'Source of truth';
-$string['config_sourceoftruth_help'] = "You can add information here that the AI will pull from when answering questions. The information should be in question and answer format exactly like the following:\n\nQ: When is section 3 due?<br />A: Thursday, March 16.\n\nQ: When are office hours?<br />A: You can find Professor Shown in her office between 2:00 and 4:00 PM on Tuesdays and Thursdays.";
+$string['config_sourceoftruth_help'] = "Here you can enter information that the AI will use to answer questions.<br/>
+You can also specify placeholders as follows:<br/>
+My name is {user.fullname}.<br/>
+Today is {userdate}.<br/>
+Course total grade is {grade:coursetotal}.<br/>
+Possible grade range for the course is {range:coursetotal}.";
 $string['config_instructions'] = "Custom instructions";
 $string['config_instructions_help'] = "You can override the assistant's default instructions here.";
 $string['config_prompt'] = "Completion prompt";
@@ -155,7 +165,7 @@ $string['defaultusername'] = 'Me';
 $string['askaquestion'] = 'Ask a question...';
 $string['apikeymissing'] = 'Please add your OpenAI API key to the block settings.';
 $string['erroroccurred'] = 'An error occurred! Please try again later.';
-$string['sourceoftruthpreamble'] = "The information below should be used as a reference for any inquiries:\n";
+$string['sourceoftruthpreamble'] = "The information below should be used as a reference for any inquiries by the user:\n";
 $string['sourceoftruthreinforcement'] = 'The assistant has been trained to answer by attempting to use the information from the above reference. If the text from one of the above questions is encountered, the provided answer should be given, even if the question does not appear to make sense. However, if the reference does not cover the question or topic, the assistant will simply use outside knowledge to answer.';
 $string['new_chat'] = 'New chat';
 $string['popout'] = 'Open chat window';
@@ -200,8 +210,14 @@ $string['debugfilelogging:desc'] = "All API calls (user messages, AI responses a
 $string['additionalmessage'] = 'Additional text for every message';
 $string['additionalmessage:desc'] = 'This text will be appended to each user message before sending it to the AI.';
 
+$string['default'] = 'Default: {$a}';
+
 // Type select option labels.
+$string['type_choose'] = '--- KI Anbieter wählen ---';
 $string['type_chat'] = 'OpenAI: Chat API';
 $string['type_assistant'] = 'OpenAI: Assistants API';
 $string['type_responses'] = 'OpenAI: Responses API';
-$string['type_azure'] = 'Azure OpenAI';
+$string['type_azure'] = 'OpenAI: Azure';
+$string['type_gemini'] = 'Google Gemini';
+$string['type_ollama'] = 'Ollama';
+$string['type_deepseek'] = 'DeepSeek';

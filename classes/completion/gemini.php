@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * Class providing completions for chat models (3.5 and up)
  *
  * @package    block_exaaichat
  * @copyright  2025 GTN Solutions https://gtn-solutions.com
@@ -23,10 +23,25 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace block_exaaichat\completion;
 
-$plugin->component = 'block_exaaichat';
-$plugin->version = 2025112800;
-$plugin->requires = 2022041600;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '3.2';
+defined('MOODLE_INTERNAL') || die;
+
+class gemini extends chat {
+    public function get_models(): array {
+        $models = [
+            'gemini-3-pro-preview',
+            'gemini-2.5-pro',
+            'gemini-2.5-flash',
+            'gemini-2.5-flash-lite',
+            'gemini-2.0-flash',
+            'gemini-2.0-flash-lite',
+        ];
+
+        return array_combine($models, $models);
+    }
+
+    protected function get_default_endpoint(): string {
+        return 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+    }
+}

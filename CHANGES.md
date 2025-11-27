@@ -1,3 +1,9 @@
+### v3.2 (2025112800) ###
+* Integration of Ollama and Gemini AI providers
+* Source of truth placeholders are also available in the admin settings
+* Admin Settings now allows to define a different model.
+* Update OpenAI Models list
+
 ### v3.2 (2025112700) ###
 * Improve ai placement integration
 * fix block edit url

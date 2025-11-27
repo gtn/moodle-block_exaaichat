@@ -23,6 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use block_exaaichat\completion\completion_base;
+use block_exaaichat\locallib;
+
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
@@ -40,21 +43,28 @@ if ($hassiteconfig) {
 
         require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
-        $type = \block_exaaichat\locallib::get_api_type();
+        $api_type = get_config('block_exaaichat', 'api_type');
+        $completion = completion_base::create_from_type($api_type);
+        $models = $completion?->get_models() ?? [];
+
         $assistant_array = [];
-        if ($type === 'assistant') {
+        if ($api_type === 'assistant') {
+            // TODO: change and maybe cache!
             $assistant_array = block_exaaichat_fetch_assistants_array();
         }
 
         global $PAGE;
-        $PAGE->requires->js_call_amd('block_exaaichat/settings', 'init');
+        $PAGE->requires->js_call_amd('block_exaaichat/moodle_settings', 'init');
 
         $settings->add(new admin_setting_configselect(
-            'block_exaaichat/type',
-            get_string('type', 'block_exaaichat'),
-            get_string('type:desc', 'block_exaaichat'),
-            'chat',
+            'block_exaaichat/api_type',
+            get_string('moodle_settings:api_type', 'block_exaaichat'),
+            get_string('moodle_settings:api_type:desc', 'block_exaaichat'),
+            '',
             [
+                // '' => get_string('type_choose', 'block_exaaichat'),
+                'ollama' => get_string('type_ollama', 'block_exaaichat'),
+                'gemini' => get_string('type_gemini', 'block_exaaichat'),
                 'chat' => get_string('type_chat', 'block_exaaichat'),
                 'assistant' => get_string('type_assistant', 'block_exaaichat'),
                 'responses' => get_string('type_responses', 'block_exaaichat'),
@@ -69,6 +79,22 @@ if ($hassiteconfig) {
             '',
             PARAM_TEXT
         ));
+
+        $settings->add(new admin_setting_configselect(
+            'block_exaaichat/model',
+            get_string('model', 'block_exaaichat'),
+            get_string('model:desc', 'block_exaaichat'),
+            '',
+            $models + ['other' => get_string('block_instance:config:model:choose-other', 'block_exaaichat')]
+        ));
+
+        $settings->add(new admin_setting_configtext(
+            'block_exaaichat/model_other',
+            get_string('moodle_settings:model_other', 'block_exaaichat'),
+            get_string('moodle_settings:model_other:desc', 'block_exaaichat'),
+            '',
+        ));
+        $settings->hide_if('block_exaaichat/model_other', 'block_exaaichat/model', 'neq', 'other');
 
         $settings->add(new admin_setting_configcheckbox(
             'block_exaaichat/restrictusage',
@@ -146,7 +172,7 @@ if ($hassiteconfig) {
 
         // Assistant settings //
 
-        if ($type === 'assistant') {
+        if ($api_type === 'assistant') {
             $settings->add(new admin_setting_heading(
                 'block_exaaichat/assistantheading',
                 get_string('assistantheading', 'block_exaaichat'),
@@ -168,7 +194,7 @@ if ($hassiteconfig) {
                     get_string('noassistants', 'block_exaaichat'),
                 ));
             }
-        } elseif ($type === 'azure') {
+        } elseif ($api_type === 'azure') {
             $settings->add(new admin_setting_heading(
                 'block_exaaichat/azureheading',
                 get_string('azureheading', 'block_exaaichat'),
@@ -209,10 +235,9 @@ if ($hassiteconfig) {
         ));
 
         $settings->add(new admin_setting_configtextarea(
-            'block_exaaichat/prompt',
-            get_string('prompt', 'block_exaaichat'),
-            get_string('prompt:desc', 'block_exaaichat'),
-            get_string('defaultprompt', 'block_exaaichat'),
+            'block_exaaichat/instructions',
+            get_string('moodle_settings:instructions', 'block_exaaichat'),
+            get_string('moodle_settings:instructions:desc', 'block_exaaichat'),
             PARAM_TEXT
         ));
 
@@ -224,7 +249,14 @@ if ($hassiteconfig) {
             PARAM_TEXT
         ));
 
-        if ($type === 'responses') {
+        // Dropdown menu for placeholders
+        $settings->add(new admin_setting_description('user_message_options', '', $OUTPUT->render_from_template('block_exaaichat/config_source_of_truth', [
+            'placeholders' => locallib::get_placeholders(),
+            'placeholders_gradebook' => locallib::get_placeholders_gradebook_additional(),
+        ])));
+
+
+        if ($api_type === 'responses') {
             $settings->add(new admin_setting_configtext(
                 'block_exaaichat/additional_message',
                 get_string('additionalmessage', 'block_exaaichat'),
@@ -242,9 +274,9 @@ if ($hassiteconfig) {
             get_string('advanced', 'block_exaaichat'),
             get_string('advanced:desc', 'block_exaaichat')
         ));
-        if ($type === 'assistant') {
+        if ($api_type === 'assistant') {
 
-        } else {
+        } elseif ($api_type === 'chat' || $api_type === 'responnses') {
             $settings->add(new admin_setting_configtext(
                 'block_exaaichat/openai_api_url',
                 get_string('openai_api_url', 'block_exaaichat'),
@@ -252,61 +284,53 @@ if ($hassiteconfig) {
                 'https://api.openai.com/v1',
                 PARAM_URL
             ));
-
-            $settings->add(new admin_setting_configtextarea(
-                'block_exaaichat/models',
-                get_string('models', 'block_exaaichat'),
-                get_string('models:desc', 'block_exaaichat'),
-                ''
-            ));
-
-            $settings->add(new admin_setting_configselect(
-                'block_exaaichat/model',
-                get_string('model', 'block_exaaichat'),
-                get_string('model:desc', 'block_exaaichat'),
-                'text-davinci-003',
-                \block_exaaichat\locallib::get_models()
-            ));
-
-            $settings->add(new admin_setting_configtext(
-                'block_exaaichat/temperature',
-                get_string('temperature', 'block_exaaichat'),
-                get_string('temperature:desc', 'block_exaaichat'),
-                0.5,
-                PARAM_FLOAT
-            ));
-
-            $settings->add(new admin_setting_configtext(
-                'block_exaaichat/maxlength',
-                get_string('maxlength', 'block_exaaichat'),
-                get_string('maxlength:desc', 'block_exaaichat'),
-                500,
-                PARAM_INT
-            ));
-
-            $settings->add(new admin_setting_configtext(
-                'block_exaaichat/topp',
-                get_string('topp', 'block_exaaichat'),
-                get_string('topp:desc', 'block_exaaichat'),
-                1,
-                PARAM_FLOAT
-            ));
-
-            $settings->add(new admin_setting_configtext(
-                'block_exaaichat/frequency',
-                get_string('frequency', 'block_exaaichat'),
-                get_string('frequency:desc', 'block_exaaichat'),
-                1,
-                PARAM_FLOAT
-            ));
-
-            $settings->add(new admin_setting_configtext(
-                'block_exaaichat/presence',
-                get_string('presence', 'block_exaaichat'),
-                get_string('presence:desc', 'block_exaaichat'),
-                1,
-                PARAM_FLOAT
-            ));
         }
+
+        $settings->add(new admin_setting_configtextarea(
+            'block_exaaichat/models',
+            get_string('models', 'block_exaaichat'),
+            get_string('models:desc', 'block_exaaichat'),
+            ''
+        ));
+
+        $settings->add(new admin_setting_configtext(
+            'block_exaaichat/temperature',
+            get_string('temperature', 'block_exaaichat'),
+            get_string('temperature:desc', 'block_exaaichat'),
+            0.5,
+            PARAM_FLOAT
+        ));
+
+        $settings->add(new admin_setting_configtext(
+            'block_exaaichat/maxlength',
+            get_string('maxlength', 'block_exaaichat'),
+            get_string('maxlength:desc', 'block_exaaichat'),
+            500,
+            PARAM_INT
+        ));
+
+        $settings->add(new admin_setting_configtext(
+            'block_exaaichat/topp',
+            get_string('topp', 'block_exaaichat'),
+            get_string('topp:desc', 'block_exaaichat'),
+            1,
+            PARAM_FLOAT
+        ));
+
+        $settings->add(new admin_setting_configtext(
+            'block_exaaichat/frequency',
+            get_string('frequency', 'block_exaaichat'),
+            get_string('frequency:desc', 'block_exaaichat'),
+            1,
+            PARAM_FLOAT
+        ));
+
+        $settings->add(new admin_setting_configtext(
+            'block_exaaichat/presence',
+            get_string('presence', 'block_exaaichat'),
+            get_string('presence:desc', 'block_exaaichat'),
+            1,
+            PARAM_FLOAT
+        ));
     }
 }
