@@ -1,3 +1,7 @@
+### v3.2 (2025112700) ###
+* Improve ai placement integration
+* fix block edit url
+
 ### v3.2 (2025112500) ###
 * Improve error handling
 * Fix: default apikey only allowed when using default endpoint

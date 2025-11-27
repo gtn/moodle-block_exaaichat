@@ -68,11 +68,8 @@ if (preg_match('!^course-(.*)$!', $block_id, $matches)) {
     $context = context::instance_by_id($instance_record->parentcontextid);
 }
 
-if ($context instanceof \context_course) {
-    require_login($context->instanceid);
-} else {
-    throw new \moodle_exception('block is not a course block, TODO: pass courseid as parameter');
-}
+// $context could be a course context, could also be any subcontext, like a module
+require_login($context->get_course_context()->instanceid);
 
 $PAGE->set_context($context);
 

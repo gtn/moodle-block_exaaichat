@@ -45,12 +45,12 @@ class block_exaaichat extends block_base {
         }
     }
 
-    public function get_content(bool $as_aiplacement_content = false) {
+    public function get_content() {
         if ($this->content !== null) {
             return $this->content;
         }
 
-        $this->content = output::render_chat_interface($this->instance->id, $this->config ?? (object)[], false);
+        $this->content = output::render_chat_interface($this->instance->id, $this->config ?? (object)[], true, false);
 
         return $this->content;
     }

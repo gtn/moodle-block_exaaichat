@@ -25,30 +25,73 @@ namespace block_exaaichat;
 defined('MOODLE_INTERNAL') || die;
 
 class output {
-    public static function render_default_chat_interface(): object {
-        global $COURSE;
 
-        $instance_id = 'course-' . $COURSE->id;
+    public static function render_aiplacement_content(): string {
+        global $COURSE, $DB, $PAGE, $OUTPUT;
 
-        $content = static::render_chat_interface($instance_id, (object)[], true);
-        $content->instance_id = $instance_id;
+        $regions = $PAGE->blocks->get_regions();
 
-        return $content;
+        $block_instance_current_page = null;
+        foreach ($regions as $region) {
+            $instances = $PAGE->blocks->get_blocks_for_region($region);
 
-        /*
-        require_once $CFG->dirroot . '/blocks/exaaichat/block_exaaichat.php';
-        $block_instance_course = new \block_exaaichat();
-        $block_instance_course->page = $PAGE;
-        $block_instance_course->config = (object)[];
-        $block_instance_course->instance = (object)['id' => $instance_id];
+            foreach ($instances as $block_instance_test) {
+                if ($block_instance_test instanceof \block_exaaichat) {
+                    $block_instance_current_page = $block_instance_test;
+                    break 2;
+                }
+            }
+        }
 
-        $content = $block_instance_course->get_content(true);
-        $content->instance_id = $instance_id;
-        return $content;
-        */
+        if ($block_instance_current_page) {
+            $visible = $DB->get_field('block_positions', 'visible', [
+                'blockinstanceid' => $block_instance_current_page->instance->id,
+                'contextid' => $block_instance_current_page->context->get_parent_context()->id,
+                // 'region' => $block_instance_current_page->instance->region,
+            ]);
+
+            if ($visible === false) {
+                // === false => couldn't find visibility record, so block is visible
+                return '';
+            } elseif ($visible) {
+                // block is visible on this page, so do not show chat
+                return '';
+            }
+        }
+
+        $block_record_course = $DB->get_record('block_instances', [
+            'blockname' => 'exaaichat',
+            'parentcontextid' => \context_course::instance($COURSE->id)->id,
+        ]);
+
+        if ($block_record_course) {
+            /* @var \block_exaaichat $block_instance_course */
+            $block_instance_course = block_instance($block_record_course->blockname, $block_record_course);
+
+            $content = output::render_chat_interface($block_instance_course->instance->id, $block_instance_course->config ?? (object)[], true, true);
+            $instance_id = $block_instance_course->instance->id;
+        } else {
+            $instance_id = 'course-' . $COURSE->id;
+            $content = static::render_chat_interface($instance_id, (object)[], false, true);
+        }
+
+        return $OUTPUT->render_from_template('block_exaaichat/aiplacement_content', [
+            'blockinstanceid' => $instance_id,
+            'content' => $content->text,
+        ]);
     }
 
-    public static function render_chat_interface(string $instance_id, object $config, bool $as_aiplacement_content): object {
+    /**
+     * @param string $instance_id the instanceid of this block, either int (for a real block, or course-{id} for a course level instance without the actual block in the course)
+     * @param object $config
+     * @param bool $is_block_instance (is a block instance, false = no block in the course)
+     * @param bool $as_aiplacement_content (is the block content, or the content of the aiplacement)
+     * @return object
+     * @throws \coding_exception
+     * @throws \core\exception\moodle_exception
+     * @throws \dml_exception
+     */
+    public static function render_chat_interface(string $instance_id, object $config, bool $is_block_instance, bool $as_aiplacement_content): object {
         global $COURSE, $OUTPUT, $PAGE;
 
         $context = \context_course::instance($COURSE->id);
@@ -129,10 +172,12 @@ class output {
             'allow_access_to_current_page' => (bool)get_config('block_exaaichat', 'allow_access_to_current_page'),
         ]]);
 
+        $canEdit = has_capability('moodle/course:update', \context_course::instance($COURSE->id));
+
         $contextdata = [
             'logging_enabled' => get_config('block_exaaichat', 'logging'),
-            'show_top_buttons' => !$PAGE->user_is_editing() || $as_aiplacement_content,
-            'settings_url' => $as_aiplacement_content ?
+            'show_top_buttons' => $as_aiplacement_content || !$PAGE->user_is_editing(), // always show top buttons in aiplacement, otherwise (in the block) only when not editing
+            'settings_url' => $is_block_instance && $as_aiplacement_content && $canEdit ?
                 // auf die editmode.php verlinken und dann zum block edit weiterleiten
                 // weil block editieren nur mit aktivem editmode geht!
                 (new \moodle_url('/editmode.php', ['setmode' => 1, 'context' => \context_system::instance()->id, 'sesskey' => sesskey(),
