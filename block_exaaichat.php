@@ -46,8 +46,6 @@ class block_exaaichat extends block_base {
     }
 
     public function get_content(bool $as_aiplacement_content = false) {
-        global $COURSE, $OUTPUT, $PAGE;
-
         if ($this->content !== null) {
             return $this->content;
         }

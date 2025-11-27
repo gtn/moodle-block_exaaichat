@@ -43,11 +43,14 @@ function block_exaaichat_fetch_assistants_array(int $block_id = null) {
     } else {
         $instance_record = $DB->get_record('block_instances', ['blockname' => 'exaaichat', 'id' => $block_id], '*');
         $instance = block_instance('exaaichat', $instance_record);
-        $apikey = $instance->config->apikey ?: get_config('block_exaaichat', 'apikey');
         if ($instance->config->endpoint ?? '') {
             $endpoint = dirname($instance->config->endpoint) . "/assistants?order=desc";
+            // custom endpoint, only own apikey allowed
+            $apikey = $instance->config->apikey;
         } else {
             $endpoint = \block_exaaichat\locallib::get_openai_api_url() . "/assistants?order=desc";
+            // default endpoint, use custom apikey or default apikey
+            $apikey = $instance->config->apikey ?: get_config('block_exaaichat', 'apikey');
         }
     }
 

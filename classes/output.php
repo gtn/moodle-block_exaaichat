@@ -68,7 +68,7 @@ class output {
             $api_type = \block_exaaichat\locallib::get_api_type();
         }
 
-        $api_key =
+        $apikey =
             (get_config('block_exaaichat', 'allowinstancesettings') ? $config->apikey ?? '' : '')
                 ?: get_config('block_exaaichat', 'apikey');
 
@@ -98,7 +98,7 @@ class output {
             $model = $config->model ?? '' ?: get_config('block_exaaichat', 'model') ?: 'chat';
 
             $ai_providers = [];
-            if ($api_key) {
+            if ($apikey) {
                 $ai_providers[] = ['id' => '', 'label' => $model];
             }
             $moodle_ai_proviers = locallib::get_moodle_ai_providers();
@@ -113,7 +113,7 @@ class output {
             }
         } else {
             $ai_providers = [];
-            if (!$api_key) {
+            if (!$apikey) {
                 $content->text .= get_string('apikeymissing', 'block_exaaichat');
                 return $content;
             }

@@ -33,6 +33,8 @@ use OpenAI\Responses\Threads\Runs\ThreadRunResponseRequiredActionFunctionToolCal
 
 defined('MOODLE_INTERNAL') || die;
 
+die('test using the openai api classes');
+
 /**
  * OpenAI chat API
  */

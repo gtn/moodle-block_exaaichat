@@ -91,7 +91,14 @@ abstract class completion_base {
             }
         }
 
-        $this->apikey = $config->apikey ?? '' ?: $this->get_plugin_setting('apikey', '');
+        $default_api_type = get_config('block_exaaichat', 'api_type') ?: 'chat';
+        $current_api_type = preg_replace('!^.*\\\\!', '', static::class);
+        $this->apikey = $config->apikey ?? '';
+        if (($config->is_moodle_ai_provider ?? false) || ($config->endpoint ?? '') || ($default_api_type != $current_api_type)) {
+            // custom endpoint, don't use default apikey!
+        } else {
+            $this->apikey = $this->apikey ?: $this->get_plugin_setting('apikey', '');
+        }
 
         $this->instructions = $config->instructions ?? '' ?: $this->get_plugin_setting('instructions', '');
         $this->sourceoftruth = $config->sourceoftruth ?? '' ?: $this->get_plugin_setting('sourceoftruth', '');
@@ -125,7 +132,7 @@ abstract class completion_base {
     public static function create_from_config(object $config, string $message, string $thread_id = '', array $history = [], string $page_content = ''): static {
         if (get_config('block_exaaichat', 'allowinstancesettings')) {
             $api_type = $config->api_type ?? '';
-             } else {
+        } else {
             $api_type = '';
         }
         $api_type = $api_type ?: get_config('block_exaaichat', 'api_type') ?: 'chat';
