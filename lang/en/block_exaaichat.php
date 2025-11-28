@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Exabis AI Chat Block';
 $string['exaaichat'] = 'Exabis AI Chat';
-$string['exaaichat_logs'] = 'Exabis Chat Logs';
+$string['exaaichat_logs'] = 'Exabis AI Chat Logs';
 $string['exaaichat:addinstance'] = 'Add a new Exabis AI Chat block';
 $string['exaaichat:myaddinstance'] = 'Add a new Exabis AI Chat block to the My Moodle page';
 $string['exaaichat:viewreport'] = 'View Exabis AI Chat log report';
@@ -58,7 +58,7 @@ $string['moodle_settings:model_other'] = 'Other model';
 $string['moodle_settings:model_other:desc'] = '';
 
 $string['logging'] = 'Enable logging';
-$string['logging:desc'] = 'If this setting is active, all user messages and AI responses will be logged.';
+$string['logging:desc'] = 'If this setting is active, all user messages and AI responses will be logged.<br/><a href="{$a}">View log</a>';
 $string['logging_retention_period'] = 'Retention Period (days)';
 $string['logging_retention_period:desc'] = 'How long (in days) to keep the logs. After this period, logs will be automatically deleted. Set to 0 to keep logs indefinitely.';
 

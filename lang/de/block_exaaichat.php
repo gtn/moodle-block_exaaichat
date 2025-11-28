@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Exabis KI Chat Block';
 $string['exaaichat'] = 'Exabis KI Chat';
-$string['exaaichat_logs'] = 'Exabis Chat-Protokolle';
+$string['exaaichat_logs'] = 'Exabis KI Chat Protokolle';
 $string['exaaichat:addinstance'] = 'Neuen Exabis KI Chat Block hinzufügen';
 $string['exaaichat:myaddinstance'] = 'Exabis KI Chat Block zur „Dashboard“-Seite hinzufügen';
 $string['exaaichat:viewreport'] = 'Exabis KI Chat-Protokollbericht anzeigen';
@@ -57,7 +57,7 @@ $string['moodle_settings:instructions:desc'] = '';
 $string['moodle_settings:model_other'] = 'Anderes Modell';
 $string['moodle_settings:model_other:desc'] = '';
 $string['logging'] = 'Protokollierung aktivieren';
-$string['logging:desc'] = 'Wenn diese Einstellung aktiviert ist, werden alle Benutzernachrichten und KI-Antworten protokolliert.';
+$string['logging:desc'] = 'Wenn diese Einstellung aktiviert ist, werden alle Benutzernachrichten und KI-Antworten protokolliert.<br/><a href="{$a}">Protokoll anzeigen</a>';
 $string['logging_retention_period'] = 'Protokollaufbewahrungszeitraum (in Tagen)';
 $string['logging_retention_period:desc'] = 'Die Anzahl der Tage, die Protokolleinträge aufbewahrt werden, bevor sie automatisch gelöscht werden. Setze diesen Wert auf 0, um Protokolle unbegrenzt aufzubewahren.';
 

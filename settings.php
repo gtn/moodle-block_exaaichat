@@ -122,8 +122,8 @@ if ($hassiteconfig) {
         $settings->add(new admin_setting_configcheckbox(
             'block_exaaichat/logging',
             get_string('logging', 'block_exaaichat'),
-            get_string('logging:desc', 'block_exaaichat'),
-            0
+            get_string('logging:desc', 'block_exaaichat', (new moodle_url('/blocks/exaaichat/report.php', ['courseid' => 1]))->out(false)),
+            1
         ));
 
         $settings->add(new admin_setting_configtext(
