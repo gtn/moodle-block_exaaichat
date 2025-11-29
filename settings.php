@@ -43,7 +43,18 @@ if ($hassiteconfig) {
 
         require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
-        $api_type = get_config('block_exaaichat', 'api_type');
+        $api_types = [
+            // '' => get_string('type_choose', 'block_exaaichat'),
+            'ollama' => get_string('type_ollama', 'block_exaaichat'),
+            'gemini' => get_string('type_gemini', 'block_exaaichat'),
+            'chat' => get_string('type_chat', 'block_exaaichat'),
+            'assistant' => get_string('type_assistant', 'block_exaaichat'),
+            'responses' => get_string('type_responses', 'block_exaaichat'),
+            'azure' => get_string('type_azure', 'block_exaaichat'),
+        ];
+
+        // fallback api_type is first from list
+        $api_type = get_config('block_exaaichat', 'api_type') ?: key($api_types);
         $completion = completion_base::create_from_type($api_type);
         $models = $completion?->get_models() ?? [];
 
@@ -61,15 +72,7 @@ if ($hassiteconfig) {
             get_string('moodle_settings:api_type', 'block_exaaichat'),
             get_string('moodle_settings:api_type:desc', 'block_exaaichat'),
             '',
-            [
-                // '' => get_string('type_choose', 'block_exaaichat'),
-                'ollama' => get_string('type_ollama', 'block_exaaichat'),
-                'gemini' => get_string('type_gemini', 'block_exaaichat'),
-                'chat' => get_string('type_chat', 'block_exaaichat'),
-                'assistant' => get_string('type_assistant', 'block_exaaichat'),
-                'responses' => get_string('type_responses', 'block_exaaichat'),
-                'azure' => get_string('type_azure', 'block_exaaichat'),
-            ]
+            $api_types
         ));
 
         $settings->add(new admin_setting_configtext(
@@ -139,7 +142,7 @@ if ($hassiteconfig) {
             'block_exaaichat/allowinstancesettings',
             get_string('allowinstancesettings', 'block_exaaichat'),
             get_string('allowinstancesettings:desc', 'block_exaaichat'),
-            0
+            1
         ));
 
         $settings->add(new admin_setting_configcheckbox(

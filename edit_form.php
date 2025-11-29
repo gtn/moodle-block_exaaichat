@@ -85,12 +85,12 @@ class block_exaaichat_edit_form extends block_edit_form {
         // this does not work if the form is displayed on the config page
         // $block_id = $this->_ajaxformdata["blockid"];
         // solution:
-        $block_id = $this->get_block()->instance->id;
+        $block_id = $this->_get_block()->instance->id;
 
         $api_type = '';
         if (get_config('block_exaaichat', 'allowinstancesettings')) {
             // allow switching to different api
-            $api_type = $this->get_block()->config->api_type;
+            $api_type = $this->_get_block()->config->api_type ?? ''; // is null on new block
         }
         if (!$api_type) {
             $api_type = \block_exaaichat\locallib::get_api_type();
@@ -148,7 +148,7 @@ class block_exaaichat_edit_form extends block_edit_form {
         }
 
         $models = [];
-        if (locallib::get_default_model()) {
+        if (locallib::get_default_model() && locallib::get_api_type() == $api_type) {
             $models += ['' => get_string('default', 'block_exaaichat', locallib::get_default_model())];
         }
         $models += $completion?->get_models() ?? [];
@@ -189,7 +189,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addHelpButton('config_apikey', 'config_apikey', 'block_exaaichat');
 
                 $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), $models);
-                $mform->setDefault('config_model', get_config('block_exaaichat', 'model'));
+                $mform->setDefault('config_model', '');
                 $mform->setType('config_model', PARAM_TEXT);
                 $mform->addHelpButton('config_model', 'config_model', 'block_exaaichat');
 
@@ -235,7 +235,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addHelpButton('config_apikey', 'config_apikey', 'block_exaaichat');
 
                 $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), $models);
-                $mform->setDefault('config_model', get_config('block_exaaichat', 'model'));
+                $mform->setDefault('config_model', '');
                 $mform->setType('config_model', PARAM_TEXT);
                 $mform->addHelpButton('config_model', 'config_model', 'block_exaaichat');
 
@@ -296,5 +296,19 @@ class block_exaaichat_edit_form extends block_edit_form {
     });
 </script>
         ");
+    }
+
+    /**
+     * Get the block instance
+     * @return block_exaaichat
+     */
+    private function _get_block(): \block_exaaichat {
+        if (method_exists($this, 'get_block')) {
+            // moodle 4.5 onwards
+            return $this->get_block();
+        } else {
+            // moodle 4.1
+            return $this->block;
+        }
     }
 }

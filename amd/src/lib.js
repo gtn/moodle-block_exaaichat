@@ -24,7 +24,7 @@
 
 /* eslint-disable @babel/semi, no-undef */
 
-import {getStrings} from 'core/str';
+import {getStrings} from './helper';
 import LocalStorage from 'core/localstorage';
 // import config from 'core/config';
 import $ from 'jquery';

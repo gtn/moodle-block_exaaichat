@@ -23,13 +23,13 @@
  */
 
 import $ from 'jquery';
-import {getString} from 'core/str';
+import {getString} from './helper';
 
 /**
  * init function, which is called when the instance form is displayed
  */
 export function init() {
-  const $form = $('input[type="hidden"][value="exaaichat"]').closest('form');
+  const $form = $('textarea[name="config_sourceoftruth"]').closest('form');
 
   // api type select
   const $select = $form.find('select[name="config_api_type"]');

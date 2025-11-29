@@ -22,7 +22,7 @@
  */
 
 import $ from 'jquery';
-import {getString} from 'core/str';
+import {getString} from './helper';
 
 /**
  * init function, which is called when the instance form is displayed

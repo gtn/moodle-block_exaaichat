@@ -64,7 +64,8 @@ if (preg_match('!^course-(.*)$!', $block_id, $matches)) {
         throw new \moodle_exception('invalidblockinstance', 'error');
     }
 
-    $config = clone $instance->config;
+    // if block was just added without a config in moodle41
+    $config = $instance->config ? clone $instance->config : (object)[];
     $context = context::instance_by_id($instance_record->parentcontextid);
 }
 
