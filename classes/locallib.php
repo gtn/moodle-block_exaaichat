@@ -109,7 +109,9 @@ class locallib {
                     // globalratelimit
                     // userratelimit
                     'model' => $actionconfig['settings']['model'] ?? '',
-                    'endpoint' => $actionconfig['settings']['endpoint'] ?? '',
+                    'endpoint' => ($actionconfig['settings']['endpoint'] ?? '') ?:
+                        // for ollama:
+                        ($provider->config['endpoint'] ?? ''),
                     'modelsettings' => $actionconfig['modelsettings'][$actionconfig['model'] ?? ''] ?? [],
                 ];
             }

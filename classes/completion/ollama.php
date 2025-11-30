@@ -28,6 +28,11 @@ namespace block_exaaichat\completion;
 defined('MOODLE_INTERNAL') || die;
 
 class ollama extends chat {
+    protected function init(object $config) {
+        // adjust endpoint to openai compatible one
+        $this->endpoint = preg_replace('!/api/chat/?$!', '/v1/chat/completions', $this->endpoint);
+    }
+
     public function get_models(): array {
         // liste von https://ollama.com/api/tags
         $models = [

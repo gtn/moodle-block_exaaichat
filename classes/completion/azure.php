@@ -33,9 +33,7 @@ class azure extends chat {
     private $deploymentid;
     private $apiversion;
 
-    public function __construct(object $config, protected string $message, protected string $thread_id = '', protected array $history = []) {
-        parent::__construct($config, $message, $thread_id, $history);
-
+    protected function init(object $config) {
         $this->resourcename = $this->get_plugin_setting('resourcename');
         $this->deploymentid = $this->get_plugin_setting('deploymentid');
         $this->apiversion = $this->get_plugin_setting('apiversion');

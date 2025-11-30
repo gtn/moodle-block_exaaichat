@@ -42,9 +42,7 @@ class assistant extends completion_base {
 
     protected string $assistant_id;
 
-    public function __construct(object $config, protected string $message, protected string $thread_id = '', protected array $history = []) {
-        parent::__construct($config, $message, $thread_id, $history);
-
+    protected function init(object $config) {
         $this->assistant_id = $config->assistant ?? '' ?: $this->get_plugin_setting('assistant', '');
         $this->client = OpenAI::client($this->apikey);
     }

@@ -128,6 +128,12 @@ abstract class completion_base {
         $this->maxlength = $config->maxlength ?? $this->get_plugin_setting('maxlength', 500);
         $this->frequency = $config->frequency ?? $this->get_plugin_setting('frequency', 1);
         $this->presence = $config->presence ?? $this->get_plugin_setting('presence', 1);
+
+        $this->init($config);
+    }
+
+    protected function init(object $config) {
+        // can be overridden by child classes
     }
 
     public static function create_from_config(object $config, string $message, string $thread_id = '', array $history = [], string $page_content = ''): static {
