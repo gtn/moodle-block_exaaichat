@@ -241,6 +241,7 @@ if ($hassiteconfig) {
             'block_exaaichat/instructions',
             get_string('moodle_settings:instructions', 'block_exaaichat'),
             get_string('moodle_settings:instructions:desc', 'block_exaaichat'),
+            '',
             PARAM_TEXT
         ));
 
