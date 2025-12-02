@@ -1,3 +1,9 @@
+### v3.2 (2025120200) ###
+* Fixes for ollama in Moodle AI Providers and on localhost
+* Fix some moodle41 issues
+* Reports are on by default
+* Fix incorrect default setting
+
 ### v3.2 (2025112800) ###
 * Integration of Ollama and Gemini AI providers
 * Source of truth placeholders are also available in the admin settings
