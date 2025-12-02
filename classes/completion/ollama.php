@@ -31,6 +31,11 @@ class ollama extends chat {
     protected function init(object $config) {
         // adjust endpoint to openai compatible one
         $this->endpoint = preg_replace('!/api/chat/?$!', '/v1/chat/completions', $this->endpoint);
+
+        if (preg_match('!^https?://localhost(:[0-9]+)?/?$!', $this->endpoint)) {
+            // localhost ollama with no api path, use openai compatible path
+            $this->endpoint = rtrim($this->endpoint, '/') . '/v1/chat/completions';
+        }
     }
 
     public function get_models(): array {
