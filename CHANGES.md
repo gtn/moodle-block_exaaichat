@@ -1,3 +1,6 @@
+### v3.2 (2025120300) ###
+* Fixes for ollama on localhost
+
 ### v3.2 (2025120200) ###
 * Fixes for ollama in Moodle AI Providers and on localhost
 * Fix some moodle41 issues
