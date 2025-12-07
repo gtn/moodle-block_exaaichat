@@ -185,6 +185,8 @@ $string['placeholders:range:placeholder'] = 'Bereich von {$a->name}: {$a->placeh
 $string['grade:not_available'] = 'Nicht verfügbar';
 $string['grade:nogradesavailable'] = 'Keine Noten verfügbar';
 
+$string['error:request_blocked'] = 'Die Anfrage an den KI-Dienst wurde blockiert. Bitte kontaktiere deinen Administrator, um die Moodle-Einstellung curlsecurityblockedhosts zu überprüfen.';
+
 // Added for search/report UI.
 $string['search'] = 'Suchen';
 $string['searchbyusername'] = 'Nach Benutzername suchen';

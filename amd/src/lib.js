@@ -243,10 +243,21 @@ export async function init(data) {
         $form.find('.exaaichat_control_bar').removeClass('disabled');
 
         if (!response.ok) {
-          const errorMessage = $(await response.text()).find('.errormessage').text();
-          throw Error(errorMessage || response.statusText)
+          throw Error(response.statusText);
         } else {
-          return response.json()
+          const responseText = await response.text();
+
+          try {
+            return JSON.parse(responseText);
+          } catch {
+            // Not JSON → try HTML error parsing
+            const errorMessage = $(responseText).find('.errormessage').text()
+              // debuggingmessage is maybe the current element or a subelement
+              || $('<div>' + responseText + '</div>').find('.debuggingmessage').text()
+              || 'Unknown return value from server';
+
+            throw new Error(errorMessage);
+          }
         }
       })
       .then(data => {

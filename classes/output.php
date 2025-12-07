@@ -130,6 +130,9 @@ class output {
         $content = (object)[];
         $content->text = '';
 
+        $endpoint = $config->endpoint ?? '' ?: get_config('block_exaaichat', 'endpoint');
+        $is_localhost_endpoint = preg_match('!/(localhost|127\.0\.0\.1)!', $endpoint);
+
         if (get_config('block_exaaichat', 'allowproviderselection')) {
             if (get_config('block_exaaichat', 'allowinstancesettings')) {
                 $config = $config;
@@ -141,7 +144,7 @@ class output {
             $model = $config->model ?? '' ?: locallib::get_default_model();
 
             $ai_providers = [];
-            if ($apikey) {
+            if ($apikey || $is_localhost_endpoint /* no apikey for localhost needed */) {
                 $ai_providers[] = ['id' => '', 'label' => $model];
             }
             $moodle_ai_proviers = locallib::get_moodle_ai_providers();
@@ -156,7 +159,7 @@ class output {
             }
         } else {
             $ai_providers = [];
-            if (!$apikey) {
+            if (!$apikey && !$is_localhost_endpoint /* no apikey for localhost needed */) {
                 $content->text .= get_string('apikeymissing', 'block_exaaichat');
                 return $content;
             }

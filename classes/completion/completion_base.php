@@ -250,4 +250,18 @@ abstract class completion_base {
             'gpt-3.5-turbo' => 'gpt-3.5-turbo',
         ];
     }
+
+    protected function curl_pre_check(string $endpoint): ?array {
+        $curl = new \curl();
+
+        // check if request will be blocked before the actual post request
+        if ($curl->get_security()->url_is_blocked($endpoint)) {
+            return [
+                'id' => 'error',
+                "error" => get_string('error:request_blocked', 'block_exaaichat'),
+            ];
+        }
+
+        return null;
+    }
 }

@@ -79,8 +79,14 @@ class azure extends chat {
             ),
         ));
 
+        $endpoint = "https://" . $this->resourcename . ".openai.azure.com/openai/deployments/" . $this->deploymentid . "/chat/completions?api-version=" . $this->apiversion;
+
+        if ($ret = $this->curl_pre_check($endpoint)) {
+            return $ret;
+        }
+
         $response = $curl->post(
-            "https://" . $this->resourcename . ".openai.azure.com/openai/deployments/" . $this->deploymentid . "/chat/completions?api-version=" . $this->apiversion,
+            $endpoint,
             json_encode($curlbody)
         );
         $response = json_decode($response);

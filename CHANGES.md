@@ -1,3 +1,8 @@
+### v3.2 (2025120700) ###
+* Check if url was blocked by curlsecurityblockedhosts setting
+* Better error handling in javascript
+* localhost endpoints don't require api key
+
 ### v3.2 (2025120300) ###
 * Fixes for ollama on localhost
 

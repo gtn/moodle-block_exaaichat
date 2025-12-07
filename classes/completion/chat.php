@@ -116,7 +116,17 @@ class chat extends completion_base {
 
         logger::debug_grouped('chat.user:' . $USER->id, $endpoint, $curlbody);
 
+        if ($ret = $this->curl_pre_check($endpoint)) {
+            return $ret;
+        }
+
         $rawResponse = $curl->post($endpoint, json_encode($curlbody));
+
+        // another solution: check $rawResponse after the request, which maybe contains the error message
+        // if ($rawResponse == $curl->get_security()->get_blocked_url_string()) {
+        //     // url was blocked error
+        // }
+
         $response = json_decode($rawResponse);
 
         logger::debug_grouped('chat.user:' . $USER->id, 'response', $response);

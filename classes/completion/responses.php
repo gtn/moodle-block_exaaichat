@@ -85,6 +85,11 @@ class responses extends completion_base {
                 'Authorization: Bearer ' . $this->apikey,
             ],
         ]);
+
+        if ($ret = $this->curl_pre_check($endpoint)) {
+            return $ret;
+        }
+
         $responseText = $curl->post($endpoint, json_encode($data));
 
         $this->debug('raw response:', $responseText);
