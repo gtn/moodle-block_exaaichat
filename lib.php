@@ -29,12 +29,12 @@ defined('MOODLE_INTERNAL') || die();
 
 /**
  * Use an API key to fetch a list of assistants from a user's OpenAI account
- * @param int|null $block_id The ID of a block instance. If this is passed, the API can be pulled from the block rather than the site level.
+ * @param int $block_id The ID of a block instance. If this is passed, the API can be pulled from the block rather than the site level.
  * @return array The list of assistants
  * @throws coding_exception
  * @throws dml_exception
  */
-function block_exaaichat_fetch_assistants_array(int $block_id = null) {
+function block_exaaichat_fetch_assistants_array(int $block_id = 0) {
     global $DB;
 
     if (!$block_id) {
