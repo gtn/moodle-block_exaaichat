@@ -25,6 +25,8 @@
 
 namespace block_exaaichat\completion;
 
+use block_exaaichat\logger;
+
 defined('MOODLE_INTERNAL') || die;
 
 class azure extends chat {
@@ -59,6 +61,7 @@ class azure extends chat {
      * @return JSON: The response from Azure
      */
     private function make_api_call($history) {
+        global $USER;
 
         $curlbody = [
             "model" => $this->model,
@@ -82,6 +85,7 @@ class azure extends chat {
         $endpoint = "https://" . $this->resourcename . ".openai.azure.com/openai/deployments/" . $this->deploymentid . "/chat/completions?api-version=" . $this->apiversion;
 
         if ($ret = $this->curl_pre_check($endpoint)) {
+            logger::debug_grouped('chat.user:' . $USER->id, 'curl_pre_check error', $ret);
             return $ret;
         }
 

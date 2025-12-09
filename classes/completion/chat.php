@@ -117,6 +117,7 @@ class chat extends completion_base {
         logger::debug_grouped('chat.user:' . $USER->id, $endpoint, $curlbody);
 
         if ($ret = $this->curl_pre_check($endpoint)) {
+            logger::debug_grouped('chat.user:' . $USER->id, 'curl_pre_check error', $ret);
             return $ret;
         }
 
@@ -129,14 +130,21 @@ class chat extends completion_base {
 
         $response = json_decode($rawResponse);
 
-        logger::debug_grouped('chat.user:' . $USER->id, 'response', $response);
-
         if (!$response) {
+            logger::debug_grouped('chat.user:' . $USER->id, 'response error', [
+                'curl_error' => $curl->error,
+                'curl_errno' => $curl->get_errno(),
+                'curl_info' => $curl->get_info(),
+            ]);
+            logger::debug_grouped('chat.user:' . $USER->id, 'rawResponse:', $rawResponse);
+
             return [
                 'id' => 'error',
                 "error" => strip_tags($rawResponse),
             ];
         }
+
+        logger::debug_grouped('chat.user:' . $USER->id, 'response', $response);
 
         if (is_object($response)) {
             if ($response->error ?? false) {

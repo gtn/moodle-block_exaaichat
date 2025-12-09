@@ -27,6 +27,7 @@ namespace block_exaaichat\completion;
 
 use block_exaaichat\callback_helper;
 use block_exaaichat\helper;
+use block_exaaichat\logger;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -38,6 +39,8 @@ class responses extends completion_base {
      * @return object (the response)
      */
     private function call_response_api(array $data): object {
+        global $USER;
+
         $tools = array_values(array_map(function($function_definition) {
             unset($function_definition['callback']);
 
@@ -87,6 +90,7 @@ class responses extends completion_base {
         ]);
 
         if ($ret = $this->curl_pre_check($endpoint)) {
+            logger::debug_grouped('chat.user:' . $USER->id, 'curl_pre_check error', $ret);
             return $ret;
         }
 
