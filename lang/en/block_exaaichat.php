@@ -188,7 +188,9 @@ $string['placeholders:range:placeholder'] = 'Range of {$a->name} is: {$a->placeh
 $string['grade:not_available'] = 'Not available';
 $string['grade:nogradesavailable'] = 'No grades available';
 
-$string['error:request_blocked'] = 'The request to the AI service was blocked. Please contact your administrator to check the Moodle curlsecurityblockedhosts setting.';
+$string['error:request_blocked'] = 'The request to the AI service was blocked.';
+$string['error:host_blocked'] = 'The host {$a->host} is blocked in curlsecurityblockedhosts.';
+$string['error:port_not_allowed'] = 'The port {$a->port} is not included in curlsecurityallowedport.';
 
 // Added for search/report UI.
 $string['search'] = 'Search';

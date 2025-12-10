@@ -185,7 +185,9 @@ $string['placeholders:range:placeholder'] = 'Bereich von {$a->name}: {$a->placeh
 $string['grade:not_available'] = 'Nicht verfügbar';
 $string['grade:nogradesavailable'] = 'Keine Noten verfügbar';
 
-$string['error:request_blocked'] = 'Die Anfrage an den KI-Dienst wurde blockiert. Bitte kontaktiere deinen Administrator, um die Moodle-Einstellung curlsecurityblockedhosts zu überprüfen.';
+$string['error:request_blocked'] = 'Die Anfrage an den KI-Dienst wurde blockiert.';
+$string['error:host_blocked'] = 'Der Host {$a->host} wird in curlsecurityblockedhosts blockiert.';
+$string['error:port_not_allowed'] = 'Der Port {$a->port} ist nicht in curlsecurityallowedport enthalten.';
 
 // Added for search/report UI.
 $string['search'] = 'Suchen';

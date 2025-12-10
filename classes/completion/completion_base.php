@@ -253,12 +253,42 @@ abstract class completion_base {
 
     protected function curl_pre_check(string $endpoint): ?array {
         $curl = new \curl();
+        $security = $curl->get_security();
 
         // check if request will be blocked before the actual post request
-        if ($curl->get_security()->url_is_blocked($endpoint)) {
+        if ($security->url_is_blocked($endpoint)) {
+            // Parse URL to get host and port for detailed error message.
+            $url = new \moodle_url($endpoint);
+            $host = $url->get_host();
+            $port = $url->get_port();
+            $scheme = $url->get_scheme();
+            if (!$port) {
+                $port = ($scheme === 'https') ? 443 : 80;
+            }
+
+            // Build detailed error message by checking each setting using reflection.
+            $errors = [get_string('error:request_blocked', 'block_exaaichat')];
+
+            // Use reflection to call protected methods.
+            $reflection = new \ReflectionClass($security);
+
+            // Check if host is blocked.
+            $hostMethod = $reflection->getMethod('host_is_blocked');
+            $hostMethod->setAccessible(true);
+            if ($hostMethod->invoke($security, $host)) {
+                $errors[] = get_string('error:host_blocked', 'block_exaaichat', (object)['host' => $host]);
+            }
+
+            // Check if port is blocked.
+            $portMethod = $reflection->getMethod('port_is_blocked');
+            $portMethod->setAccessible(true);
+            if ($portMethod->invoke($security, $port)) {
+                $errors[] = get_string('error:port_not_allowed', 'block_exaaichat', (object)['port' => $port]);
+            }
+
             return [
                 'id' => 'error',
-                "error" => get_string('error:request_blocked', 'block_exaaichat'),
+                "error" => implode(' ', $errors),
             ];
         }
 
