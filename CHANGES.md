@@ -1,3 +1,7 @@
+### v3.2 (2025121000) ###
+* More detailed error message when curlsecurityblockedhosts or curlsecurityallowedhosts block the request
+* add more info to the debug log to troubleshoot issues
+
 ### v3.2 (2025120700) ###
 * Check if url was blocked by curlsecurityblockedhosts setting
 * Better error handling in javascript
