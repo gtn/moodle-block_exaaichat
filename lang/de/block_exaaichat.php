@@ -45,8 +45,11 @@ $string['downloadfilename'] = 'block_exaaichat_protokolle';
 
 $string['blocktitle'] = 'Blocktitel';
 
-$string['restrictusage'] = 'Verwendung auf angemeldete Nutzer beschränken';
-$string['restrictusage:desc'] = 'Wenn dieses Kästchen aktiviert ist, können nur angemeldete Benutzer das Chat-Fenster verwenden.';
+$string['allowguests'] = 'Gäste erlauben';
+$string['allowguests:desc'] = 'Wenn aktiviert, können Gäste und nicht angemeldete Benutzer den Chat verwenden.';
+$string['aiplacementheading'] = 'KI-Platzierung Einstellungen';
+$string['aiplacement_showonfrontpage'] = 'Auf Startseite anzeigen';
+$string['aiplacement_showonfrontpage:desc'] = 'Wenn aktiviert, wird sie auf der Startseite angezeigt.';
 $string['apikey'] = 'API-Schlüssel';
 $string['apikey:desc'] = 'Der API-Schlüssel des KI Anbieters.';
 $string['moodle_settings:api_type'] = 'API-Typ';

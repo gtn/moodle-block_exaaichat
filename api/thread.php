@@ -29,8 +29,8 @@ require_once('../../../config.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
-if (get_config('block_exaaichat', 'restrictusage') !== "0") {
-    require_login();
+if (!get_config('block_exaaichat', 'allowguests') && (!isloggedin() || isguestuser())) {
+    throw new \moodle_exception('error:guestsnotallowed', 'block_exaaichat');
 }
 
 $thread_id = required_param('thread_id', PARAM_NOTAGS);

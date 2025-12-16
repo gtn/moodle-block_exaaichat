@@ -100,10 +100,10 @@ if ($hassiteconfig) {
         $settings->hide_if('block_exaaichat/model_other', 'block_exaaichat/model', 'neq', 'other');
 
         $settings->add(new admin_setting_configcheckbox(
-            'block_exaaichat/restrictusage',
-            get_string('restrictusage', 'block_exaaichat'),
-            get_string('restrictusage:desc', 'block_exaaichat'),
-            1
+            'block_exaaichat/allowguests',
+            get_string('allowguests', 'block_exaaichat'),
+            get_string('allowguests:desc', 'block_exaaichat'),
+            0
         ));
 
         $settings->add(new admin_setting_configtext(
@@ -229,6 +229,20 @@ if ($hassiteconfig) {
             ));
         }
 
+
+        // AI Placement Settings
+        $settings->add(new admin_setting_heading(
+            'block_exaaichat/aiplacementheading',
+            get_string('aiplacementheading', 'block_exaaichat'),
+            ''
+        ));
+
+        $settings->add(new admin_setting_configcheckbox(
+            'block_exaaichat/aiplacement_showonfrontpage',
+            get_string('aiplacement_showonfrontpage', 'block_exaaichat'),
+            get_string('aiplacement_showonfrontpage:desc', 'block_exaaichat'),
+            0
+        ));
 
         // Chat settings
         $settings->add(new admin_setting_heading(

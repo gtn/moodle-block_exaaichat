@@ -29,6 +29,16 @@ class output {
     public static function render_aiplacement_content(): string {
         global $COURSE, $DB, $PAGE, $OUTPUT;
 
+        // Check if guests are allowed
+        if (!get_config('block_exaaichat', 'allowguests') && (!isloggedin() || isguestuser())) {
+            return '';
+        }
+
+        // Check if AI placement should be shown on frontpage
+        if ($COURSE->id == SITEID && !get_config('block_exaaichat', 'aiplacement_showonfrontpage')) {
+            return '';
+        }
+
         $regions = $PAGE->blocks->get_regions();
 
         $block_instance_current_page = null;

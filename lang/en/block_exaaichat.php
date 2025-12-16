@@ -45,8 +45,11 @@ $string['downloadfilename'] = 'block_exaaichat_logs';
 
 $string['blocktitle'] = 'Block title';
 
-$string['restrictusage'] = 'Restrict usage to logged-in users';
-$string['restrictusage:desc'] = 'If this box is checked, only logged-in users will be able to use the chat box.';
+$string['allowguests'] = 'Allow guests';
+$string['allowguests:desc'] = 'If checked, guests and not logged-in users can use the chat.';
+$string['aiplacementheading'] = 'AI Placement Settings';
+$string['aiplacement_showonfrontpage'] = 'Show on front page';
+$string['aiplacement_showonfrontpage:desc'] = 'If checked, it will be shown on the front page.';
 $string['apikey'] = 'API Key';
 $string['apikey:desc'] = 'The API Key for the AI Provider';
 $string['moodle_settings:api_type'] = 'API Type';

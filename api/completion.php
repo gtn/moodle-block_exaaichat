@@ -31,10 +31,6 @@ require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
 global $DB, $PAGE;
 
-if (get_config('block_exaaichat', 'restrictusage') !== "0") {
-    require_login();
-}
-
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header("Location: $CFG->wwwroot");
     die();
@@ -70,7 +66,18 @@ if (preg_match('!^course-(.*)$!', $block_id, $matches)) {
 }
 
 // $context could be a course context, could also be any subcontext, like a module
-require_login($context->get_course_context()->instanceid);
+$courseid = $context->get_course_context()->instanceid;
+require_login($courseid);
+
+// Check if guests are allowed
+if (!get_config('block_exaaichat', 'allowguests') && (!isloggedin() || isguestuser())) {
+    throw new \moodle_exception('guestsnotallowed');
+}
+
+// Check if AI placement is allowed on frontpage
+if ($courseid == SITEID && !get_config('block_exaaichat', 'aiplacement_showonfrontpage')) {
+    throw new \moodle_exception('aiplacement_not_allowed_on_frontpage');
+}
 
 $PAGE->set_context($context);
 
