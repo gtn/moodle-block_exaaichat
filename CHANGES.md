@@ -1,3 +1,7 @@
+### v3.2 (2025121600) ###
+* New setting: allow AI Placement on frontpage
+- Rename Setting: allow guests
+
 ### v3.2 (2025121000) ###
 * More detailed error message when curlsecurityblockedhosts or curlsecurityallowedhosts block the request
 * add more info to the debug log to troubleshoot issues
