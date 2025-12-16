@@ -62,25 +62,26 @@ All API requests can be logged and later reviewed by course trainers.
 
 The AI Chat Block can be used without paid licenses by leveraging free or self-hosted AI providers. These options are ideal for testing, experimentation, or cost-sensitive environments.
  
-* **Google AI Studio:** [https://aistudio.gogle.com/](https://aistudio.gogle.com/)
-
+* **Google AI Studio:** [https://aistudio.gogle.com/](https://aistudio.gogle.com/)<br/>
   Offers Google Gemini AI
 
-* **Ollama:** [https://ollama.com/](https://ollama.com/)
-
-  Can be self-hosted on local servers or as a cloud service
-
-  Offers Ollama, DeepSeek and other AIs
-  
+* **Ollama:** [https://ollama.com/](https://ollama.com/)<br/>
+  Can be self-hosted on local servers or as a cloud service<br/>
+  Offers Ollama, DeepSeek and other AIs<br/>
   List of AI models: [https://ollama.com/search?c=cloud&o=newest](https://ollama.com/search?c=cloud&o=newest)
 
 ## Use Cases
 
-* **Provide grading rules:** Trainers define rules in the instruction field for how grading inquiries should be answered.
-* **Contextualized student questions:** Students can ask course-specific questions using gradebook data (e.g. *“What do I need to do to pass this course?”*).
-* **Target-group–specific communication styles:** For example, *“Act as a Tutor”*, *“Talk like a pirate”*, etc.
-* **Prompt reflection:** Trainers can review prompt logs in course reports.
-* **Experiment with AI models:** Trainers can use their own API keys to test different AIs.
+* **Provide grading rules:**<br/>
+  Trainers define rules in the instruction field for how grading inquiries should be answered.
+* **Contextualized student questions:**<br/>
+  Students can ask course-specific questions using gradebook data (e.g. *“What do I need to do to pass this course?”*).
+* **Target-group–specific communication styles:**<br/>
+  For example, *“Act as a Tutor”*, *“Talk like a pirate”*, etc.
+* **Prompt reflection:**<br/>
+  Trainers can review prompt logs in course reports.
+* **Experiment with AI models:**<br/>
+  Trainers can use their own API keys to test different AIs.
 
 ## Advanced Features
 
@@ -98,22 +99,19 @@ Files uploaded to the OpenAI Platform can be queried by the AI agent.
 ### API Support
 
 * **Responses API Support** (new API from OpenAI)
+
 * **Assistant API Support** (deprecated API from OpenAI)
 
-### Azure OpenAI Support
-
-* Azure (self-hosted OpenAI)
-* Supports Azure-hosted OpenAI instances
+* **Azure OpenAI Support**
+  Supports Azure-hosted OpenAI instances
 
 ## Planned Features
 
 * Allow trainers to pre-select available AI models for students
 
-### User-Based Vector Storage (RAG)
-
-This feature allows students to ask the AI questions about any course materials, such as PDFs, Word files, presentations, or text documents.
-
-All these files are automatically analysed and stored in a student-specific **knowledge base** (a vector store) on the AI Provider servers.
+* **User-Based Vector Storage (RAG)**<br/>
+  This feature allows students to ask the AI questions about any course materials, such as PDFs, Word files, presentations, or text documents.<br/>
+  All these files are automatically analysed and stored in a student-specific **knowledge base** (a vector store) on the AI Provider servers.
 
 * Extended placeholder support
 
