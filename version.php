@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'block_exaaichat';
-$plugin->version = 2025121000;
+$plugin->version = 2025121600;
 $plugin->requires = 2022041600;
 $plugin->maturity = MATURITY_STABLE;
 $plugin->release = '3.2';
