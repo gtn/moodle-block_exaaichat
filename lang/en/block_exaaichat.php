@@ -47,6 +47,8 @@ $string['blocktitle'] = 'Block title';
 
 $string['allowguests'] = 'Allow guests';
 $string['allowguests:desc'] = 'If checked, guests and not logged-in users can use the chat.';
+$string['allow_on_dashboard'] = 'Allow on dashboard';
+$string['allow_on_dashboard:desc'] = 'If checked, the chat can be used on the dashboard.';
 $string['aiplacementheading'] = 'AI Placement Settings';
 $string['aiplacement_showonfrontpage'] = 'Show on front page';
 $string['aiplacement_showonfrontpage:desc'] = 'If checked, it will be shown on the front page.';

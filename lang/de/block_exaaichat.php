@@ -47,6 +47,8 @@ $string['blocktitle'] = 'Blocktitel';
 
 $string['allowguests'] = 'Gäste erlauben';
 $string['allowguests:desc'] = 'Wenn aktiviert, können Gäste und nicht angemeldete Benutzer den Chat verwenden.';
+$string['allow_on_dashboard'] = 'Auf Dashboard erlauben';
+$string['allow_on_dashboard:desc'] = 'Wenn aktiviert, kann der Chat auf dem Dashboard verwendet werden.';
 $string['aiplacementheading'] = 'KI-Platzierung Einstellungen';
 $string['aiplacement_showonfrontpage'] = 'Auf Startseite anzeigen';
 $string['aiplacement_showonfrontpage:desc'] = 'Wenn aktiviert, wird sie auf der Startseite angezeigt.';

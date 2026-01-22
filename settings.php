@@ -106,6 +106,13 @@ if ($hassiteconfig) {
             0
         ));
 
+        $settings->add(new admin_setting_configcheckbox(
+            'block_exaaichat/allow_on_dashboard',
+            get_string('allow_on_dashboard', 'block_exaaichat'),
+            get_string('allow_on_dashboard:desc', 'block_exaaichat'),
+            0
+        ));
+
         $settings->add(new admin_setting_configtext(
             'block_exaaichat/assistantname',
             get_string('assistantname', 'block_exaaichat'),

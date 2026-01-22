@@ -47,10 +47,13 @@ $provider_id = clean_param($body['providerId'] ?? null, PARAM_NOTAGS);
 $page_content = clean_param($body['pageContent'] ?? null, PARAM_NOTAGS);
 
 if (preg_match('!^course-(.*)$!', $block_id, $matches)) {
+    // ai placement in course
     $courseid = $matches[1];
 
     $config = (object)[];
     $context = context_course::instance($courseid);
+
+    require_login($courseid);
 } else {
     // So that we're not leaking info to the client like API key, the block makes an API request including its ID
     // Then we can look up that specific block to pull out its config data
@@ -63,11 +66,23 @@ if (preg_match('!^course-(.*)$!', $block_id, $matches)) {
     // if block was just added without a config in moodle41
     $config = $instance->config ? clone $instance->config : (object)[];
     $context = context::instance_by_id($instance_record->parentcontextid);
-}
 
-// $context could be a course context, could also be any subcontext, like a module
-$courseid = $context->get_course_context()->instanceid;
-require_login($courseid);
+    // $context could be a course context, could also be any subcontext, like a module or could also be the dashboard
+    $coursecontext = $context->get_course_context(false);
+    if ($coursecontext) {
+        $courseid = $coursecontext->instanceid;
+        require_login($courseid);
+    } elseif ($context->contextlevel == CONTEXT_USER) {
+        // Block is on the dashboard
+        if (!get_config('block_exaaichat', 'allow_on_dashboard')) {
+            throw new \moodle_exception('not_allowed_on_dashboard', 'block_exaaichat');
+        }
+        $courseid = null;
+        require_login();
+    } else {
+        throw new \moodle_exception('invalidcontext', 'error');
+    }
+}
 
 // Check if guests are allowed
 if (!get_config('block_exaaichat', 'allowguests') && (!isloggedin() || isguestuser())) {

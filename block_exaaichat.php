@@ -35,8 +35,11 @@ class block_exaaichat extends block_base {
         return true;
     }
 
-    function applicable_formats() {
-        return array('all' => true);
+    public function applicable_formats() {
+        return [
+            'all' => true,
+            'my' => (bool)get_config('block_exaaichat', 'allow_on_dashboard'),
+        ];
     }
 
     public function specialization() {
