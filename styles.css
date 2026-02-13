@@ -13,6 +13,7 @@
     gap: 8px;
     padding: 15px 15px 15px 0;
 }
+
 .block_exaaichat .exaaichat_log.hidden {
     display: none;
 }
@@ -65,9 +66,11 @@
     right: 0.5rem;
     z-index: 100;
 }
+
 .block_exaaichat .exaaichat_top-buttons > * {
     margin-right: 6px;
 }
+
 .block_exaaichat .exaaichat_btn {
     width: 2rem;
     height: 2rem;
@@ -83,15 +86,19 @@
     max-width: 1.25rem !important; /* needs to be important, because .card img is important */
     pointer-events: none;
 }
+
 .block_exaaichat .exaaichat_btn_close {
     display: none;
 }
+
 .block_exaaichat.expanded .exaaichat_popout_btn {
     display: none;
 }
+
 .block_exaaichat.expanded .exaaichat_btn_close {
     display: flex;
 }
+
 .drawercontent {
     position: unset;
 }
@@ -119,6 +126,7 @@
 .drawer-right .block_exaaichat:not(.expanded) .exaaichat_input_bar.with_ai_provider_select {
     flex-wrap: wrap;
 }
+
 .drawer-right .block_exaaichat:not(.expanded) .exaaichat_input_bar.with_ai_provider_select .exaaichat_input {
     width: 100%;
     margin-bottom: 10px;
@@ -183,6 +191,7 @@
     background: #f0f0f0;
     color: black;
 }
+
 .block_exaaichat .chat_message.error .chat_message_content {
     background: #fdebeb;
     color: black;
@@ -202,6 +211,7 @@
     position: fixed;
     height: 70vh;
     width: 80vw;
+    /*rtl:ignore*/
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -248,27 +258,34 @@
 .block_exaaichat.expanded .block-header-wrapper {
     padding: 1rem !important;
 }
+
 .block_exaaichat.expanded .edw-block-body {
     box-shadow: none !important;
 }
+
 .block_exaaichat .edw-block-body .recording {
     top: 0.75rem;
 }
+
 .block_exaaichat.expanded .edw-block-body .recording {
     top: 1.5rem;
 }
+
 .block_exaaichat.expanded .edw-block-body .exaaichat_control_bar {
     width: calc(100% - 4rem);
 }
+
 .block_exaaichat.expanded .block-body-wrapper {
     height: calc(100% - 4rem);
     overflow: auto;
 }
+
 #block-region-side-pre .block_exaaichat.expanded .block-body-wrapper {
     margin-left: 0;
     margin-right: 0;
     padding: 0 2rem;
 }
+
 .drawer {
     filter: unset !important;
 }
@@ -277,9 +294,11 @@
     .drawerheader {
         pointer-events: none;
     }
+
     .drawerheader button {
         pointer-events: all;
     }
+
     .block_exaaichat.expanded {
         transform: unset;
         top: 0;
@@ -287,6 +306,7 @@
         width: 100vw;
         height: 100vh;
     }
+
     .block_exaaichat .report_container {
         flex-direction: column;
     }
