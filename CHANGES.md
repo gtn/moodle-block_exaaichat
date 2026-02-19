@@ -1,5 +1,6 @@
-### v5.1 (next) ###
+### v5.1 (2026021900) ###
 * fix UI for arabic language with rtl text direction
+* fix block on dashboard
 
 ### v3.2 (2025121600) ###
 * New setting: allow AI Placement on frontpage
