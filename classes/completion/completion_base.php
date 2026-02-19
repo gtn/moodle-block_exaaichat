@@ -101,8 +101,9 @@ abstract class completion_base {
             $this->apikey = $this->apikey ?: $this->get_plugin_setting('apikey', '');
         }
 
-        $this->instructions = trim($config->instructions ?? '') ?: $this->get_plugin_setting('instructions', '');
-        $this->sourceoftruth = trim($config->sourceoftruth ?? '') ?: $this->get_plugin_setting('sourceoftruth', '');
+        // Only fall back to global settings if not explicitly set (null).
+        $this->instructions = isset($config->instructions) ? trim($config->instructions) : $this->get_plugin_setting('instructions', '');
+        $this->sourceoftruth = isset($config->sourceoftruth) ? trim($config->sourceoftruth) : $this->get_plugin_setting('sourceoftruth', '');
 
         // $this->persistconvo = $config->persistconvo ?? $this->get_plugin_setting( 'persistconvo', 0);
         $this->username = $config->username ?? '' ?: $this->get_plugin_setting('username', get_string('defaultusername', 'block_exaaichat'));
@@ -134,6 +135,26 @@ abstract class completion_base {
 
     protected function init(object $config) {
         // can be overridden by child classes
+    }
+
+    /**
+     * Get the block_exaaichat config for a given course.
+     * Returns the block instance config if found, otherwise an empty object.
+     */
+    public static function get_course_config(int $courseid): ?object {
+        global $DB;
+
+        $block_record = $DB->get_record('block_instances', [
+            'blockname' => 'exaaichat',
+            'parentcontextid' => \context_course::instance($courseid)->id,
+        ]);
+
+        if ($block_record) {
+            $block = block_instance($block_record->blockname, $block_record);
+            return $block->config ?? null;
+        }
+
+        return null;
     }
 
     public static function create_from_config(object $config, string $message, string $thread_id = '', array $history = [], string $page_content = ''): static {
