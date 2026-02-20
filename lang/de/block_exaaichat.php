@@ -45,6 +45,18 @@ $string['downloadfilename'] = 'block_exaaichat_protokolle';
 
 $string['blocktitle'] = 'Blocktitel';
 
+$string['tosheading'] = 'Nutzungsbedingungen';
+$string['terms_of_service_enabled'] = 'Nutzungsbedingungen aktivieren';
+$string['terms_of_service_enabled:desc'] = 'Wenn aktiviert, müssen Benutzer die Nutzungsbedingungen akzeptieren, bevor sie den Chat verwenden können.';
+$string['terms_of_service_content'] = 'Nutzungsbedingungen Inhalt';
+$string['terms_of_service_content:desc'] = 'Der Text der Nutzungsbedingungen, den Benutzer akzeptieren müssen.';
+$string['terms_of_service_version'] = 'Version';
+$string['terms_of_service_version:desc'] = 'Ändern Sie diesen Wert, um Benutzer zur erneuten Akzeptierung aufzufordern.';
+$string['terms_of_service:title'] = 'Nutzungsbedingungen';
+$string['terms_of_service:info'] = 'Um den Chat zu verwenden müssen die Nutzungsbedingungen akzeptiert werden';
+$string['terms_of_service:open_button'] = 'Nutzungsbedingungen anzeigen';
+$string['terms_of_service:accept'] = 'Nutzungsbedingungen akzeptieren';
+
 $string['allowguests'] = 'Gäste erlauben';
 $string['allowguests:desc'] = 'Wenn aktiviert, können Gäste und nicht angemeldete Benutzer den Chat verwenden.';
 $string['allow_on_dashboard'] = 'Auf Dashboard erlauben';

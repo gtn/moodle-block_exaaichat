@@ -45,6 +45,18 @@ $string['downloadfilename'] = 'block_exaaichat_logs';
 
 $string['blocktitle'] = 'Block title';
 
+$string['tosheading'] = 'Terms of Service';
+$string['terms_of_service_enabled'] = 'Enable Terms of Service';
+$string['terms_of_service_enabled:desc'] = 'If enabled, users must accept the terms before using the chat.';
+$string['terms_of_service_content'] = 'Terms of Service Content';
+$string['terms_of_service_content:desc'] = 'The terms of service text that users must accept.';
+$string['terms_of_service_version'] = 'Version';
+$string['terms_of_service_version:desc'] = 'Change this value to require users to re-accept the terms.';
+$string['terms_of_service:title'] = 'Terms of Service';
+$string['terms_of_service:info'] = 'To use the chat, the Terms of Service must be accepted';
+$string['terms_of_service:open_button'] = 'Show Terms of Service';
+$string['terms_of_service:accept'] = 'Accept Terms of Service';
+
 $string['allowguests'] = 'Allow guests';
 $string['allowguests:desc'] = 'If checked, guests and not logged-in users can use the chat.';
 $string['allow_on_dashboard'] = 'Allow on dashboard';

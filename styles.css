@@ -355,3 +355,8 @@
         opacity: 1;
     }
 }
+
+/* Terms of Service Dialog */
+.block_exaaichat .exaaichat_tos_wrapper {
+    text-align: center;
+}

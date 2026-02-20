@@ -106,6 +106,25 @@ class output {
 
         $context = \context_course::instance($COURSE->id);
 
+        // Check if TOS needs to be accepted
+        $tos_enabled = get_config('block_exaaichat', 'terms_of_service_enabled');
+        if ($tos_enabled && isloggedin() && !isguestuser()) {
+            $tos_version = get_config('block_exaaichat', 'terms_of_service_version') ?: '1';
+            $tos_accepted_version = \get_user_preferences('block_exaaichat_tos_accepted_version');
+            if ($tos_accepted_version !== $tos_version) {
+                $tos_content = get_config('block_exaaichat', 'terms_of_service_content');
+
+                $PAGE->requires->js_call_amd('block_exaaichat/tos', 'init');
+
+                $content = (object)[];
+                $content->text = $OUTPUT->render_from_template('block_exaaichat/tos_dialog', [
+                    'tos_content' => $tos_content,
+                ]);
+
+                return $content;
+            }
+        }
+
         // Send data to front end
         $persistconvo = get_config('block_exaaichat', 'persistconvo');
         if (!empty($config)) {

@@ -359,5 +359,36 @@ if ($hassiteconfig) {
             1,
             PARAM_FLOAT
         ));
+
+        // Terms of Service Settings
+        $settings->add(new admin_setting_heading(
+            'block_exaaichat/tosheading',
+            get_string('tosheading', 'block_exaaichat'),
+            ''
+        ));
+
+        $settings->add(new admin_setting_configcheckbox(
+            'block_exaaichat/terms_of_service_enabled',
+            get_string('terms_of_service_enabled', 'block_exaaichat'),
+            get_string('terms_of_service_enabled:desc', 'block_exaaichat'),
+            0
+        ));
+
+        $settings->add(new admin_setting_confightmleditor(
+            'block_exaaichat/terms_of_service_content',
+            get_string('terms_of_service_content', 'block_exaaichat'),
+            get_string('terms_of_service_content:desc', 'block_exaaichat'),
+            ''
+        ));
+        $settings->hide_if('block_exaaichat/terms_of_service_content', 'block_exaaichat/terms_of_service_enabled', 'notchecked');
+
+        $settings->add(new admin_setting_configtext(
+            'block_exaaichat/terms_of_service_version',
+            get_string('terms_of_service_version', 'block_exaaichat'),
+            get_string('terms_of_service_version:desc', 'block_exaaichat'),
+            '1',
+            PARAM_TEXT
+        ));
+        $settings->hide_if('block_exaaichat/terms_of_service_version', 'block_exaaichat/terms_of_service_enabled', 'notchecked');
     }
 }

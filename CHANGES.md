@@ -1,3 +1,6 @@
+### v5.1 (2026022000) ###
+* terms of service logic
+
 ### v5.1 (2026021900) ###
 * fix UI for arabic language with rtl text direction
 * fix block on dashboard

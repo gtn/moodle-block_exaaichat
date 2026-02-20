@@ -15,18 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information
+ * External functions and service definitions.
  *
  * @package    block_exaaichat
  * @copyright  2025 GTN Solutions https://gtn-solutions.com
- * @copyright  based on work by Limekiller https://github.com/Limekiller/moodle-block_openai_chat
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'block_exaaichat';
-$plugin->version = 2026022000;
-$plugin->requires = 2022041600;
-$plugin->maturity = MATURITY_STABLE;
-$plugin->release = '5.1';
+$functions = [
+    'block_exaaichat_accept_tos' => [
+        'classname' => 'block_exaaichat\external\accept_tos',
+        'description' => 'Accept terms of service',
+        'type' => 'write',
+        'ajax' => true,
+        'loginrequired' => true,
+    ],
+];
