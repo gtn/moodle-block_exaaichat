@@ -1,3 +1,6 @@
+### v5.1 (2026030300) ###
+* compatible with gpt-5.2
+
 ### v5.1 (2026022000) ###
 * terms of service logic
 
