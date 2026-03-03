@@ -245,6 +245,7 @@ abstract class completion_base {
 
     public function get_models(): array {
         return [
+            'gpt-5.2' => 'gpt-5.2',
             'gpt-5' => 'gpt-5',
             'gpt-5-mini' => 'gpt-5-mini',
             'gpt-5-nano' => 'gpt-5-nano',
