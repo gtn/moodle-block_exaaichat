@@ -100,6 +100,22 @@ class chat extends completion_base {
             "stop" => $this->username . ":",
         ];
 
+        if (str_starts_with($model, 'gpt-5')) {
+            // gpt-5x uses max_completion_tokens instead of max_tokens
+            $curlbody['max_completion_tokens'] = (int)$this->maxlength;
+            unset($curlbody['max_tokens']);
+            unset($curlbody['stop']);
+            unset($curlbody['temperature']);
+            unset($curlbody['frequency_penalty']);
+            unset($curlbody['presence_penalty']);
+        }
+
+        if (str_starts_with($endpoint, 'https://generativelanguage.googleapis.com/v1beta/openai/')) {
+            // not supported by gemini
+            unset($curlbody['frequency_penalty']);
+            unset($curlbody['presence_penalty']);
+        }
+
         $curl = new \curl();
         $curl->setopt(array(
             'CURLOPT_HTTPHEADER' => array(
@@ -107,12 +123,6 @@ class chat extends completion_base {
                 'Content-Type: application/json',
             ),
         ));
-
-        if (str_starts_with($endpoint, 'https://generativelanguage.googleapis.com/v1beta/openai/')) {
-            // not supported by gemini
-            unset($curlbody['frequency_penalty']);
-            unset($curlbody['presence_penalty']);
-        }
 
         logger::debug_grouped('chat.user:' . $USER->id, $endpoint, $curlbody);
 
