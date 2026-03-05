@@ -68,26 +68,35 @@ class assistant extends completion_base {
      * @return \OpenAI\Responses\Threads\Messages\ThreadMessageResponse
      */
     public function create_thread(string $message = '') {
-        $tools = array_values(array_map(function($function_definition) {
-            unset($function_definition['callback']);
+        $tools = [];
 
-            return [
-                'type' => 'function',
-                'function' => $function_definition,
-            ];
-        }, callback_helper::get_functions()));
+        if (static::model_supports_tool_calling($this->model)) {
+            $tools = array_values(array_map(function($function_definition) {
+                unset($function_definition['callback']);
+
+                return [
+                    'type' => 'function',
+                    'function' => $function_definition,
+                ];
+            }, callback_helper::get_functions()));
+        }
+
+        $data = [
+            'assistant_id' => $this->assistant_id,
+            'instructions' => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth(),
+            'thread' => $message ? [
+                'messages' => [
+                    ['role' => 'user', 'content' => $message],
+                ],
+            ] : (object)[],
+        ];
+
+        if ($tools) {
+            $data['tools'] = $tools;
+        }
 
         $this->stream = $this->client->threads()->createAndRunStreamed(
-            parameters: [
-                'assistant_id' => $this->assistant_id,
-                'instructions' => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth(),
-                'thread' => $message ? [
-                    'messages' => [
-                        ['role' => 'user', 'content' => $message],
-                    ],
-                ] : (object)[],
-                'tools' => $tools,
-            ]
+            parameters: $data,
         );
 
         return $this->get_response();

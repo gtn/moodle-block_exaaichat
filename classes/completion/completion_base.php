@@ -273,6 +273,50 @@ abstract class completion_base {
         ];
     }
 
+    public static function model_supports_tool_calling(string $model): bool {
+        $model = strtolower($model);
+
+        $supported_prefixes = [
+            // OpenAI
+            'gpt-',
+            // Gemini
+            'gemini-',
+            // Meta Llama
+            'llama',
+            // Mistral
+            'mistral',
+            // Alibaba Qwen
+            'qwen',
+            // DeepSeek (v3/chat support tools, r1 doesn't)
+            'deepseek-v',
+            'deepseek-chat',
+            // IBM Granite
+            'granite',
+            // Microsoft Phi
+            'phi',
+            // Cohere Command
+            'command-r',
+            // Nvidia Nemotron
+            'nemotron',
+            // Others
+            'cogito',
+            'kimi-k2',
+            'glm-',
+            'minimax',
+            'gpt-oss',
+            'firefunction',
+            'hermes',
+        ];
+
+        foreach ($supported_prefixes as $prefix) {
+            if (str_starts_with($model, $prefix)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     protected function curl_pre_check(string $endpoint): ?array {
         $curl = new \curl();
         $security = $curl->get_security();

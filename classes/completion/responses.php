@@ -41,14 +41,18 @@ class responses extends completion_base {
     private function call_response_api(array $data): object {
         global $USER;
 
-        $tools = array_values(array_map(function($function_definition) {
-            unset($function_definition['callback']);
+        $tools = [];
 
-            return [
-                'type' => 'function',
-                ...$function_definition,
-            ];
-        }, callback_helper::get_functions()));
+        if (static::model_supports_tool_calling($this->model)) {
+            $tools = array_values(array_map(function($function_definition) {
+                unset($function_definition['callback']);
+
+                return [
+                    'type' => 'function',
+                    ...$function_definition,
+                ];
+            }, callback_helper::get_functions()));
+        }
 
         if ($this->vector_store_ids) {
             $tools = array_merge($tools, [
@@ -70,12 +74,15 @@ class responses extends completion_base {
 
             // needs to be sent every time
             'instructions' => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth(),
-            'tools' => $tools,
 
             ...$data,
         ];
 
-        if (strtolower($data['model']) == 'gpt-5') {
+        if ($tools) {
+            $data['tools'] = $tools;
+        }
+
+        if (preg_match('!^gpt-[5-9]!i', $data['model'])) {
             // Unsupported parameter: 'temperature' is not supported with this model.
             unset($data['temperature']);
         }

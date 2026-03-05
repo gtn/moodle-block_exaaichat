@@ -25,6 +25,7 @@
 
 namespace block_exaaichat\completion;
 
+use block_exaaichat\callback_helper;
 use block_exaaichat\logger;
 
 defined('MOODLE_INTERNAL') || die;
@@ -35,19 +36,46 @@ class chat extends completion_base {
      * @return array The API response from OpenAI
      */
     public function create_completion(): array {
-        $history_json = [];
-        $history_json[] = ["role" => "system", "content" => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth()];
+        $history = [];
+        $history[] = ["role" => "system", "content" => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth()];
         if (trim($this->page_content)) {
-            $history_json[] = ["role" => "user", "content" => get_string('page_content_ai_message', 'block_exaaichat') . "\n" . $this->page_content];
+            $history[] = ["role" => "user", "content" => get_string('page_content_ai_message', 'block_exaaichat') . "\n" . $this->page_content];
             // needed for conova APIs
             // Error: Conversation roles must alternate user/assistant/user/assistant/...
-            $history_json[] = ["role" => "assistant", "content" => 'ok'];
+            $history[] = ["role" => "assistant", "content" => 'ok'];
         }
-        $history_json = array_merge($history_json, $this->format_history());
-        $history_json[] = ["role" => "user", "content" => $this->message];
+        $history = array_merge($history, $this->format_history());
+        $history[] = ["role" => "user", "content" => $this->message];
 
-        $response_data = $this->make_api_call($history_json);
-        return $response_data;
+        // Tool calling loop: keep calling until we get a final text response.
+        while (true) {
+            $response_data = $this->make_api_call($history);
+
+            if (isset($response_data['error'])) {
+                return $response_data;
+            }
+
+            if (!isset($response_data['tool_calls'])) {
+                return $response_data;
+            }
+
+            // Append the assistant message with tool calls to history.
+            $history[] = $response_data['assistant_message'];
+
+            // Process each tool call and append results.
+            foreach ($response_data['tool_calls'] as $tool_call) {
+                $result = callback_helper::call_tool((object)[
+                    'name' => $tool_call->function->name,
+                    'arguments' => $tool_call->function->arguments,
+                ]);
+
+                $history[] = [
+                    'role' => 'tool',
+                    'tool_call_id' => $tool_call->id,
+                    'content' => $result,
+                ];
+            }
+        }
     }
 
     /**
@@ -89,7 +117,7 @@ class chat extends completion_base {
             $endpoint = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
         }
 
-        $curlbody = [
+        $data = [
             "model" => $model,
             "messages" => $history,
             "temperature" => (float)$this->temperature,
@@ -100,20 +128,31 @@ class chat extends completion_base {
             "stop" => $this->username . ":",
         ];
 
-        if (str_starts_with($model, 'gpt-5')) {
-            // gpt-5x uses max_completion_tokens instead of max_tokens
-            $curlbody['max_completion_tokens'] = (int)$this->maxlength;
-            unset($curlbody['max_tokens']);
-            unset($curlbody['stop']);
-            unset($curlbody['temperature']);
-            unset($curlbody['frequency_penalty']);
-            unset($curlbody['presence_penalty']);
+        if (static::model_supports_tool_calling($model)) {
+            $data['tools'] = array_values(array_map(function($function_definition) {
+                unset($function_definition['callback']);
+
+                return [
+                    'type' => 'function',
+                    'function' => $function_definition,
+                ];
+            }, callback_helper::get_functions()));
+        }
+
+        if (preg_match('!^gpt-[5-9]!i', $model)) {
+            // gpt-5+ uses max_completion_tokens instead of max_tokens
+            $data['max_completion_tokens'] = (int)$this->maxlength;
+            unset($data['max_tokens']);
+            unset($data['stop']);
+            unset($data['temperature']);
+            unset($data['frequency_penalty']);
+            unset($data['presence_penalty']);
         }
 
         if (str_starts_with($endpoint, 'https://generativelanguage.googleapis.com/v1beta/openai/')) {
             // not supported by gemini
-            unset($curlbody['frequency_penalty']);
-            unset($curlbody['presence_penalty']);
+            unset($data['frequency_penalty']);
+            unset($data['presence_penalty']);
         }
 
         $curl = new \curl();
@@ -124,14 +163,14 @@ class chat extends completion_base {
             ),
         ));
 
-        logger::debug_grouped('chat.user:' . $USER->id, $endpoint, $curlbody);
+        logger::debug_grouped('chat.user:' . $USER->id, $endpoint, $data);
 
         if ($ret = $this->curl_pre_check($endpoint)) {
             logger::debug_grouped('chat.user:' . $USER->id, 'curl_pre_check error', $ret);
             return $ret;
         }
 
-        $rawResponse = $curl->post($endpoint, json_encode($curlbody));
+        $rawResponse = $curl->post($endpoint, json_encode($data));
 
         // another solution: check $rawResponse after the request, which maybe contains the error message
         // if ($rawResponse == $curl->get_security()->get_blocked_url_string()) {
@@ -161,13 +200,23 @@ class chat extends completion_base {
                 return [
                     "error" => is_string($response->error) ? /* ollama */ $response->error : $response->error->message,
                 ];
-            } else {
-                $message = $response->choices[0]->message->content;
+            }
+
+            $choice = $response->choices[0];
+
+            // Handle tool calls.
+            if ($choice->message->tool_calls ?? null) {
                 return [
                     "id" => property_exists($response, 'id') ? $response->id : 'error',
-                    "message" => $message,
+                    "tool_calls" => $choice->message->tool_calls,
+                    "assistant_message" => json_decode(json_encode($choice->message), true),
                 ];
             }
+
+            return [
+                "id" => property_exists($response, 'id') ? $response->id : 'error',
+                "message" => $choice->message->content,
+            ];
         }
 
         return [
