@@ -114,6 +114,8 @@ abstract class completion_base {
             $config->model = $config->model_other ?? '';
         }
         $this->model = $config->model ?? '' ?: locallib::get_default_model();
+        // bei komma-getrennten Modellen das erste als Default verwenden
+        $this->model = explode(',', $this->model)[0];
 
         $this->endpoint = $config->endpoint ?? '';
         $this->temperature = $config->temperature ?? $this->get_plugin_setting('temperature', 0.5);;

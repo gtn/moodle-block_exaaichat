@@ -196,6 +196,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addElement('text', 'config_model_other', get_string('block_instance:config:model_other', 'block_exaaichat'));
                 $mform->setDefault('config_model_other', '');
                 $mform->setType('config_model_other', PARAM_TEXT);
+                $mform->addHelpButton('config_model_other', 'block_instance:config:model_other', 'block_exaaichat');
                 $mform->hideIf('config_model_other', 'config_model', 'neq', 'other');
 
                 $mform->addElement('text', 'config_endpoint', get_string('block_instance:config:endpoint', 'block_exaaichat'));
@@ -242,6 +243,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addElement('text', 'config_model_other', get_string('block_instance:config:model_other', 'block_exaaichat'));
                 $mform->setDefault('config_model_other', '');
                 $mform->setType('config_model_other', PARAM_TEXT);
+                $mform->addHelpButton('config_model_other', 'block_instance:config:model_other', 'block_exaaichat');
                 $mform->hideIf('config_model_other', 'config_model', 'neq', 'other');
 
                 $mform->addElement('text', 'config_endpoint', get_string('block_instance:config:endpoint', 'block_exaaichat'));

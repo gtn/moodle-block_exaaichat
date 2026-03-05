@@ -96,6 +96,18 @@ if ($courseid == SITEID && !get_config('block_exaaichat', 'aiplacement_showonfro
 
 $PAGE->set_context($context);
 
+// Handle model selection from combined dropdown (comma-separated models configured by teacher)
+if ($provider_id && preg_match('!^model:(.+)$!', $provider_id, $matches)) {
+    $selected_model = $matches[1];
+    $model_value = ($config->model ?? '') === 'other' ? ($config->model_other ?? '') : ($config->model ?? '');
+    $available_models = array_filter(array_map('trim', explode(',', $model_value)));
+    if (!in_array($selected_model, $available_models)) {
+        throw new \moodle_exception('invalidmodel');
+    }
+    $config->model = $selected_model;
+    $provider_id = null;
+}
+
 if (get_config('block_exaaichat', 'allowproviderselection') && $provider_id) {
     $providers = locallib::get_moodle_ai_providers();
     $provider = current(array_filter($providers, fn($provider) => $provider->id == $provider_id));

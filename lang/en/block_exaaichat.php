@@ -71,8 +71,8 @@ $string['moodle_settings:api_type:desc'] = 'The API type that the plugin should 
 $string['moodle_settings:api_type:change'] = 'Do you want to change the API type for the site? The current settings will be saved and the page will be reloaded.';
 $string['moodle_settings:instructions'] = 'Instructions an die KI';
 $string['moodle_settings:instructions:desc'] = '';
-$string['moodle_settings:model_other'] = 'Other model';
-$string['moodle_settings:model_other:desc'] = '';
+$string['moodle_settings:model_other'] = 'Other model (multiple models possible)';
+$string['moodle_settings:model_other:desc'] = 'Separate multiple models with a comma (e.g. gpt-4o, gpt-4o-mini). If multiple models are specified, users can choose between them.';
 
 $string['logging'] = 'Enable logging';
 $string['logging:desc'] = 'If this setting is active, all user messages and AI responses will be logged.<br/><a href="{$a}">View log</a>';
@@ -172,7 +172,8 @@ $string['config_presence_help'] = "How much to penalize new tokens based on whet
 
 $string['block_instance:config:api_type:change'] = 'Do you want to change the API type for this block instance? The settings dialog will be closed and you will need to reopen it afterward.';
 $string['block_instance:config:model:choose-other'] = 'Other model...';
-$string['block_instance:config:model_other'] = 'Other model';
+$string['block_instance:config:model_other'] = 'Other model (multiple models possible)';
+$string['block_instance:config:model_other_help'] = 'Enter one or more model names. Separate multiple models with a comma (e.g. gpt-4o, gpt-4o-mini). If multiple models are specified, students can choose between them.';
 $string['block_instance:config:endpoint'] = 'Alternative endpoint URL';
 
 $string['page_content_ai_message'] = 'This message contains the content of the page currently being viewed by the user in their browser:';

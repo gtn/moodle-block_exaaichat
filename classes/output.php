@@ -174,7 +174,14 @@ class output {
 
             $ai_providers = [];
             if ($apikey || $is_localhost_endpoint /* no apikey for localhost needed */) {
-                $ai_providers[] = ['id' => '', 'label' => $model];
+                $models_list = array_filter(array_map('trim', explode(',', $model)));
+                if (count($models_list) > 1) {
+                    foreach ($models_list as $m) {
+                        $ai_providers[] = ['id' => 'model:' . $m, 'label' => $m];
+                    }
+                } else {
+                    $ai_providers[] = ['id' => '', 'label' => $model];
+                }
             }
             $moodle_ai_proviers = locallib::get_moodle_ai_providers();
             $ai_providers = [

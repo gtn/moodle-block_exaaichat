@@ -71,8 +71,8 @@ $string['moodle_settings:api_type:desc'] = 'Der API-Typ, den dieses Plugin verwe
 $string['moodle_settings:api_type:change'] = 'Möchten Sie den API-Typ ändern? Es werden die aktuellen Einstellungen gespeichert und die Seite wird neu geladen.';
 $string['moodle_settings:instructions'] = 'Anweisungen an die KI';
 $string['moodle_settings:instructions:desc'] = '';
-$string['moodle_settings:model_other'] = 'Anderes Modell';
-$string['moodle_settings:model_other:desc'] = '';
+$string['moodle_settings:model_other'] = 'Anderes Modell (mehrere Modelle möglich)';
+$string['moodle_settings:model_other:desc'] = 'Mehrere Modelle mit Komma trennen (z.B. gpt-4o, gpt-4o-mini). Bei mehreren Modellen können Benutzer zwischen diesen wählen.';
 $string['logging'] = 'Protokollierung aktivieren';
 $string['logging:desc'] = 'Wenn diese Einstellung aktiviert ist, werden alle Benutzernachrichten und KI-Antworten protokolliert.<br/><a href="{$a}">Protokoll anzeigen</a>';
 $string['logging_retention_period'] = 'Protokollaufbewahrungszeitraum (in Tagen)';
@@ -169,7 +169,8 @@ $string['config_presence_help'] = 'Legt fest, wie stark neue Tokens bestraft wer
 
 $string['block_instance:config:api_type:change'] = 'Möchten Sie den API-Typ für diese Blockinstanz ändern? Der Einstellungsdialog wird dabei geschlossen und muss anschließend erneut geöffnet werden.';
 $string['block_instance:config:model:choose-other'] = 'Anderes Modell...';
-$string['block_instance:config:model_other'] = 'Anderes Modell';
+$string['block_instance:config:model_other'] = 'Anderes Modell (mehrere Modelle möglich)';
+$string['block_instance:config:model_other_help'] = 'Ein oder mehrere Modellnamen eingeben. Mehrere Modelle mit Komma trennen (z.B. gpt-4o, gpt-4o-mini). Bei mehreren Modellen können Schüler/innen zwischen diesen wählen.';
 $string['block_instance:config:endpoint'] = 'Alternative Endpunkt-URL';
 
 $string['page_content_ai_message'] = 'Diese Nachricht enthält den Inhalt der aktuell vom Benutzer im Browser angezeigten Seite:';
