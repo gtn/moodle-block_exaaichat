@@ -366,7 +366,9 @@ export async function init(data) {
   })
 
   $form.find('.exaaichat_input_refresh_btn').on('click', () => {
-    setBlockChatData({history: [], historyTimestamp: Date.now()});
+    // Also clear the threadId, otherwise the stateful APIs (assistant/responses) would resume
+    // the old conversation via previous_response_id instead of starting a new one.
+    setBlockChatData({history: [], historyTimestamp: Date.now(), threadId: null});
     clearHistory();
     $input.focus();
   })

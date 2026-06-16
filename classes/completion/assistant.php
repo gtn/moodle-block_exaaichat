@@ -184,7 +184,7 @@ class assistant extends completion_base {
                             /* @var $toolCall ThreadRunResponseRequiredActionFunctionToolCall */
                             $function = $toolCall->function;
 
-                            $output = callback_helper::call_tool($function);
+                            $output = $this->call_tool($function);
 
                             $tool_outputs[] = [
                                 'tool_call_id' => $toolCall->id,

@@ -25,6 +25,7 @@
 
 namespace block_exaaichat\completion;
 
+use block_exaaichat\callback_helper;
 use block_exaaichat\helper;
 use block_exaaichat\locallib;
 use block_exaaichat\logger;
@@ -51,6 +52,7 @@ abstract class completion_base {
     protected string $instructions = '';
     protected string $endpoint = '';
     protected array $vector_store_ids = [];
+    protected string $log_id = '';
 
     /**
      * Initialize all the class properties that we'll need regardless of model
@@ -63,6 +65,11 @@ abstract class completion_base {
      */
     public function __construct(object $config, protected string $message, protected string $thread_id = '', protected array $history = [], protected string $page_content = '') {
         $config = clone $config;
+
+        // Stable id for grouping all debug log lines of this turn. Unlike $thread_id (which
+        // the responses API reassigns mid-call), this is set once and never changed. The
+        // "new:" prefix marks a freshly started conversation (no incoming thread_id).
+        $this->log_id = $thread_id ?: ('localid:' . random_string(12));
 
         if (!get_config('block_exaaichat', 'allowinstancesettings')) {
             $global_configs_to_use = [
@@ -232,7 +239,7 @@ abstract class completion_base {
      * @return void
      */
     protected function debug(...$args): void {
-        logger::debug_grouped($this->thread_id ?: 'new', ...$args);
+        logger::debug_grouped($this->log_id, ...$args);
     }
 
     /**
@@ -245,13 +252,27 @@ abstract class completion_base {
         throw new \moodle_exception(json_encode($args));
     }
 
+    /**
+     * Execute an AI tool call, logging it grouped under the current thread.
+     */
+    protected function call_tool(object $function): string {
+        return callback_helper::call_tool($function, $this->log_id);
+    }
+
     public function get_models(): array {
         return [
+            'gpt-5.5' => 'gpt-5.5',
+            'gpt-5.4' => 'gpt-5.4',
+            'gpt-5.4-mini' => 'gpt-5.4-mini',
+            'gpt-5.4-nano' => 'gpt-5.4-nano',
             'gpt-5.2' => 'gpt-5.2',
+            'gpt-5.1' => 'gpt-5.1',
             'gpt-5' => 'gpt-5',
             'gpt-5-mini' => 'gpt-5-mini',
             'gpt-5-nano' => 'gpt-5-nano',
+            'gpt-4.1' => 'gpt-4.1',
             'gpt-4.1-mini' => 'gpt-4.1-mini',
+            'gpt-4.1-nano' => 'gpt-4.1-nano',
             'gpt-4o' => 'gpt-4o',
             'gpt-4o-2024-11-20' => 'gpt-4o-2024-11-20',
             'gpt-4o-2024-08-06' => 'gpt-4o-2024-08-06',

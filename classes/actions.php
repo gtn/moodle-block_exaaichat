@@ -37,6 +37,7 @@ require_once $CFG->dirroot . '/grade/report/user/lib.php';
 class actions {
     /**
      * Get the firstname, lastname, email, etc. of the current user
+     * @return object the current user's id, username, firstname, lastname and email
      */
     public static function get_current_user_info(): object {
         global $USER;
@@ -52,7 +53,8 @@ class actions {
     }
 
     /**
-     * Gets info about the current course
+     * Get information about the course the user is currently in
+     * @return object the current course record (id, fullname, shortname, summary, start/end dates, etc.)
      */
     public static function get_current_course(): object {
         global $COURSE;
@@ -70,6 +72,7 @@ class actions {
 
     /**
      * Get a list of all courses of the current user
+     * @return array the courses the current user is enrolled in
      */
     public static function get_current_users_courses(): array {
         global $USER;
@@ -77,11 +80,9 @@ class actions {
     }
 
     /**
-     * Get course participants details
-     * @param int $courseid
-     * @return array
-     * @throws \invalid_parameter_exception
-     * @throws \moodle_exception
+     * Get the list of users enrolled in a course (the participants), including their roles
+     * @param int $courseid the course id, use 0 for the current course
+     * @return array the enrolled users (participants) of the course, including their roles
      */
     public static function get_enrolled_users(int $courseid = 0): array {
         global $COURSE;
@@ -94,8 +95,8 @@ class actions {
     }
 
     /**
-     * Get my grade information of the current course
-     * Abruf der Noten und Bewertungen für den aktuellen Kurs
+     * Get the current user's own grades and assessments for the current course
+     * @return array the user's grade items for the course; sub-items are nested under each parent's "subs"; empty if no grades are available
      */
     public static function get_student_grades_for_course(): array {
         global $COURSE, $USER;
@@ -179,5 +180,37 @@ class actions {
         }
 
         return $data;
+    }
+
+    /**
+     * Get the contents (sections and activities) of a course
+     * @param int $courseid the course id, use 0 for the current course
+     * @return array the course sections, each with its activities and resources
+     */
+    public static function get_course_contents(int $courseid = 0): array {
+        global $COURSE;
+
+        if (!$courseid) {
+            $courseid = $COURSE->id;
+        }
+
+        return \core_course_external::get_course_contents($courseid);
+    }
+
+    /**
+     * Get the most recently accessed courses of the current user
+     * @return array the courses the current user accessed most recently
+     */
+    public static function get_recent_courses(): array {
+        global $USER;
+        return \core_course_external::get_recent_courses($USER->id);
+    }
+
+    /**
+     * Get the list of all course categories
+     * @return array all course categories
+     */
+    public static function get_categories(): array {
+        return \core_course_external::get_categories();
     }
 }

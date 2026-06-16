@@ -83,8 +83,12 @@ class responses extends completion_base {
         }
 
         if (preg_match('!^gpt-[5-9]!i', $data['model'])) {
-            // Unsupported parameter: 'temperature' is not supported with this model.
+            // 'temperature' is not supported with these models.
             unset($data['temperature']);
+            // 'top_p' is rejected by the full gpt-5+ models, but the mini/nano variants accept it.
+            if (!preg_match('!-(mini|nano)!i', $data['model'])) {
+                unset($data['top_p']);
+            }
         }
 
         $curl = new \curl();
@@ -100,6 +104,8 @@ class responses extends completion_base {
             logger::debug_grouped('chat.user:' . $USER->id, 'curl_pre_check error', $ret);
             return $ret;
         }
+
+        $this->debug('request:', $endpoint, $data);
 
         $responseText = $curl->post($endpoint, json_encode($data));
 
@@ -131,31 +137,24 @@ class responses extends completion_base {
      * @throws \Exception If an error occurs during the API call.
      */
     public function message(string $message) {
-        try {
-            if ($additional_message = trim(get_config('block_exaaichat', 'additional_message'))) {
-                $message .= "\n" . $additional_message;
-            }
-
-            $response = $this->call_response_api([
-                'input' => $message,
-            ]);
-        } catch (\Exception $e) {
-            $this->debug("User: {$message}");
-            throw $e;
+        if ($additional_message = trim(get_config('block_exaaichat', 'additional_message'))) {
+            $message .= "\n" . $additional_message;
         }
 
         $this->debug("User: {$message}");
 
+        $response = $this->call_response_api([
+            'input' => $message,
+        ]);
+
         $result_message = '';
         while (true) {
-            $output_function_call = null;
+            $function_calls = [];
             $output_message = null;
             foreach ($response->output as $output) {
                 if ($output->type == 'function_call') {
-                    if ($output_function_call) {
-                        $this->debug('function call already set');
-                    }
-                    $output_function_call = $output;
+                    // The model can request multiple tool calls in a single response.
+                    $function_calls[] = $output;
                 } elseif ($output->type == 'message') {
                     if ($output_message) {
                         $this->debug('message already set');
@@ -163,12 +162,14 @@ class responses extends completion_base {
                     $output_message = $output;
                 } elseif ($output->type == 'file_search_call') {
                     // info about a file search
+                } elseif ($output->type == 'reasoning') {
+                    // reasoning models emit a reasoning item; the answer is in the message output
                 } else {
                     $this->debug('wrong output type', $output);
                 }
             }
 
-            if ($output_function_call) {
+            if ($function_calls) {
                 // call again
 
                 // https://platform.openai.com/docs/guides/function-calling?api-mode=responses
@@ -178,17 +179,18 @@ class responses extends completion_base {
                 //     "call_id": tool_call.call_id,
                 //     "output": str(result)
                 // })
-                // var_dump($output);
 
-                $response = $this->call_response_api([
-                    'input' => [
-                        [
-                            "type" => "function_call_output",
-                            "call_id" => $output_function_call->call_id,
-                            "output" => callback_helper::call_tool($output_function_call),
-                        ],
-                    ],
-                ]);
+                // Answer every requested tool call; the API rejects the next request if any call_id is left unanswered.
+                $input = [];
+                foreach ($function_calls as $function_call) {
+                    $input[] = [
+                        "type" => "function_call_output",
+                        "call_id" => $function_call->call_id,
+                        "output" => $this->call_tool($function_call),
+                    ];
+                }
+
+                $response = $this->call_response_api(['input' => $input]);
 
                 // process next message
                 continue;

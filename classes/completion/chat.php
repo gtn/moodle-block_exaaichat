@@ -64,7 +64,7 @@ class chat extends completion_base {
 
             // Process each tool call and append results.
             foreach ($response_data['tool_calls'] as $tool_call) {
-                $result = callback_helper::call_tool((object)[
+                $result = $this->call_tool((object)[
                     'name' => $tool_call->function->name,
                     'arguments' => $tool_call->function->arguments,
                 ]);
@@ -147,6 +147,10 @@ class chat extends completion_base {
             unset($data['temperature']);
             unset($data['frequency_penalty']);
             unset($data['presence_penalty']);
+            // 'top_p' is rejected by the full gpt-5+ models, but the mini/nano variants accept it.
+            if (!preg_match('!-(mini|nano)!i', $model)) {
+                unset($data['top_p']);
+            }
         }
 
         if (str_starts_with($endpoint, 'https://generativelanguage.googleapis.com/v1beta/openai/')) {

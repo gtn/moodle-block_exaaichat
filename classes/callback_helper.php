@@ -49,6 +49,12 @@ class callback_helper {
             return $functions;
         }
 
+        // All AI functions are defined as simplified methods in the actions class, so the AI doesn't
+        // have to fill technical parameters (e.g. a courseid it can't know) like the raw web service functions require.
+        $functions = static::get_class_functions(actions::class);
+
+        // OLD:
+        /*
         $functions = array_merge(
             static::get_moodle_ws_functions(\core_course_external::class, [
                 'get_course_contents',
@@ -66,20 +72,16 @@ class callback_helper {
 
             static::get_class_functions(actions::class)
         );
+        */
 
-        // make each function name unique
-        $function_names = [];
-        foreach ($functions as &$function) {
-            if (isset($function_names[$function['name']])) {
-                for ($i = 1; $i < 10; $i++) {
-                    if (!isset($function_names[$function['name'] . $i])) {
-                        $function['name'] .= $i;
-                        break;
-                    }
+        // Let other plugins contribute their own AI tool classes. Each plugin's callback only
+        // runs when that plugin is installed, and the plugin decides which action classes to offer.
+        foreach (get_plugins_with_function('exaaichat_actions') as $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                foreach ((array)$pluginfunction() as $class) {
+                    $functions = array_merge($functions, static::get_class_functions($class));
                 }
             }
-
-            $function_names[$function['name']] = true;
         }
 
         return $functions;
@@ -120,6 +122,11 @@ class callback_helper {
             if (!empty($line)) {
                 $description[] = $line;
             }
+        }
+
+        // Also expose the @return description (without the type) so the AI knows the result shape.
+        if (preg_match('/@return\s+\S+\s+(.+)/', $docComment, $matches)) {
+            $description[] = 'Returns: ' . trim($matches[1]);
         }
 
         // Return the description as a single string
@@ -223,8 +230,9 @@ class callback_helper {
      * @return bool|float|int|string
      * @throws \Exception
      */
-    public static function call_tool(object $function) {
-        logger::debug('api calling function: ' . $function->name);
+    public static function call_tool(object $function, string $thread_id = '') {
+        $group = $thread_id ?: 'new';
+        logger::debug_grouped($group, 'api calling function:', $function->name);
 
         $functions = static::get_functions();
         $functionDefinition = current(array_filter($functions, fn($f) => $f['name'] == $function->name));
@@ -234,7 +242,7 @@ class callback_helper {
                 $arguments = (array)$arguments;
             }
 
-            logger::debug('arguments:', $arguments);
+            logger::debug_grouped($group, 'arguments:', $arguments);
 
             $finalArguments = [];
             foreach ($functionDefinition['parameters']['properties'] as $paramName => $paramDetails) {
@@ -259,7 +267,7 @@ class callback_helper {
         } else {
             $output = 'This API is not available';
         }
-        logger::debug("output:", $output);
+        logger::debug_grouped($group, "tool output:", $output);
 
         return is_scalar($output) ? $output : json_encode($output);
     }
@@ -280,7 +288,8 @@ class callback_helper {
             $methodName = $method->getName();
 
             $functions[] = [
-                'name' => $methodName, // trim(substr(preg_replace('!.*\\\\!', '', $class) . '_' . $methodName, -64), '_'),
+                // Append a hash of the class name so methods with the same name in different action classes don't collide.
+                'name' => $methodName . '_' . substr(md5($class), 0, 8),
                 'description' => static::get_method_doc_description($class, $methodName) ?: $methodName,
                 'parameters' => static::parse_callback_parameters($method),
                 // Setting strict to true will ensure function calls reliably adhere to the function schema, instead of being best effort. We recommend always enabling strict mode.
@@ -301,6 +310,7 @@ class callback_helper {
      * @return array
      * @throws \ReflectionException
      */
+    /*
     protected static function get_moodle_ws_functions(string $class, ?array $method_filter = null): array {
         $functions = [];
 
@@ -339,4 +349,5 @@ class callback_helper {
 
         return $functions;
     }
+    */
 }

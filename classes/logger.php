@@ -81,7 +81,7 @@ class logger {
      * @param mixed ...$args The message (values) to log.
      */
     public static function debug(...$args) {
-        static::debug_grouped('', $args);
+        static::debug_grouped('', ...$args);
     }
 
     /**

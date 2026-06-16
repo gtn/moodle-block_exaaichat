@@ -204,7 +204,7 @@ class chat_old extends base {
                             } else {
                                 $output = 'This API is not available';
                             }
-                            $this->debug("output:", $output);
+                            $this->debug("tool output:", $output);
 
                             $tool_outputs[] = [
                                 'tool_call_id' => $toolCall->id,
