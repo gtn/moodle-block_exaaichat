@@ -147,6 +147,17 @@ class block_exaaichat_edit_form extends block_edit_form {
             $mform->addHelpButton('config_assistantname', 'config_assistantname', 'block_exaaichat');
         }
 
+        // File upload: synced to a managed OpenAI vector store (file_search). Only meaningful for the
+        // responses api and only when the admin has enabled the documents feature.
+        if ($api_type === 'responses' && get_config('block_exaaichat', 'enablefileupload')) {
+            $mform->addElement('filemanager', 'config_documents', get_string('documents', 'block_exaaichat'), null, [
+                'subdirs' => 0,
+                'maxfiles' => 50,
+                'accepted_types' => ['.pdf', '.txt', '.md', '.docx', '.pptx', '.html', '.json', '.csv'],
+            ]);
+            $mform->addHelpButton('config_documents', 'documents', 'block_exaaichat');
+        }
+
         $models = [];
         if (locallib::get_default_model() && locallib::get_api_type() == $api_type) {
             $models += ['' => get_string('default', 'block_exaaichat', locallib::get_default_model())];
@@ -298,6 +309,21 @@ class block_exaaichat_edit_form extends block_edit_form {
     });
 </script>
         ");
+    }
+
+    public function set_data($defaults) {
+        // Load the existing uploaded documents into the filemanager draft area.
+        if (get_config('block_exaaichat', 'enablefileupload')) {
+            $context = \context_block::instance($this->_get_block()->instance->id);
+            $draftid = file_get_submitted_draft_itemid('config_documents');
+            file_prepare_draft_area($draftid, $context->id, 'block_exaaichat', 'documents', 0, [
+                'subdirs' => 0,
+                'maxfiles' => 50,
+            ]);
+            $defaults->config_documents = $draftid;
+        }
+
+        parent::set_data($defaults);
     }
 
     /**

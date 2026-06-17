@@ -153,6 +153,13 @@ if ($hassiteconfig) {
         ));
 
         $settings->add(new admin_setting_configcheckbox(
+            'block_exaaichat/enablefileupload',
+            get_string('enablefileupload', 'block_exaaichat'),
+            get_string('enablefileupload:desc', 'block_exaaichat'),
+            0
+        ));
+
+        $settings->add(new admin_setting_configcheckbox(
             'block_exaaichat/persistconvo',
             get_string('persistconvo', 'block_exaaichat'),
             get_string('persistconvo:desc', 'block_exaaichat'),

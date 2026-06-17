@@ -132,6 +132,10 @@ abstract class completion_base {
         if ($vector_store_ids) {
             $this->vector_store_ids = preg_split('![\s,]+!', $vector_store_ids);
         }
+        // The vector store managed from the uploaded block documents (file_search).
+        if ($config->managed_vector_store_id ?? '') {
+            $this->vector_store_ids[] = $config->managed_vector_store_id;
+        }
 
         // $this->prompt = $config->prompt ?? $this->get_plugin_setting('prompt', get_string('defaultprompt', 'block_exaaichat'));
 

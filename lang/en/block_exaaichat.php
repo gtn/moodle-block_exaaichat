@@ -224,6 +224,13 @@ $string['time'] = 'Time';
 
 $string['vectorstoreids'] = 'Vector store IDs';
 
+// Document upload (synced to a managed OpenAI vector store).
+$string['enablefileupload'] = 'Allow file uploads';
+$string['enablefileupload:desc'] = 'Allow uploading documents on a block. Files are synced to an OpenAI vector store and used for file_search. Responses API only.';
+$string['documents'] = 'Documents';
+$string['documents_help'] = 'Upload documents (PDF, text, Word, PowerPoint, HTML, ...) the AI can search and reference when answering. The files are synced to an OpenAI vector store and used via file_search. Removing a file here also removes it from OpenAI on the next save.';
+$string['documents:syncerror'] = 'Could not sync the uploaded documents to OpenAI:';
+
 // Debug file logging setting.
 $string['debugfilelogging'] = 'Enable debug logging';
 $string['debugfilelogging:desc'] = "All API calls (user messages, AI responses and function calls) will be logged to moodledata/log/exaaichat.log<br/>\nThis can be useful for debugging issues with the AI responses, but the log file can grow very large very quickly, so it should only be enabled temporarily.";

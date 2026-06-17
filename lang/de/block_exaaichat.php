@@ -220,6 +220,13 @@ $string['time'] = 'Zeit';
 
 $string['vectorstoreids'] = 'Vektorspeicher-IDs';
 
+// Dokumenten-Upload (synchronisiert mit einem verwalteten OpenAI Vector Store).
+$string['enablefileupload'] = 'Datei-Uploads erlauben';
+$string['enablefileupload:desc'] = 'Erlaubt das Hochladen von Dokumenten in einem Block. Dateien werden mit einem OpenAI Vector Store synchronisiert und für file_search verwendet. Nur Responses-API.';
+$string['documents'] = 'Dokumente';
+$string['documents_help'] = 'Laden Sie Dokumente (PDF, Text, Word, PowerPoint, HTML, ...) hoch, die die KI durchsuchen und beim Beantworten heranziehen kann. Die Dateien werden mit einem OpenAI Vector Store synchronisiert und über file_search verwendet. Wird eine Datei hier entfernt, wird sie beim nächsten Speichern auch aus OpenAI entfernt.';
+$string['documents:syncerror'] = 'Die hochgeladenen Dokumente konnten nicht mit OpenAI synchronisiert werden:';
+
 // Debug file logging setting.
 $string['debugfilelogging'] = 'Debug-Protokollierung aktivieren';
 $string['debugfilelogging:desc'] = "Alle API-Aufrufe (Benutzernachrichten, KI-Antworten und Funktionsaufrufe) werden in der Datei moodledata/log/exaaichat.log protokolliert.<br/>\nDies kann bei der Fehlersuche hilfreich sein, aber die Protokolldatei kann sehr schnell sehr groß werden. Daher sollte diese Einstellung nur vorübergehend aktiviert werden.";

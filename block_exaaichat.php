@@ -57,4 +57,42 @@ class block_exaaichat extends block_base {
 
         return $this->content;
     }
+
+    public function instance_config_save($data, $nolongerused = false) {
+        if (isset($data->documents) && get_config('block_exaaichat', 'enablefileupload')) {
+            file_save_draft_area_files($data->documents, $this->context->id, 'block_exaaichat', 'documents', 0, [
+                'subdirs' => 0,
+                'maxfiles' => 50,
+            ]);
+
+            try {
+                $data->managed_vector_store_id = \block_exaaichat\vector_store_sync::sync($this->context, $this->config ?? (object)[]);
+            } catch (\Throwable $e) {
+                \block_exaaichat\logger::debug('vector store sync failed:', $e->getMessage());
+                \core\notification::error(get_string('documents:syncerror', 'block_exaaichat') . ' ' . $e->getMessage());
+                // Keep the previously stored id so cleanup on block delete still works.
+                $data->managed_vector_store_id = $this->config->managed_vector_store_id ?? '';
+            }
+        } elseif (($this->config->managed_vector_store_id ?? '') !== '') {
+            // Documents field not present (other api type or feature disabled): preserve the existing
+            // store id so cleanup on block delete still works.
+            $data->managed_vector_store_id = $this->config->managed_vector_store_id;
+        }
+
+        parent::instance_config_save($data, $nolongerused);
+    }
+
+    public function instance_delete() {
+        // Always remove the managed vector store + files from OpenAI, even when the documents feature
+        // is currently disabled, so we never orphan a paid vector store.
+        try {
+            \block_exaaichat\vector_store_sync::cleanup($this->config ?? (object)[]);
+        } catch (\Throwable $e) {
+            \block_exaaichat\logger::debug('vector store cleanup failed:', $e->getMessage());
+        }
+
+        get_file_storage()->delete_area_files($this->context->id, 'block_exaaichat');
+
+        return true;
+    }
 }
