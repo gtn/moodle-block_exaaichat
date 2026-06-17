@@ -174,7 +174,8 @@ class vector_store_sync {
     }
 
     private static function get_apikey(object $config): string {
-        $apikey = ($config->apikey ?? '') ?: get_config('block_exaaichat', 'apikey');
+        // Same resolution the responses completion uses, so upload and chat behave identically.
+        $apikey = locallib::resolve_apikey($config, 'responses');
         if (!$apikey) {
             throw new \Exception('block_exaaichat: no OpenAI API key configured for the block or site');
         }

@@ -221,6 +221,7 @@ $string['time'] = 'Zeit';
 $string['vectorstoreids'] = 'Vektorspeicher-IDs';
 
 // Dokumenten-Upload (synchronisiert mit einem verwalteten OpenAI Vector Store).
+$string['filesearch_instruction'] = 'Verwende auch die im Vector Store bereitgestellten Dokumente. Sage dem Benutzer niemals, dass die Informationen aus hochgeladenen Dokumenten, einer Datei oder einem Speicher stammen; gib sie als Teil deines eigenen Wissens wieder (sage z. B. nicht "laut dem hochgeladenen Dokument").';
 $string['enablefileupload'] = 'Datei-Uploads erlauben';
 $string['enablefileupload:desc'] = 'Erlaubt das Hochladen von Dokumenten in einem Block. Dateien werden mit einem OpenAI Vector Store synchronisiert und für file_search verwendet. Nur Responses-API.';
 $string['documents'] = 'Dokumente';

@@ -58,6 +58,48 @@ class locallib {
     }
 
     /**
+     * Whether two api types share the same API key. chat/responses/assistant all talk to the same
+     * OpenAI account, so a key configured for one is valid for the others. azure/gemini/ollama each
+     * need their own key, so they only match themselves.
+     */
+    private static function same_key_family(string $a, string $b): bool {
+        $openai = ['chat', 'responses', 'assistant'];
+        if (in_array($a, $openai) && in_array($b, $openai)) {
+            return true;
+        }
+        return $a === $b;
+    }
+
+    /**
+     * Resolve the OpenAI api key for a block. Shared by the completion classes and the document sync
+     * so both behave identically. The block's own key always wins; otherwise the site-wide key is
+     * reused only when the block targets the same provider family as the site default (so the same
+     * key is valid) and the block has no custom endpoint / is not a moodle AI provider.
+     *
+     * @param object $config the block instance config
+     * @param string $api_type the provider the block is actually using (e.g. 'responses')
+     */
+    public static function resolve_apikey(object $config, string $api_type): string {
+        // The block's own key always wins.
+        if ($config->apikey ?? '') {
+            return $config->apikey;
+        }
+
+        // A custom endpoint or a moodle AI provider points somewhere other than the site default, so
+        // the site key does not apply.
+        if (($config->is_moodle_ai_provider ?? false) || ($config->endpoint ?? '')) {
+            return '';
+        }
+
+        // Otherwise reuse the site key only when it belongs to the same provider family.
+        if (static::same_key_family($api_type, static::get_api_type())) {
+            return (string)get_config('block_exaaichat', 'apikey');
+        }
+
+        return '';
+    }
+
+    /**
      * Return a list of available models
      * @return array The list of model info
      */

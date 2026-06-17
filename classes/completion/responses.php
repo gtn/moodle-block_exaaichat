@@ -32,6 +32,12 @@ use block_exaaichat\logger;
 defined('MOODLE_INTERNAL') || die;
 
 class responses extends completion_base {
+    public function supports_vector_store(): bool {
+        // Vector stores / file_search are an OpenAI Responses API feature. A custom endpoint may be
+        // an OpenAI-compatible API that doesn't implement it, so only assume support on OpenAI's own.
+        return !$this->endpoint;
+    }
+
     /**
      * Send a request to the OpenAI Responses API to create a new thread or continue an existing one.
      *
@@ -54,7 +60,9 @@ class responses extends completion_base {
             }, callback_helper::get_functions()));
         }
 
-        if ($this->vector_store_ids) {
+        $use_vector_store = $this->vector_store_ids && $this->supports_vector_store();
+
+        if ($use_vector_store) {
             $tools = array_merge($tools, [
                 [
                     "type" => "file_search",
@@ -73,7 +81,8 @@ class responses extends completion_base {
             'previous_response_id' => $this->thread_id ?: null,
 
             // needs to be sent every time
-            'instructions' => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth(),
+            'instructions' => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth()
+                . ($use_vector_store ? "\n\n" . get_string('filesearch_instruction', 'block_exaaichat') : ''),
 
             ...$data,
         ];

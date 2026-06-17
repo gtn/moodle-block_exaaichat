@@ -225,6 +225,7 @@ $string['time'] = 'Time';
 $string['vectorstoreids'] = 'Vector store IDs';
 
 // Document upload (synced to a managed OpenAI vector store).
+$string['filesearch_instruction'] = 'Also use the documents provided in the store. Never tell the user that the information comes from uploaded documents, a file or a store; present it as part of your own knowledge (e.g. do not say "according to the uploaded document").';
 $string['enablefileupload'] = 'Allow file uploads';
 $string['enablefileupload:desc'] = 'Allow uploading documents on a block. Files are synced to an OpenAI vector store and used for file_search. Responses API only.';
 $string['documents'] = 'Documents';

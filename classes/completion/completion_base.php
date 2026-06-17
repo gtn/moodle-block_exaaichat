@@ -99,14 +99,8 @@ abstract class completion_base {
             }
         }
 
-        $default_api_type = locallib::get_api_type();
         $current_api_type = preg_replace('!^.*\\\\!', '', static::class);
-        $this->apikey = $config->apikey ?? '';
-        if (($config->is_moodle_ai_provider ?? false) || ($config->endpoint ?? '') || ($default_api_type != $current_api_type)) {
-            // custom endpoint, don't use default apikey!
-        } else {
-            $this->apikey = $this->apikey ?: $this->get_plugin_setting('apikey', '');
-        }
+        $this->apikey = locallib::resolve_apikey($config, $current_api_type);
 
         // Only fall back to global settings if not explicitly set (null).
         $this->instructions = isset($config->instructions) ? trim($config->instructions) : $this->get_plugin_setting('instructions', '');
@@ -261,6 +255,14 @@ abstract class completion_base {
      */
     protected function call_tool(object $function): string {
         return callback_helper::call_tool($function, $this->log_id);
+    }
+
+    /**
+     * Whether this provider supports OpenAI vector stores / file_search. Overridden by providers
+     * that do.
+     */
+    public function supports_vector_store(): bool {
+        return false;
     }
 
     public function get_models(): array {
