@@ -108,6 +108,30 @@ if ($provider_id && preg_match('!^model:(.+)$!', $provider_id, $matches)) {
     $provider_id = null;
 }
 
+// Handle a teacher-configured additional provider selected from the dropdown.
+if ($provider_id && preg_match('!^blockprovider:(\d+)$!', $provider_id, $matches)) {
+    $index = $matches[1];
+    $provider = ($config->providers ?? [])[$index] ?? null;
+    if (!$provider) {
+        throw new \moodle_exception('invalidprovider', 'block_exaaichat');
+    }
+
+    $extra_config = (object)[
+        'api_type' => $provider->api_type,
+        'apikey' => $provider->apikey,
+        'model' => $provider->model,
+        'endpoint' => $provider->endpoint,
+    ];
+    // Only override the block-level instruction when this provider defines its own.
+    if (trim($provider->instructions ?? '')) {
+        $extra_config->instructions = $provider->instructions;
+    }
+
+    $config = (object)array_merge((array)$config, (array)$extra_config);
+    $config->settings_to_keep = array_keys((array)$extra_config);
+    $provider_id = null;
+}
+
 if (get_config('block_exaaichat', 'allowproviderselection') && $provider_id) {
     $providers = locallib::get_moodle_ai_providers();
     $provider = current(array_filter($providers, fn($provider) => $provider->id == $provider_id));

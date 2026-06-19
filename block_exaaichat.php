@@ -59,6 +59,28 @@ class block_exaaichat extends block_base {
     }
 
     public function instance_config_save($data, $nolongerused = false) {
+        // Normalize the repeated provider fields into a clean providers list. Skip empty rows
+        // (no api_type and no model) and drop the raw repeat arrays so they don't pollute the config.
+        if (is_array($data->provider_api_type ?? false)) {
+            $providers = [];
+            foreach ($data->provider_api_type as $i => $api_type) {
+                $model = trim($data->provider_model[$i] ?? '');
+                if (!$api_type && !$model) {
+                    continue;
+                }
+                $providers[] = (object)[
+                    'label' => trim($data->provider_label[$i] ?? ''),
+                    'api_type' => $api_type,
+                    'apikey' => trim($data->provider_apikey[$i] ?? ''),
+                    'model' => $model,
+                    'endpoint' => trim($data->provider_endpoint[$i] ?? ''),
+                    'instructions' => trim($data->provider_instructions[$i] ?? ''),
+                ];
+            }
+            $data->providers = array_values($providers);
+            unset($data->provider_label, $data->provider_api_type, $data->provider_apikey, $data->provider_model, $data->provider_endpoint, $data->provider_instructions);
+        }
+
         if (isset($data->documents) && get_config('block_exaaichat', 'enablefileupload')) {
             file_save_draft_area_files($data->documents, $this->context->id, 'block_exaaichat', 'documents', 0, [
                 'subdirs' => 0,

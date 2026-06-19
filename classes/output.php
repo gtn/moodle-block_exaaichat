@@ -189,6 +189,17 @@ class output {
                 ...array_map(fn($ai_provider) => ['id' => $ai_provider->id, 'label' => $ai_provider->name . ($ai_provider->model && $ai_provider->model != $ai_provider->name ? ' (' . $ai_provider->model . ')' : '')], $moodle_ai_proviers),
             ];
 
+            // Teacher-configured additional providers (each with its own api_type / key / model /
+            // endpoint), stored per block instance. Resolved back in api/completion.php.
+            if (get_config('block_exaaichat', 'allowinstancesettings')) {
+                foreach (($config->providers ?? []) as $index => $provider) {
+                    $ai_providers[] = [
+                        'id' => 'blockprovider:' . $index,
+                        'label' => $provider->label ?: ($provider->model ?: $provider->api_type),
+                    ];
+                }
+            }
+
             if (!$ai_providers) {
                 $content->text .= get_string('apikeymissing', 'block_exaaichat');
                 return $content;

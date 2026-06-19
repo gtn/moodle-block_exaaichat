@@ -111,13 +111,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 '' => \block_exaaichat\locallib::get_api_type()
                     ? get_string('default', 'block_exaaichat', get_string('type_' . $api_type, 'block_exaaichat'))
                     : get_string('type_choose', 'block_exaaichat'),
-                'ollama' => get_string('type_ollama', 'block_exaaichat'),
-                'gemini' => get_string('type_gemini', 'block_exaaichat'),
-                'chat' => get_string('type_chat', 'block_exaaichat'),
-                'assistant' => get_string('type_assistant', 'block_exaaichat'),
-                'responses' => get_string('type_responses', 'block_exaaichat'),
-                'azure' => get_string('type_azure', 'block_exaaichat'),
-            ]);
+            ] + \block_exaaichat\locallib::get_api_types());
             $mform->setDefault('config_api_type', '');
             $mform->setType('config_api_type', PARAM_TEXT);
         }
@@ -128,6 +122,59 @@ class block_exaaichat_edit_form extends block_edit_form {
         $mform->setType('config_instructions', PARAM_TEXT);
         $mform->addHelpButton('config_instructions', 'config_instructions', 'block_exaaichat');
 
+        if (get_config('block_exaaichat', 'allowinstancesettings')) {
+            $mform->addElement('text', 'config_assistantname', get_string('assistantname', 'block_exaaichat'));
+            $mform->setDefault('config_assistantname', '');
+            $mform->setType('config_assistantname', PARAM_TEXT);
+            $mform->addHelpButton('config_assistantname', 'config_assistantname', 'block_exaaichat');
+        }
+
+        $models = [];
+        if (locallib::get_default_model() && locallib::get_api_type() == $api_type) {
+            $models += ['' => get_string('default', 'block_exaaichat', locallib::get_default_model())];
+        }
+        $models += $completion?->get_models() ?? [];
+        $models += ['other' => get_string('block_instance:config:model:choose-other', 'block_exaaichat')];
+
+        // Primary provider: key / model / endpoint, placed right below the assistant name. The
+        // "Advanced" parameter group is rendered further down, below the additional providers.
+        if (get_config('block_exaaichat', 'allowinstancesettings')) {
+            if ($api_type === 'assistant') {
+                $mform->addElement('select', 'config_assistant', get_string('assistant', 'block_exaaichat'), block_exaaichat_fetch_assistants_array($block_id));
+                $mform->setDefault('config_assistant', get_config('block_exaaichat', 'assistant'));
+                $mform->setType('config_assistant', PARAM_TEXT);
+                $mform->addHelpButton('config_assistant', 'config_assistant', 'block_exaaichat');
+
+                $mform->addElement('advcheckbox', 'config_persistconvo', get_string('persistconvo', 'block_exaaichat'));
+                $mform->addHelpButton('config_persistconvo', 'config_persistconvo', 'block_exaaichat');
+                $mform->setDefault('config_persistconvo', 1);
+            } else {
+                $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), $models);
+                $mform->setDefault('config_model', '');
+                $mform->setType('config_model', PARAM_TEXT);
+                $mform->addHelpButton('config_model', 'config_model', 'block_exaaichat');
+
+                $mform->addElement('text', 'config_model_other', get_string('block_instance:config:model_other', 'block_exaaichat'));
+                $mform->setDefault('config_model_other', '');
+                $mform->setType('config_model_other', PARAM_TEXT);
+                $mform->addHelpButton('config_model_other', 'block_instance:config:model_other', 'block_exaaichat');
+                $mform->hideIf('config_model_other', 'config_model', 'neq', 'other');
+            }
+
+            $mform->addElement('text', 'config_apikey', get_string('apikey', 'block_exaaichat'));
+            $mform->setDefault('config_apikey', '');
+            $mform->setType('config_apikey', PARAM_TEXT);
+            $mform->addHelpButton('config_apikey', 'config_apikey', 'block_exaaichat');
+
+            if ($api_type !== 'assistant') {
+                $mform->addElement('text', 'config_endpoint', get_string('block_instance:config:endpoint', 'block_exaaichat'));
+                $mform->setDefault('config_endpoint', '');
+                $mform->setType('config_endpoint', PARAM_URL);
+            }
+        }
+
+        // Knowledge base for the AI (source of truth) + its placeholder dropdown, placed just above
+        // the documents upload.
         $el = $mform->addElement('textarea', 'config_sourceoftruth', get_string('sourceoftruth', 'block_exaaichat'));
         $el->updateAttributes(['rows' => 10]);
         $mform->setDefault('config_sourceoftruth', '');
@@ -140,17 +187,11 @@ class block_exaaichat_edit_form extends block_edit_form {
             'placeholders_gradebook' => $this->get_placeholders_gradebook(),
         ]));
 
-        if (get_config('block_exaaichat', 'allowinstancesettings')) {
-            $mform->addElement('text', 'config_assistantname', get_string('assistantname', 'block_exaaichat'));
-            $mform->setDefault('config_assistantname', '');
-            $mform->setType('config_assistantname', PARAM_TEXT);
-            $mform->addHelpButton('config_assistantname', 'config_assistantname', 'block_exaaichat');
-        }
-
-        // File upload: synced to a managed OpenAI vector store (file_search). Only meaningful for the
-        // responses api and only when the admin has enabled the documents feature.
-        if ($api_type === 'responses' && get_config('block_exaaichat', 'enablefileupload')) {
-            $mform->addElement('filemanager', 'config_documents', get_string('documents', 'block_exaaichat'), null, [
+        // File upload: synced to a managed OpenAI vector store (file_search). Shown whenever the admin
+        // enabled the documents feature; the note flags that it only works with the OpenAI Responses API.
+        if (get_config('block_exaaichat', 'enablefileupload')) {
+            $mform->addElement('static', 'config_documents_note', get_string('documents', 'block_exaaichat'), get_string('documents:responsesonly', 'block_exaaichat'));
+            $mform->addElement('filemanager', 'config_documents', '', null, [
                 'subdirs' => 0,
                 'maxfiles' => 50,
                 'accepted_types' => ['.pdf', '.txt', '.md', '.docx', '.pptx', '.html', '.json', '.csv'],
@@ -158,67 +199,53 @@ class block_exaaichat_edit_form extends block_edit_form {
             $mform->addHelpButton('config_documents', 'documents', 'block_exaaichat');
         }
 
-        $models = [];
-        if (locallib::get_default_model() && locallib::get_api_type() == $api_type) {
-            $models += ['' => get_string('default', 'block_exaaichat', locallib::get_default_model())];
+        // Additional providers: a teacher-configured list of full providers (each with its own
+        // api_type / apikey / model / endpoint / instruction) the students can pick from at runtime,
+        // on top of the primary provider configured above.
+        if (get_config('block_exaaichat', 'allowinstancesettings')) {
+            $mform->addElement('header', 'config_providers_header', get_string('additionalproviders', 'block_exaaichat'));
+            $mform->setExpanded('config_providers_header', true);
+
+            $provider_api_types = ['' => get_string('type_choose', 'block_exaaichat')] + locallib::get_api_types();
+
+            // {no} is replaced by repeat_elements with the 1-based row number, giving each provider a
+            // numbered divider that visually separates the rows.
+            $repeatarray = [
+                $mform->createElement('static', 'config_provider_divider', '<strong>' . get_string('additionalproviders:provider', 'block_exaaichat', '{no}') . '</strong>', '<hr class="mt-0">'),
+                $mform->createElement('text', 'config_provider_label', get_string('additionalproviders:label', 'block_exaaichat')),
+                $mform->createElement('select', 'config_provider_api_type', get_string('moodle_settings:api_type', 'block_exaaichat'), $provider_api_types),
+                $mform->createElement('text', 'config_provider_model', get_string('model', 'block_exaaichat')),
+                $mform->createElement('text', 'config_provider_apikey', get_string('apikey', 'block_exaaichat')),
+                $mform->createElement('text', 'config_provider_endpoint', get_string('block_instance:config:endpoint', 'block_exaaichat')),
+                $mform->createElement('textarea', 'config_provider_instructions', get_string('additionalproviders:instructions', 'block_exaaichat')),
+                $mform->createElement('submit', 'config_provider_delete', get_string('delete'), [], false),
+            ];
+
+            $repeatoptions = [
+                'config_provider_label' => ['type' => PARAM_TEXT],
+                'config_provider_api_type' => ['type' => PARAM_TEXT],
+                'config_provider_apikey' => ['type' => PARAM_TEXT],
+                'config_provider_model' => ['type' => PARAM_TEXT],
+                'config_provider_endpoint' => ['type' => PARAM_URL],
+                'config_provider_instructions' => ['type' => PARAM_TEXT],
+            ];
+
+            $existing_providers = $this->_get_block()->config?->providers ?? [];
+            $this->repeat_elements($repeatarray, count($existing_providers), $repeatoptions, 'config_provider_repeats',
+                'config_provider_add', 1, get_string('additionalproviders:add', 'block_exaaichat'), true, 'config_provider_delete');
         }
-        $models += $completion?->get_models() ?? [];
-        $models += ['other' => get_string('block_instance:config:model:choose-other', 'block_exaaichat')];
-        if ($api_type === 'assistant') {
-            // Assistant settings
 
-            if (get_config('block_exaaichat', 'allowinstancesettings')) {
-                $mform->addElement('header', 'config_assistant_header', get_string('assistant', 'block_exaaichat'));
-                $mform->setExpanded('config_assistant_header', true);
+        // Advanced parameters, moved below the additional providers. Assistant has no advanced params.
+        if (get_config('block_exaaichat', 'allowinstancesettings') && $api_type !== 'assistant') {
+            $mform->addElement('header', 'config_adv_header', get_string('advanced', 'block_exaaichat'));
+            $mform->setExpanded('config_adv_header', true);
 
-                $mform->addElement('select', 'config_assistant', get_string('assistant', 'block_exaaichat'), block_exaaichat_fetch_assistants_array($block_id));
-                $mform->setDefault('config_assistant', get_config('block_exaaichat', 'assistant'));
-                $mform->setType('config_assistant', PARAM_TEXT);
-                $mform->addHelpButton('config_assistant', 'config_assistant', 'block_exaaichat');
+            $mform->addElement('text', 'config_temperature', get_string('temperature', 'block_exaaichat'));
+            $mform->setDefault('config_temperature', 0.5);
+            $mform->setType('config_temperature', PARAM_FLOAT);
+            $mform->addHelpButton('config_temperature', 'config_temperature', 'block_exaaichat');
 
-                $mform->addElement('advcheckbox', 'config_persistconvo', get_string('persistconvo', 'block_exaaichat'));
-                $mform->addHelpButton('config_persistconvo', 'config_persistconvo', 'block_exaaichat');
-                $mform->setDefault('config_persistconvo', 1);
-
-                $mform->addElement('header', 'config_adv_header', get_string('advanced', 'block_exaaichat'));
-                $mform->setExpanded('config_adv_header', true);
-
-                $mform->addElement('text', 'config_apikey', get_string('apikey', 'block_exaaichat'));
-                $mform->setDefault('config_apikey', '');
-                $mform->setType('config_apikey', PARAM_TEXT);
-                $mform->addHelpButton('config_apikey', 'config_apikey', 'block_exaaichat');
-            }
-
-        } elseif ($api_type === 'responses') {
-            if (get_config('block_exaaichat', 'allowinstancesettings')) {
-                $mform->addElement('header', 'config_adv_header', get_string('advanced', 'block_exaaichat'));
-                $mform->setExpanded('config_adv_header', true);
-
-                $mform->addElement('text', 'config_apikey', get_string('apikey', 'block_exaaichat'));
-                $mform->setDefault('config_apikey', '');
-                $mform->setType('config_apikey', PARAM_TEXT);
-                $mform->addHelpButton('config_apikey', 'config_apikey', 'block_exaaichat');
-
-                $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), $models);
-                $mform->setDefault('config_model', '');
-                $mform->setType('config_model', PARAM_TEXT);
-                $mform->addHelpButton('config_model', 'config_model', 'block_exaaichat');
-
-                $mform->addElement('text', 'config_model_other', get_string('block_instance:config:model_other', 'block_exaaichat'));
-                $mform->setDefault('config_model_other', '');
-                $mform->setType('config_model_other', PARAM_TEXT);
-                $mform->addHelpButton('config_model_other', 'block_instance:config:model_other', 'block_exaaichat');
-                $mform->hideIf('config_model_other', 'config_model', 'neq', 'other');
-
-                $mform->addElement('text', 'config_endpoint', get_string('block_instance:config:endpoint', 'block_exaaichat'));
-                $mform->setDefault('config_endpoint', '');
-                $mform->setType('config_endpoint', PARAM_URL);
-
-                $mform->addElement('text', 'config_temperature', get_string('temperature', 'block_exaaichat'));
-                $mform->setDefault('config_temperature', 0.5);
-                $mform->setType('config_temperature', PARAM_FLOAT);
-                $mform->addHelpButton('config_temperature', 'config_temperature', 'block_exaaichat');
-
+            if ($api_type === 'responses') {
                 $mform->addElement('text', 'config_topp', get_string('topp', 'block_exaaichat'));
                 $mform->setDefault('config_topp', 1);
                 $mform->setType('config_topp', PARAM_FLOAT);
@@ -227,45 +254,7 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->addElement('text', 'config_vector_store_ids', get_string('vectorstoreids', 'block_exaaichat'));
                 $mform->setDefault('config_vector_store_ids', '');
                 $mform->setType('config_vector_store_ids', PARAM_TEXT);
-            }
-        } else {
-            // Chat settings
-            if (get_config('block_exaaichat', 'allowinstancesettings')) {
-                /*
-                $mform->addElement('textarea', 'config_prompt', get_string('prompt', 'block_exaaichat'));
-                $mform->setDefault('config_prompt', '');
-                $mform->setType('config_prompt', PARAM_TEXT);
-                $mform->addHelpButton('config_prompt', 'config_prompt', 'block_exaaichat');
-                */
-
-                $mform->addElement('header', 'config_adv_header', get_string('advanced', 'block_exaaichat'));
-                $mform->setExpanded('config_adv_header', true);
-
-                $mform->addElement('text', 'config_apikey', get_string('apikey', 'block_exaaichat'));
-                $mform->setDefault('config_apikey', '');
-                $mform->setType('config_apikey', PARAM_TEXT);
-                $mform->addHelpButton('config_apikey', 'config_apikey', 'block_exaaichat');
-
-                $mform->addElement('select', 'config_model', get_string('model', 'block_exaaichat'), $models);
-                $mform->setDefault('config_model', '');
-                $mform->setType('config_model', PARAM_TEXT);
-                $mform->addHelpButton('config_model', 'config_model', 'block_exaaichat');
-
-                $mform->addElement('text', 'config_model_other', get_string('block_instance:config:model_other', 'block_exaaichat'));
-                $mform->setDefault('config_model_other', '');
-                $mform->setType('config_model_other', PARAM_TEXT);
-                $mform->addHelpButton('config_model_other', 'block_instance:config:model_other', 'block_exaaichat');
-                $mform->hideIf('config_model_other', 'config_model', 'neq', 'other');
-
-                $mform->addElement('text', 'config_endpoint', get_string('block_instance:config:endpoint', 'block_exaaichat'));
-                $mform->setDefault('config_endpoint', '');
-                $mform->setType('config_endpoint', PARAM_URL);
-
-                $mform->addElement('text', 'config_temperature', get_string('temperature', 'block_exaaichat'));
-                $mform->setDefault('config_temperature', 0.5);
-                $mform->setType('config_temperature', PARAM_FLOAT);
-                $mform->addHelpButton('config_temperature', 'config_temperature', 'block_exaaichat');
-
+            } else {
                 $mform->addElement('text', 'config_maxlength', get_string('maxlength', 'block_exaaichat'));
                 $mform->setDefault('config_maxlength', 500);
                 $mform->setType('config_maxlength', PARAM_INT);
@@ -321,6 +310,21 @@ class block_exaaichat_edit_form extends block_edit_form {
                 'maxfiles' => 50,
             ]);
             $defaults->config_documents = $draftid;
+        }
+
+        // Unpack the saved providers list into the repeated form fields so they are shown again.
+        // Read from the block config directly: parent::set_data() only copies config into config_*
+        // fields later (in prepare_defaults), so $defaults does not hold it yet here.
+        $saved_providers = $this->_get_block()->config?->providers ?? [];
+        if (get_config('block_exaaichat', 'allowinstancesettings') && $saved_providers) {
+            foreach ($saved_providers as $i => $provider) {
+                $defaults->config_provider_label[$i] = $provider->label ?? '';
+                $defaults->config_provider_api_type[$i] = $provider->api_type ?? '';
+                $defaults->config_provider_apikey[$i] = $provider->apikey ?? '';
+                $defaults->config_provider_model[$i] = $provider->model ?? '';
+                $defaults->config_provider_endpoint[$i] = $provider->endpoint ?? '';
+                $defaults->config_provider_instructions[$i] = $provider->instructions ?? '';
+            }
         }
 
         parent::set_data($defaults);

@@ -43,15 +43,7 @@ if ($hassiteconfig) {
 
         require_once($CFG->dirroot . '/blocks/exaaichat/lib.php');
 
-        $api_types = [
-            // '' => get_string('type_choose', 'block_exaaichat'),
-            'ollama' => get_string('type_ollama', 'block_exaaichat'),
-            'gemini' => get_string('type_gemini', 'block_exaaichat'),
-            'chat' => get_string('type_chat', 'block_exaaichat'),
-            'assistant' => get_string('type_assistant', 'block_exaaichat'),
-            'responses' => get_string('type_responses', 'block_exaaichat'),
-            'azure' => get_string('type_azure', 'block_exaaichat'),
-        ];
+        $api_types = locallib::get_api_types();
 
         // fallback api_type is first from list
         $api_type = get_config('block_exaaichat', 'api_type') ?: key($api_types);

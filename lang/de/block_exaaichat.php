@@ -112,6 +112,11 @@ Möglicher Notenbereich für den Kurs ist {range:coursetotal}.";
 $string['showlabels'] = 'Labels anzeigen';
 $string['advanced'] = 'Erweitert';
 $string['advanced:desc'] = 'Erweiterte Parameter, die an die KI gesendet werden.';
+$string['additionalproviders'] = 'Zusätzliche Provider';
+$string['additionalproviders:label'] = 'Anzeigename';
+$string['additionalproviders:add'] = 'Provider hinzufügen';
+$string['additionalproviders:provider'] = 'Provider {$a}';
+$string['additionalproviders:instructions'] = 'Anweisung an die KI';
 $string['allowinstancesettings'] = 'Instanzbezogene Einstellungen';
 $string['allowinstancesettings:desc'] = 'Diese Einstellung erlaubt es Lehrenden bzw. jedem mit der Berechtigung, einen Block im jeweiligen Kontext hinzuzufügen, instanzspezifische Einstellungen vorzunehmen. Dies kann zu zusätzlichen Kosten führen (z. B. durch Auswahl teurerer Modelle).';
 $string['allowproviderselection'] = 'Moodle KI-Provider Integration';
@@ -142,7 +147,7 @@ Mein Name ist {user.fullname}.<br/>
 Heute ist {userdate}.<br/>
 Kursgesamtbewertung ist {grade:coursetotal}.<br/>
 Möglicher Notenbereich für den Kurs ist {range:coursetotal}.";
-$string['config_instructions'] = 'Benutzerdefinierte Anweisungen';
+$string['config_instructions'] = 'Anweisung an die KI';
 $string['config_instructions_help'] = 'Du kannst hier die Standard-Anweisungen des Assistenten überschreiben.';
 $string['config_prompt'] = 'Prompt';
 $string['config_prompt_help'] = 'Dies ist der Prompt, der der KI vor dem Gespräch gesendet wird. Du kannst die Persönlichkeit der KI beeinflussen, indem du diese Beschreibung anpasst. Standard ist:\n\n"Below is a conversation between a user and a support assistant for a Moodle site, where users go for online learning."\n\nWenn leer, wird der siteweite Prompt verwendet.';
@@ -224,9 +229,10 @@ $string['vectorstoreids'] = 'Vektorspeicher-IDs';
 $string['filesearch_instruction'] = 'Verwende auch die im Vector Store bereitgestellten Dokumente. Sage dem Benutzer niemals, dass die Informationen aus hochgeladenen Dokumenten, einer Datei oder einem Speicher stammen; gib sie als Teil deines eigenen Wissens wieder (sage z. B. nicht "laut dem hochgeladenen Dokument").';
 $string['enablefileupload'] = 'Datei-Uploads erlauben';
 $string['enablefileupload:desc'] = 'Erlaubt das Hochladen von Dokumenten in einem Block. Dateien werden mit einem OpenAI Vector Store synchronisiert und für file_search verwendet. Nur Responses-API.';
-$string['documents'] = 'Dokumente';
+$string['documents'] = 'Dokumente für die KI';
 $string['documents_help'] = 'Laden Sie Dokumente (PDF, Text, Word, PowerPoint, HTML, ...) hoch, die die KI durchsuchen und beim Beantworten heranziehen kann. Die Dateien werden mit einem OpenAI Vector Store synchronisiert und über file_search verwendet. Wird eine Datei hier entfernt, wird sie beim nächsten Speichern auch aus OpenAI entfernt.';
 $string['documents:syncerror'] = 'Die hochgeladenen Dokumente konnten nicht mit OpenAI synchronisiert werden:';
+$string['documents:responsesonly'] = 'Hinweis: Diese Funktion ist nur mit der OpenAI Responses API verfügbar.';
 
 // Debug file logging setting.
 $string['debugfilelogging'] = 'Debug-Protokollierung aktivieren';

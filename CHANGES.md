@@ -1,3 +1,9 @@
+### v5.1 (2026061900) ###
+* exabisAI now supports RAG (Retrieval-Augmented Generation): upload your own documents and let the AI answer questions directly from your course material
+* Teachers can configure multiple AI providers per course (e.g. OpenAI + Ollama), each with its own api type, api key, model, endpoint and instruction; students pick the provider in the chat dialog
+* Each additional provider can have its own instruction (falls back to the block instruction when empty)
+* Reorganized the block settings form
+
 ### v5.1 (2026030300) ###
 * compatible with gpt-5.2
 

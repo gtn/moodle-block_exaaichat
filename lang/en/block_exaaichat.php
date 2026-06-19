@@ -113,6 +113,11 @@ Possible grade range for the course is {range:coursetotal}.";
 $string['showlabels'] = 'Show labels';
 $string['advanced'] = 'Advanced';
 $string['advanced:desc'] = 'Advanced arguments sent to KI Provider.';
+$string['additionalproviders'] = 'Additional providers';
+$string['additionalproviders:label'] = 'Display name';
+$string['additionalproviders:add'] = 'Add provider';
+$string['additionalproviders:provider'] = 'Provider {$a}';
+$string['additionalproviders:instructions'] = 'Instruction to the AI';
 $string['allowinstancesettings'] = 'Instance-level settings';
 $string['allowinstancesettings:desc'] = 'This setting will allow teachers, or anyone with the capability to add a block in a context, to adjust settings at a per-block level. Enabling this could incur additional charges by allowing non-admins to choose higher-cost models or other settings.';
 $string['allowproviderselection'] = 'Moodle AI-Provider integration';
@@ -145,7 +150,7 @@ My name is {user.fullname}.<br/>
 Today is {userdate}.<br/>
 Course total grade is {grade:coursetotal}.<br/>
 Possible grade range for the course is {range:coursetotal}.";
-$string['config_instructions'] = "Custom instructions";
+$string['config_instructions'] = "Instruction to the AI";
 $string['config_instructions_help'] = "You can override the assistant's default instructions here.";
 $string['config_prompt'] = "Completion prompt";
 $string['config_prompt_help'] = "This is the prompt the AI will be given before the conversation transcript. You can influence the AI's personality by altering this description. By default, the prompt is \n\n\"Below is a conversation between a user and a support assistant for a Moodle site, where users go for online learning.\"\n\nIf blank, the site-wide prompt will be used.";
@@ -228,9 +233,10 @@ $string['vectorstoreids'] = 'Vector store IDs';
 $string['filesearch_instruction'] = 'Also use the documents provided in the store. Never tell the user that the information comes from uploaded documents, a file or a store; present it as part of your own knowledge (e.g. do not say "according to the uploaded document").';
 $string['enablefileupload'] = 'Allow file uploads';
 $string['enablefileupload:desc'] = 'Allow uploading documents on a block. Files are synced to an OpenAI vector store and used for file_search. Responses API only.';
-$string['documents'] = 'Documents';
+$string['documents'] = 'Documents for the AI';
 $string['documents_help'] = 'Upload documents (PDF, text, Word, PowerPoint, HTML, ...) the AI can search and reference when answering. The files are synced to an OpenAI vector store and used via file_search. Removing a file here also removes it from OpenAI on the next save.';
 $string['documents:syncerror'] = 'Could not sync the uploaded documents to OpenAI:';
+$string['documents:responsesonly'] = 'Note: This feature is only available with the OpenAI Responses API.';
 
 // Debug file logging setting.
 $string['debugfilelogging'] = 'Enable debug logging';

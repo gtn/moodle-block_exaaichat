@@ -41,6 +41,20 @@ class locallib {
         return 'chat';
     }
 
+    /**
+     * The selectable provider / API types. Callers prepend their own leading empty option as needed.
+     */
+    public static function get_api_types(): array {
+        return [
+            'ollama' => get_string('type_ollama', 'block_exaaichat'),
+            'gemini' => get_string('type_gemini', 'block_exaaichat'),
+            'chat' => get_string('type_chat', 'block_exaaichat'),
+            'assistant' => get_string('type_assistant', 'block_exaaichat'),
+            'responses' => get_string('type_responses', 'block_exaaichat'),
+            'azure' => get_string('type_azure', 'block_exaaichat'),
+        ];
+    }
+
     public static function get_default_model(): string {
         $model = get_config('block_exaaichat', 'model');
         if ($model == 'other') {
