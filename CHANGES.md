@@ -1,3 +1,7 @@
+### v5.1 (2026080600) ###
+* Azure now supports tool calling (function calling), so the AI can also use grade and course placeholders when using Azure
+* compatible with gpt-5.6 (including the sol, terra and luna variants)
+
 ### v5.1 (2026061900) ###
 * exabisAI now supports RAG (Retrieval-Augmented Generation): upload your own documents and let the AI answer questions directly from your course material
 * Teachers can configure multiple AI providers per course (e.g. OpenAI + Ollama), each with its own api type, api key, model, endpoint and instruction; students pick the provider in the chat dialog
