@@ -25,8 +25,6 @@
 
 namespace block_exaaichat\completion;
 
-use block_exaaichat\logger;
-
 defined('MOODLE_INTERNAL') || die;
 
 class azure extends chat {
@@ -41,69 +39,19 @@ class azure extends chat {
         $this->apiversion = $this->get_plugin_setting('apiversion');
     }
 
-    /**
-     * Given everything we know after constructing the parent, create a completion by constructing the prompt and making the api call
-     * @return JSON: The API response from Azure
-     */
-    public function create_completion(): array {
-        $history_json = array_values([
-            ["role" => "system", "content" => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth()],
-            ...$this->format_history(),
-            ["role" => "user", "content" => $this->message],
-        ]);
-
-        $response_data = $this->make_api_call($history_json);
-        return $response_data;
+    protected function get_default_endpoint(): string {
+        return "https://" . $this->resourcename . ".openai.azure.com/openai/deployments/" . $this->deploymentid . "/chat/completions?api-version=" . $this->apiversion;
     }
 
-    /**
-     * Make the actual API call to Azure
-     * @return JSON: The response from Azure
-     */
-    private function make_api_call($history) {
-        global $USER;
-
-        $curlbody = [
-            "model" => $this->model,
-            "messages" => $history,
-            "temperature" => (float)$this->temperature,
-            "max_tokens" => (int)$this->maxlength,
-            "top_p" => (float)$this->topp,
-            "frequency_penalty" => (float)$this->frequency,
-            "presence_penalty" => (float)$this->presence,
-            "stop" => $this->username . ":",
-        ];
-
-        $curl = new \curl();
-        $curl->setopt(array(
-            'CURLOPT_HTTPHEADER' => array(
-                'api-key: ' . $this->apikey,
-                'Content-Type: application/json',
-            ),
-        ));
-
-        $endpoint = "https://" . $this->resourcename . ".openai.azure.com/openai/deployments/" . $this->deploymentid . "/chat/completions?api-version=" . $this->apiversion;
-
-        if ($ret = $this->curl_pre_check($endpoint)) {
-            logger::debug_grouped('chat.user:' . $USER->id, 'curl_pre_check error', $ret);
-            return $ret;
-        }
-
-        $response = $curl->post(
-            $endpoint,
-            json_encode($curlbody)
-        );
-        $response = json_decode($response);
-
-        if (property_exists($response, 'error')) {
-            $message = 'ERROR: ' . $response->error->message;
-        } else {
-            $message = $response->choices[0]->message->content;
-        }
-
+    protected function get_api_headers(): array {
         return [
-            "id" => property_exists($response, 'id') ? $response->id : 'error',
-            "message" => $message,
+            'api-key: ' . $this->apikey,
+            'Content-Type: application/json',
         ];
+    }
+
+    protected function is_gpt5_or_newer(string $model): bool {
+        // On Azure the deployment determines the actual model, so also check the deployment id.
+        return parent::is_gpt5_or_newer($model) || parent::is_gpt5_or_newer((string)$this->deploymentid);
     }
 }

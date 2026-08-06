@@ -139,7 +139,7 @@ class chat extends completion_base {
             }, callback_helper::get_functions()));
         }
 
-        if (preg_match('!^gpt-[5-9]!i', $model)) {
+        if ($this->is_gpt5_or_newer($model)) {
             // gpt-5+ uses max_completion_tokens instead of max_tokens
             $data['max_completion_tokens'] = (int)$this->maxlength;
             unset($data['max_tokens']);
@@ -161,10 +161,7 @@ class chat extends completion_base {
 
         $curl = new \curl();
         $curl->setopt(array(
-            'CURLOPT_HTTPHEADER' => array(
-                'Authorization: Bearer ' . $this->apikey,
-                'Content-Type: application/json',
-            ),
+            'CURLOPT_HTTPHEADER' => $this->get_api_headers(),
         ));
 
         logger::debug_grouped('chat.user:' . $USER->id, $endpoint, $data);
@@ -229,6 +226,17 @@ class chat extends completion_base {
             // gemini error format (array with one error object)
                 $response[0]->error->message ?? 'Unknown error',
         ];
+    }
+
+    protected function get_api_headers(): array {
+        return [
+            'Authorization: Bearer ' . $this->apikey,
+            'Content-Type: application/json',
+        ];
+    }
+
+    protected function is_gpt5_or_newer(string $model): bool {
+        return (bool)preg_match('!^gpt-[5-9]!i', $model);
     }
 
     protected function get_default_endpoint(): string {
