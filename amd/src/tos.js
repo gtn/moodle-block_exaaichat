@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import ModalFactory from 'core/modal_factory';
+import ModalSaveCancel from 'core/modal_save_cancel';
 import ModalEvents from 'core/modal_events';
 import {get_string} from 'core/str';
 import {call as ajaxCall} from 'core/ajax';
@@ -38,36 +38,35 @@ export async function init() {
   const acceptLabel = await get_string('terms_of_service:accept', 'block_exaaichat');
 
   openBtn.addEventListener('click', async function () {
-    const modal = await ModalFactory.create({
-      type: ModalFactory.types.SAVE_CANCEL,
+    const modal = await ModalSaveCancel.create({
       title: title,
       body: tosContent,
-      buttons: {
-        save: acceptLabel,
-      },
       large: true,
     });
 
-    // Add icon to save button
+    // Icon must be added after the button text is set, otherwise setSaveButtonText() would overwrite it.
+    await modal.setSaveButtonText(acceptLabel);
     modal.getRoot().find('[data-action="save"]').prepend('<i class="fa fa-check"></i> ');
 
-    modal.getRoot().on(ModalEvents.save, function () {
-      modal.getRoot().find('[data-action="save"]').prop('disabled', true);
+    modal.getRoot().on(ModalEvents.save, async function (event) {
+      // Keep the modal open while the request is running, an async handler can't do this via "return false".
+      event.preventDefault();
 
-      ajaxCall([{
-        methodname: 'block_exaaichat_accept_tos',
-        args: {},
-      }])[0]
-        .then(data => {
-          if (data.success) {
-            window.location.reload();
-          }
-        })
-        .catch(() => {
-          modal.getRoot().find('[data-action="save"]').prop('disabled', false);
-        });
+      const saveBtn = modal.getRoot().find('[data-action="save"]');
+      saveBtn.prop('disabled', true);
 
-      return false;
+      try {
+        const data = await ajaxCall([{
+          methodname: 'block_exaaichat_accept_tos',
+          args: {},
+        }])[0];
+
+        if (data.success) {
+          window.location.reload();
+        }
+      } catch (e) {
+        saveBtn.prop('disabled', false);
+      }
     });
 
     modal.show();

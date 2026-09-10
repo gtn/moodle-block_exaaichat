@@ -1,3 +1,6 @@
+### v5.2 (2026091000) ###
+* Moodle 5.2 compatibility
+
 ### v5.1 (2026080600) ###
 * Azure now supports tool calling (function calling), so the AI can also use grade and course placeholders when using Azure
 * compatible with gpt-5.6 (including the sol, terra and luna variants)
