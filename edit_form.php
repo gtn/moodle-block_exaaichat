@@ -255,10 +255,10 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->setDefault('config_vector_store_ids', '');
                 $mform->setType('config_vector_store_ids', PARAM_TEXT);
             } else {
-                $mform->addElement('text', 'config_maxlength', get_string('maxlength', 'block_exaaichat'));
-                $mform->setDefault('config_maxlength', 500);
-                $mform->setType('config_maxlength', PARAM_INT);
-                $mform->addHelpButton('config_maxlength', 'config_maxlength', 'block_exaaichat');
+                $mform->addElement('text', 'config_max_output_tokens', get_string('max_output_tokens', 'block_exaaichat'));
+                $mform->setDefault('config_max_output_tokens', 1500);
+                $mform->setType('config_max_output_tokens', PARAM_INT);
+                $mform->addHelpButton('config_max_output_tokens', 'config_max_output_tokens', 'block_exaaichat');
 
                 $mform->addElement('text', 'config_topp', get_string('topp', 'block_exaaichat'));
                 $mform->setDefault('config_topp', 1);

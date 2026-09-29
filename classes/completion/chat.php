@@ -121,14 +121,13 @@ class chat extends completion_base {
             "model" => $model,
             "messages" => $history,
             "temperature" => (float)$this->temperature,
-            "max_tokens" => (int)$this->maxlength,
             "top_p" => (float)$this->topp,
             "frequency_penalty" => (float)$this->frequency,
             "presence_penalty" => (float)$this->presence,
             "stop" => $this->username . ":",
         ];
 
-        if (static::model_supports_tool_calling($model)) {
+        if ($this->tool_calling_enabled && static::model_supports_tool_calling($model)) {
             $data['tools'] = array_values(array_map(function($function_definition) {
                 unset($function_definition['callback']);
 
@@ -141,8 +140,7 @@ class chat extends completion_base {
 
         if ($this->is_gpt5_or_newer($model)) {
             // gpt-5+ uses max_completion_tokens instead of max_tokens
-            $data['max_completion_tokens'] = (int)$this->maxlength;
-            unset($data['max_tokens']);
+            $data['max_completion_tokens'] = $this->max_output_tokens;
             unset($data['stop']);
             unset($data['temperature']);
             unset($data['frequency_penalty']);
@@ -151,6 +149,8 @@ class chat extends completion_base {
             if (!preg_match('!-(mini|nano)!i', $model)) {
                 unset($data['top_p']);
             }
+        } else {
+            $data['max_tokens'] = $this->max_output_tokens;
         }
 
         if (str_starts_with($endpoint, 'https://generativelanguage.googleapis.com/v1beta/openai/')) {
@@ -217,6 +217,8 @@ class chat extends completion_base {
             return [
                 "id" => property_exists($response, 'id') ? $response->id : 'error',
                 "message" => $choice->message->content,
+                // 'length' means the answer was cut off by max_tokens / max_completion_tokens.
+                "finish_reason" => $choice->finish_reason ?? '',
             ];
         }
 

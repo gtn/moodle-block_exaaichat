@@ -328,10 +328,10 @@ if ($hassiteconfig) {
         ));
 
         $settings->add(new admin_setting_configtext(
-            'block_exaaichat/maxlength',
-            get_string('maxlength', 'block_exaaichat'),
-            get_string('maxlength:desc', 'block_exaaichat'),
-            500,
+            'block_exaaichat/max_output_tokens',
+            get_string('max_output_tokens', 'block_exaaichat'),
+            get_string('max_output_tokens:desc', 'block_exaaichat'),
+            1500,
             PARAM_INT
         ));
 

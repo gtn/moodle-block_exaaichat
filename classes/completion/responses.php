@@ -49,7 +49,7 @@ class responses extends completion_base {
 
         $tools = [];
 
-        if (static::model_supports_tool_calling($this->model)) {
+        if ($this->tool_calling_enabled && static::model_supports_tool_calling($this->model)) {
             $tools = array_values(array_map(function($function_definition) {
                 unset($function_definition['callback']);
 
@@ -76,6 +76,7 @@ class responses extends completion_base {
 
         $data = [
             'model' => $this->model,
+            'max_output_tokens' => $this->max_output_tokens,
             'temperature' => $this->temperature,
             'top_p' => $this->topp,
             'previous_response_id' => $this->thread_id ?: null,

@@ -43,7 +43,7 @@ abstract class completion_base {
     protected string $sourceoftruth;
     protected string $model;
     protected float $temperature;
-    protected $maxlength;
+    protected int $max_output_tokens;
     protected float $topp;
     protected $frequency;
     protected $presence;
@@ -53,6 +53,7 @@ abstract class completion_base {
     protected string $endpoint = '';
     protected array $vector_store_ids = [];
     protected string $log_id = '';
+    protected bool $tool_calling_enabled = true;
 
     /**
      * Initialize all the class properties that we'll need regardless of model
@@ -87,6 +88,8 @@ abstract class completion_base {
                 'topp',
                 'vector_store_ids',
                 // 'prompt',
+                'max_output_tokens',
+                // Keep the legacy setting available until existing installations migrate.
                 'maxlength',
                 'frequency',
                 'presence',
@@ -133,7 +136,12 @@ abstract class completion_base {
 
         // $this->prompt = $config->prompt ?? $this->get_plugin_setting('prompt', get_string('defaultprompt', 'block_exaaichat'));
 
-        $this->maxlength = $config->maxlength ?? $this->get_plugin_setting('maxlength', 500);
+        $this->max_output_tokens = max(1, (int)($config->max_output_tokens
+            // Read the legacy block setting for existing block instances.
+            ?? $config->maxlength
+            ?? $this->get_plugin_setting('max_output_tokens',
+                // Read the legacy global setting for existing installations.
+                $this->get_plugin_setting('maxlength', 1500))));
         $this->frequency = $config->frequency ?? $this->get_plugin_setting('frequency', 1);
         $this->presence = $config->presence ?? $this->get_plugin_setting('presence', 1);
 
@@ -187,6 +195,20 @@ abstract class completion_base {
     }
 
     public abstract function create_completion(): array;
+
+    /**
+     * Callers that use the AI for a single fixed task (like generating a report) can turn off tool calling,
+     * so the model can't pull in extra data.
+     */
+    public function set_tool_calling_enabled(bool $enabled): static {
+        $this->tool_calling_enabled = $enabled;
+        return $this;
+    }
+
+    public function set_max_output_tokens(int $maxoutputtokens): static {
+        $this->max_output_tokens = max(1, $maxoutputtokens);
+        return $this;
+    }
 
     /**
      * Attempt to get the saved value for a setting; if this isn't set, return a passed default instead

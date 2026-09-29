@@ -70,7 +70,7 @@ class assistant extends completion_base {
     public function create_thread(string $message = '') {
         $tools = [];
 
-        if (static::model_supports_tool_calling($this->model)) {
+        if ($this->tool_calling_enabled && static::model_supports_tool_calling($this->model)) {
             $tools = array_values(array_map(function($function_definition) {
                 unset($function_definition['callback']);
 
@@ -83,6 +83,7 @@ class assistant extends completion_base {
 
         $data = [
             'assistant_id' => $this->assistant_id,
+            'max_completion_tokens' => $this->max_output_tokens,
             'instructions' => $this->get_instructions() . "\n\n" . $this->get_sourceoftruth(),
             'thread' => $message ? [
                 'messages' => [
@@ -123,6 +124,7 @@ class assistant extends completion_base {
                 threadId: $this->thread_id,
                 parameters: [
                     'assistant_id' => $this->assistant_id,
+                    'max_completion_tokens' => $this->max_output_tokens,
                 ],
             );
 
