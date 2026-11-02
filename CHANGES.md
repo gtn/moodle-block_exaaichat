@@ -2,6 +2,7 @@
 * gpt-5.1 and newer (e.g. gpt-5.6-luna) can now be used with tool calling in the Chat API (reasoning is turned off automatically there)
 * New site-wide and block setting to turn off tool calling (the AI retrieving Moodle data like courses, participants and grades)
 * "Maximum output tokens" can now also be set per block for the Responses API
+* Fixed the popped-out chat being cut off by the block drawer in Safari
 
 ### v5.2 (2026091000) ###
 * Moodle 5.2 compatibility

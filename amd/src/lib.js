@@ -373,11 +373,24 @@ export async function init(data) {
     $input.focus();
   })
 
+  // The expanded chat is moved to the body, because ancestors like the block drawer can clip
+  // position:fixed elements (Safari) or put them behind the navbar (own stacking context).
+  let popoutPlaceholder = null;
   $form.find('.exaaichat_popout_btn, .exaaichat_btn_close').click(() => {
-    if (document.querySelector('.drawer.drawer-right')) {
-      document.querySelector('.drawer.drawer-right').style.zIndex = '1041';
+    if ($form.hasClass('expanded')) {
+      popoutPlaceholder.replaceWith($form[0]);
+    } else {
+      popoutPlaceholder = document.createComment('block_exaaichat popout placeholder');
+      $form[0].before(popoutPlaceholder);
+      document.body.append($form[0]);
     }
     $form.toggleClass('expanded');
+    // moving the element in the DOM resets the scroll position, so scroll to the latest message again
+    const messageContainer = $form.find('.exaaichat_log')[0];
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+    messageContainer.closest('.block_exaaichat > div').scrollTop = messageContainer.scrollHeight;
+    // moving the element in the DOM drops the focus
+    $input.focus();
   });
 
   // beim laden den letzten ai_provider setzen
