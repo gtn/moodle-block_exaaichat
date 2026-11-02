@@ -141,6 +141,11 @@ class chat extends completion_base {
         if ($this->is_gpt5_or_newer($model)) {
             // gpt-5+ uses max_completion_tokens instead of max_tokens
             $data['max_completion_tokens'] = $this->max_output_tokens;
+            // Some models (e.g. gpt-5.6-luna) reject function tools in the Chat API unless reasoning is turned off.
+            // The original gpt-5/-mini/-nano don't know 'none', so only send it from gpt-5.1 on.
+            if (isset($data['tools']) && preg_match('!^gpt-(5\.\d|[6-9])!i', $model)) {
+                $data['reasoning_effort'] = 'none';
+            }
             unset($data['stop']);
             unset($data['temperature']);
             unset($data['frequency_penalty']);

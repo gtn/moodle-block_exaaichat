@@ -150,6 +150,9 @@ My name is {user.fullname}.<br/>
 Today is {userdate}.<br/>
 Course total grade is {grade:coursetotal}.<br/>
 Possible grade range for the course is {range:coursetotal}.";
+$string['config_tool_calling_enabled'] = 'Allow AI to retrieve Moodle data (tool calling)';
+$string['config_tool_calling_enabled_help'] = 'If enabled, the AI can retrieve data from Moodle on its own when needed to answer a question, e.g. information about the current user and course, the user\'s courses, course contents, participants and the user\'s grades. The data is retrieved with the permissions (role) of the user who is chatting, so the AI can only access data this user can also see in Moodle, e.g. a student only gets their own grades.<br/>
+Disable this if the AI should only use the instructions and the knowledge base. This also makes requests a bit smaller and cheaper, because the tool definitions are not sent.';
 $string['config_instructions'] = "Instruction to the AI";
 $string['config_instructions_help'] = "You can override the assistant's default instructions here.";
 $string['config_prompt'] = "Completion prompt";
@@ -233,6 +236,8 @@ $string['vectorstoreids'] = 'Vector store IDs';
 $string['filesearch_instruction'] = 'Also use the documents provided in the store. Never tell the user that the information comes from uploaded documents, a file or a store; present it as part of your own knowledge (e.g. do not say "according to the uploaded document").';
 $string['enablefileupload'] = 'Allow file uploads';
 $string['enablefileupload:desc'] = 'Allow uploading documents on a block. Files are synced to an OpenAI vector store and used for file_search. Responses API only.';
+$string['tool_calling_enabled'] = 'Allow AI to retrieve Moodle data (tool calling)';
+$string['tool_calling_enabled:desc'] = 'If enabled, the AI can retrieve data from Moodle on its own when needed to answer a question, e.g. information about the current user and course, the user\'s courses, course contents, participants and the user\'s grades. The data is retrieved with the permissions (role) of the user who is chatting, so the AI can only access data this user can also see in Moodle, e.g. a student only gets their own grades. Each block can still turn it off. If disabled, tool calling is turned off for all blocks.';
 $string['documents'] = 'Documents for the AI';
 $string['documents_help'] = 'Upload documents (PDF, text, Word, PowerPoint, HTML, ...) the AI can search and reference when answering. The files are synced to an OpenAI vector store and used via file_search. Removing a file here also removes it from OpenAI on the next save.';
 $string['documents:syncerror'] = 'Could not sync the uploaded documents to OpenAI:';

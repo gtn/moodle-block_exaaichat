@@ -144,6 +144,10 @@ abstract class completion_base {
                 $this->get_plugin_setting('maxlength', 1500))));
         $this->frequency = $config->frequency ?? $this->get_plugin_setting('frequency', 1);
         $this->presence = $config->presence ?? $this->get_plugin_setting('presence', 1);
+        // The site setting is a master switch, so admins can prevent any block from exposing Moodle data to the AI.
+        // Existing blocks without the block setting keep tool calling enabled.
+        $this->tool_calling_enabled = get_config('block_exaaichat', 'tool_calling_enabled')
+            && ($config->tool_calling_enabled ?? true);
 
         $this->init($config);
     }

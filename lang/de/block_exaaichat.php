@@ -147,6 +147,9 @@ Mein Name ist {user.fullname}.<br/>
 Heute ist {userdate}.<br/>
 Kursgesamtbewertung ist {grade:coursetotal}.<br/>
 Möglicher Notenbereich für den Kurs ist {range:coursetotal}.";
+$string['config_tool_calling_enabled'] = 'KI darf Moodle-Daten abrufen (Tool Calling)';
+$string['config_tool_calling_enabled_help'] = 'Wenn aktiviert, kann die KI bei Bedarf selbstständig Daten aus Moodle abrufen, um eine Frage zu beantworten, z.B. Informationen zum aktuellen Benutzer und Kurs, die Kurse des Benutzers, Kursinhalte, Teilnehmer/innen und die eigenen Bewertungen. Die Daten werden mit den Rechten (der Rolle) des Benutzers abgerufen, der gerade chattet. Die KI kann also nur auf Daten zugreifen, die dieser Benutzer auch in Moodle sehen darf, z.B. bekommen Studierende nur ihre eigenen Bewertungen.<br/>
+Deaktivieren, wenn die KI nur die Anweisung und die Wissensbasis verwenden soll. Die Anfragen werden dadurch auch etwas kleiner und günstiger, weil die Tool-Definitionen nicht mitgeschickt werden.';
 $string['config_instructions'] = 'Anweisung an die KI';
 $string['config_instructions_help'] = 'Du kannst hier die Standard-Anweisungen des Assistenten überschreiben.';
 $string['config_prompt'] = 'Prompt';
@@ -229,6 +232,8 @@ $string['vectorstoreids'] = 'Vektorspeicher-IDs';
 $string['filesearch_instruction'] = 'Verwende auch die im Vector Store bereitgestellten Dokumente. Sage dem Benutzer niemals, dass die Informationen aus hochgeladenen Dokumenten, einer Datei oder einem Speicher stammen; gib sie als Teil deines eigenen Wissens wieder (sage z. B. nicht "laut dem hochgeladenen Dokument").';
 $string['enablefileupload'] = 'Datei-Uploads erlauben';
 $string['enablefileupload:desc'] = 'Erlaubt das Hochladen von Dokumenten in einem Block. Dateien werden mit einem OpenAI Vector Store synchronisiert und für file_search verwendet. Nur Responses-API.';
+$string['tool_calling_enabled'] = 'KI darf Moodle-Daten abrufen (Tool Calling)';
+$string['tool_calling_enabled:desc'] = 'Wenn aktiviert, kann die KI bei Bedarf selbstständig Daten aus Moodle abrufen, um eine Frage zu beantworten, z.B. Informationen zum aktuellen Benutzer und Kurs, die Kurse des Benutzers, Kursinhalte, Teilnehmer/innen und die eigenen Bewertungen. Die Daten werden mit den Rechten (der Rolle) des Benutzers abgerufen, der gerade chattet. Die KI kann also nur auf Daten zugreifen, die dieser Benutzer auch in Moodle sehen darf, z.B. bekommen Studierende nur ihre eigenen Bewertungen. Jeder Block kann es zusätzlich deaktivieren. Wenn deaktiviert, ist Tool Calling für alle Blöcke ausgeschaltet.';
 $string['documents'] = 'Dokumente für die KI';
 $string['documents_help'] = 'Laden Sie Dokumente (PDF, Text, Word, PowerPoint, HTML, ...) hoch, die die KI durchsuchen und beim Beantworten heranziehen kann. Die Dateien werden mit einem OpenAI Vector Store synchronisiert und über file_search verwendet. Wird eine Datei hier entfernt, wird sie beim nächsten Speichern auch aus OpenAI entfernt.';
 $string['documents:syncerror'] = 'Die hochgeladenen Dokumente konnten nicht mit OpenAI synchronisiert werden:';

@@ -152,6 +152,13 @@ if ($hassiteconfig) {
         ));
 
         $settings->add(new admin_setting_configcheckbox(
+            'block_exaaichat/tool_calling_enabled',
+            get_string('tool_calling_enabled', 'block_exaaichat'),
+            get_string('tool_calling_enabled:desc', 'block_exaaichat'),
+            1
+        ));
+
+        $settings->add(new admin_setting_configcheckbox(
             'block_exaaichat/persistconvo',
             get_string('persistconvo', 'block_exaaichat'),
             get_string('persistconvo:desc', 'block_exaaichat'),

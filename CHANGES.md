@@ -1,3 +1,8 @@
+### v5.2 (2026110200) ###
+* gpt-5.1 and newer (e.g. gpt-5.6-luna) can now be used with tool calling in the Chat API (reasoning is turned off automatically there)
+* New site-wide and block setting to turn off tool calling (the AI retrieving Moodle data like courses, participants and grades)
+* "Maximum output tokens" can now also be set per block for the Responses API
+
 ### v5.2 (2026091000) ###
 * Moodle 5.2 compatibility
 * Renamed the maximum length setting to maximum output tokens, increased its default to 1500, and applied it consistently across completion APIs

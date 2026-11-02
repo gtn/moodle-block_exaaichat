@@ -187,6 +187,12 @@ class block_exaaichat_edit_form extends block_edit_form {
             'placeholders_gradebook' => $this->get_placeholders_gradebook(),
         ]));
 
+        if (get_config('block_exaaichat', 'tool_calling_enabled')) {
+            $mform->addElement('advcheckbox', 'config_tool_calling_enabled', get_string('config_tool_calling_enabled', 'block_exaaichat'));
+            $mform->setDefault('config_tool_calling_enabled', 1);
+            $mform->addHelpButton('config_tool_calling_enabled', 'config_tool_calling_enabled', 'block_exaaichat');
+        }
+
         // File upload: synced to a managed OpenAI vector store (file_search). Shown whenever the admin
         // enabled the documents feature; the note flags that it only works with the OpenAI Responses API.
         if (get_config('block_exaaichat', 'enablefileupload')) {
@@ -245,6 +251,11 @@ class block_exaaichat_edit_form extends block_edit_form {
             $mform->setType('config_temperature', PARAM_FLOAT);
             $mform->addHelpButton('config_temperature', 'config_temperature', 'block_exaaichat');
 
+            $mform->addElement('text', 'config_max_output_tokens', get_string('max_output_tokens', 'block_exaaichat'));
+            $mform->setDefault('config_max_output_tokens', 1500);
+            $mform->setType('config_max_output_tokens', PARAM_INT);
+            $mform->addHelpButton('config_max_output_tokens', 'config_max_output_tokens', 'block_exaaichat');
+
             if ($api_type === 'responses') {
                 $mform->addElement('text', 'config_topp', get_string('topp', 'block_exaaichat'));
                 $mform->setDefault('config_topp', 1);
@@ -255,11 +266,6 @@ class block_exaaichat_edit_form extends block_edit_form {
                 $mform->setDefault('config_vector_store_ids', '');
                 $mform->setType('config_vector_store_ids', PARAM_TEXT);
             } else {
-                $mform->addElement('text', 'config_max_output_tokens', get_string('max_output_tokens', 'block_exaaichat'));
-                $mform->setDefault('config_max_output_tokens', 1500);
-                $mform->setType('config_max_output_tokens', PARAM_INT);
-                $mform->addHelpButton('config_max_output_tokens', 'config_max_output_tokens', 'block_exaaichat');
-
                 $mform->addElement('text', 'config_topp', get_string('topp', 'block_exaaichat'));
                 $mform->setDefault('config_topp', 1);
                 $mform->setType('config_topp', PARAM_FLOAT);
